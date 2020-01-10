@@ -6,8 +6,6 @@
 #ifndef BX_MACROS_H_HEADER_GUARD
 #define BX_MACROS_H_HEADER_GUARD
 
-#include "bx.h"
-
 ///
 #if BX_COMPILER_MSVC
 // Workaround MSVS bug...

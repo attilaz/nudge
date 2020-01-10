@@ -27,6 +27,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <bx/simd_t.h>
+
 #ifdef _WIN32
 #include <intrin.h>
 #define NUDGE_ALIGNED(n) __declspec(align(n))
