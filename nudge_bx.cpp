@@ -167,11 +167,6 @@ namespace simd_float {
 	NUDGE_FORCEINLINE simd4_float cmp_neq(simd4_float x, simd4_float y) {
 		return _mm_cmpneq_ps(x, y);
 	}
-	
-	NUDGE_FORCEINLINE simd4_int32 toint(simd4_float x) {
-		return simd_ftoi(x);	//todo(attila): this rounds
-		//return _mm_cvttps_epi32(x);	// this truncates
-	}
 }
 
 // ext
@@ -2451,7 +2446,7 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		pos_z = simd_nmsub(pos_z, scene_scale, scene_min_z);
 		
 		simd4_int32 lm, hm;
-		morton(simd_float::toint(pos_x), simd_float::toint(pos_y), simd_float::toint(pos_z), lm, hm);
+		morton(simd_ftoi(pos_x), simd_ftoi(pos_y), simd_ftoi(pos_z), lm, hm);
 		hm = simd_or(hm, index);
 		
 		simd4_int32 mi0 = simd_shuf_xAyB(lm, hm);
