@@ -64,7 +64,8 @@ static const unsigned simdv_width32_log2 = 3;
 
 #ifdef _WIN32
 NUDGE_FORCEINLINE simd128_t operator - (simd128_t a) {
-	return _mm_xor_ps(a, _mm_set1_ps(-0.0f));
+	return simd_neg(a);	//todo(attila): this does 0-a, does the xor version faster or needed?
+	//return _mm_xor_ps(a, _mm_set1_ps(-0.0f));
 }
 
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
@@ -142,11 +143,11 @@ typedef __m128i simd4_int32;
 
 namespace simd128 {
 	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
-		return _mm_unpacklo_ps(x, y);
+		return simd_shuf_xAyB(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd128_t unpackhi32(simd128_t x, simd128_t y) {
-		return _mm_unpackhi_ps(x, y);
+		return simd_shuf_zCwD(x, y);
 	}
 
 	NUDGE_FORCEINLINE __m128i unpacklo32(__m128i x, __m128i y) {
@@ -187,21 +188,17 @@ namespace simd {
 	}
 	
 	NUDGE_FORCEINLINE simd128_t bitwise_xor(simd128_t x, simd128_t y) {
-		return _mm_xor_ps(x, y);
+		return simd_xor(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd128_t bitwise_or(simd128_t x, simd128_t y) {
-		return _mm_or_ps(x, y);
+		return simd_or(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd128_t bitwise_and(simd128_t x, simd128_t y) {
-		return _mm_and_ps(x, y);
+		return simd_and(x, y);
 	}
-	
-	NUDGE_FORCEINLINE simd128_t bitwise_notand(simd128_t x, simd128_t y) {
-		return _mm_andnot_ps(x, y);
-	}
-	
+
 	NUDGE_FORCEINLINE __m128i bitwise_xor(__m128i x, __m128i y) {
 		return _mm_xor_si128(x, y);
 	}
@@ -235,19 +232,19 @@ namespace simd {
 
 namespace simd_float {
 	NUDGE_FORCEINLINE float extract_first_float(simd4_float x) {
-		return _mm_cvtss_f32(x);
+		return simd_x(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float zero4() {
-		return _mm_setzero_ps();
+		return simd_zero();
 	}
 	
 	NUDGE_FORCEINLINE simd4_float make4(float x) {
-		return _mm_set1_ps(x);
+		return simd_splat(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float make4(float x, float y, float z, float w) {
-		return _mm_setr_ps(x, y, z, w);
+		return simd_ld(x, y, z, w);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float broadcast_load4(const float* p) {
