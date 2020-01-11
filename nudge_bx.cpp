@@ -139,7 +139,8 @@ NUDGE_FORCEINLINE __m256& operator /= (__m256& a, __m256 b) {
 #endif
 
 typedef simd128_t simd4_float;
-typedef __m128i simd4_int32;
+typedef simd128_t simd4_int32;
+
 
 namespace simd128 {
 	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
@@ -211,9 +212,10 @@ namespace simd {
 		return _mm_and_si128(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
+/*	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
 		return _mm_andnot_si128(x, y);
 	}
+	*/
 	
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
 #if defined(__SSE4_1__) || defined(__AVX__)
@@ -331,63 +333,167 @@ namespace simd_float {
 	NUDGE_FORCEINLINE simd4_float cmp_neq(simd4_float x, simd4_float y) {
 		return _mm_cmpneq_ps(x, y);
 	}
-	
+
+	//todo(attila): this is a noop in bx::simd
 	NUDGE_FORCEINLINE simd4_int32 asint(simd4_float x) {
-		return _mm_castps_si128(x);
+		return x; // _mm_castps_si128(x);
+
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 toint(simd4_float x) {
-		return _mm_cvttps_epi32(x);
+		return simd_ftoi(x);	//todo(attila): this rounds
+		//return _mm_cvttps_epi32(x);	// this truncates
 	}
 }
 
 namespace simd_int32 {
 	NUDGE_FORCEINLINE simd4_int32 zero4() {
-		return _mm_setzero_si128();
+		return simd_zero();
+		//return _mm_setzero_si128();
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x) {
-		return _mm_set1_epi32(x);
+		return simd_isplat(x);
+		//return _mm_set1_epi32(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x, int32_t y, int32_t z, int32_t w) {
-		return _mm_setr_epi32(x, y, z, w);
+		return simd_ild(x, y, z, w);
+		//return _mm_setr_epi32(x, y, z, w);
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 load4(const int32_t* p) {
-		return _mm_load_si128((const __m128i*)p);
+		return simd_ld(p);
+		//return _mm_load_si128((const __m128i*)p);
 	}
 	
 	NUDGE_FORCEINLINE void store4(int32_t* p, simd4_int32 x) {
-		_mm_store_si128((__m128i*)p, x);
+		simd_st(p, x);
+		//_mm_store_si128((__m128i*)p, x);
 	}
 	
 	NUDGE_FORCEINLINE void storeu4(int32_t* p, simd4_int32 x) {
-		_mm_storeu_si128((__m128i*)p, x);
+		_mm_storeu_ps((float*)p, x);
+		//_mm_storeu_si128((__m128*)p, x);
 	}
 	
 	template<unsigned bits>
 	NUDGE_FORCEINLINE simd4_int32 shift_left(simd4_int32 x) {
-		return _mm_slli_epi32(x, bits);
+		return simd_sll(x, bits);
+		//return _mm_slli_epi32(x, bits);
 	}
 	
 	template<unsigned bits>
 	NUDGE_FORCEINLINE simd4_int32 shift_right(simd4_int32 x) {
-		return _mm_srli_epi32(x, bits);
+		return simd_srl(x, bits);
+		//return _mm_srli_epi32(x, bits);
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 add(simd4_int32 x, simd4_int32 y) {
-		return _mm_add_epi32(x, y);
+		return simd_iadd(x, y);
+		//return _mm_add_epi32(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_int32 cmp_eq(simd4_int32 x, simd4_int32 y) {
-		return _mm_cmpeq_epi32(x, y);
+		return simd_icmpeq(x, y);
+		//return _mm_cmpeq_epi32(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float asfloat(simd4_int32 x) {
-		return _mm_castsi128_ps(x);
+		return x;
+		//return _mm_castsi128_ps(x);
+	}
+
+	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
+		return simd_shuf_xAyB(x, y);
 	}
 }
+
+// ext
+
+BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_packs_epi32(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_packs_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_add_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_cmpeq_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i add = _mm_srli_epi16(a, _bits);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+
+BX_SIMD_FORCE_INLINE simd128_t simd_iandc(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_andnot_si128(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i add = _mm_unpacklo_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(add);
+
+	return result;
+}
+
+
+BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	return _mm_movemask_epi8(a);
+}
+
+/*	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
+		return _mm_andnot_si128(x, y);
+	}
+	*/
+
+
 
 #ifdef __AVX2__
 typedef __m256 simd8_float;
@@ -1777,8 +1883,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float sign_npnp = simd_float::make4(-0.0f, 0.0f, -0.0f, 0.0f);
 					
 					// Add corner points to the support if they are part of the intersection.
-					__m128i corner_mask;
-					__m128i edge_mask;
+					simd128_t corner_mask;
+					simd128_t edge_mask;
 					{
 						simd4_float sign_pnpn = simd_float::make4(0.0f, -0.0f, 0.0f, -0.0f);
 						simd4_float sign_nnpp = simd_float::make4(-0.0f, -0.0f, 0.0f, 0.0f);
@@ -1807,11 +1913,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float mask0 = simd_float::cmp_le(simd_float::max(simd_float::abs(delta_x), simd_float::abs(delta_y)), delta_max);
 						simd4_float mask1 = simd::bitwise_and(inside_x, inside_y);
 						
-						corner_mask = _mm_packs_epi32(simd_float::asint(mask0), simd_float::asint(mask1));
+						corner_mask = simd_pack_i32_to_i16(mask0, mask1);
 						
 						// Don't allow edge intersections if both vertices are inside.
-						edge_mask = _mm_packs_epi32(simd_float::asint(simd::bitwise_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0))),
-													simd_float::asint(simd::bitwise_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1))));
+						edge_mask = simd_pack_i32_to_i16(simd::bitwise_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0)),
+														 simd::bitwise_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1)));
 						
 						simd_float::store4(support_x + 0, corner0x);
 						simd_float::store4(support_y + 0, corner0y);
@@ -1867,7 +1973,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						mask_a = simd::bitwise_and(mask_a, mask);
 						mask_b = simd::bitwise_and(mask_b, mask);
 						
-						edge_mask = simd::bitwise_notand(edge_mask, _mm_packs_epi32(simd_float::asint(mask_a), simd_float::asint(mask_b)));
+						edge_mask = simd_iandc(edge_mask, simd_pack_i32_to_i16(mask_a, mask_b));
 						
 						simd_float::store4(support_x + 8, ax);
 						simd_float::store4(support_y + 8, ay);
@@ -1875,7 +1981,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd_float::store4(support_y + 12, by);
 					}
 					
-					mask = _mm_movemask_epi8(_mm_packs_epi16(corner_mask, edge_mask));
+					mask = simd_i8_mask(simd_pack_i16_to_i8(corner_mask, edge_mask));
 					
 					// Calculate and store vertex labels.
 					// The 8 vertices are tagged using the sign bit of each axis.
@@ -2356,13 +2462,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_int32 edge_x = simd::bitwise_or(simd_int32::shift_right<31-0>(simd_float::asint(a_sign_x)), simd_int32::shift_right<31-16>(simd_float::asint(simd::bitwise_xor(b_sign_x, simd_float::make4(-0.0f)))));
 			simd4_int32 edge_y = simd::bitwise_or(simd_int32::shift_right<31-1>(simd_float::asint(a_sign_y)), simd_int32::shift_right<31-17>(simd_float::asint(simd::bitwise_xor(b_sign_y, simd_float::make4(-0.0f)))));
 			simd4_int32 edge_z = simd::bitwise_or(simd_int32::shift_right<31-2>(simd_float::asint(a_sign_z)), simd_int32::shift_right<31-18>(simd_float::asint(simd::bitwise_xor(b_sign_z, simd_float::make4(-0.0f)))));
-			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
+			simd4_int32 edge_w = simd_i16_add(simd_i16_add(edge, simd_isplat((1 << 16) | 1)), simd_i16_srl(edge, 1)); // Calculates 1 << edge (valid for 0-2).
+
+//			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 			
 			simd4_int32 edge_xy = simd::bitwise_or(edge_x, edge_y);
 			simd4_int32 edge_zw = simd::bitwise_or(edge_z, edge_w);
 			
 			simd4_int32 tag_hi = simd::bitwise_or(edge_xy, edge_zw);
-			simd4_int32 tag_lo = simd::bitwise_notand(edge_w, tag_hi);
+			simd4_int32 tag_lo = simd_iandc(edge_w, tag_hi);
 			tag_hi = simd_int32::shift_left<8>(tag_hi);
 			
 			simd4_int32 tag = simd::bitwise_or(tag_lo, tag_hi);
@@ -4236,23 +4344,25 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 			
 			unsigned lane = first_set_bit((unsigned)_mm256_movemask_ps(_mm256_castsi256_ps(_mm256_cmpeq_epi32(scheduled_a_b, invalid_index))));
 #else
-			__m128i a = _mm_set1_epi16(ca);
-			__m128i b = _mm_set1_epi16(cb);
+			simd128_t a = simd_isplat((ca << 16) | ca);
+			simd128_t b = simd_isplat((cb << 16) | cb);
 			
-			__m128i scheduled_a_b;
+			simd128_t scheduled_a_b;
 			
 			unsigned j = 0;
 			
 			for (;; ++j) {
-				scheduled_a_b = _mm_load_si128((const __m128i*)vacant_pairs[j].ab);
+				scheduled_a_b = simd_ld(vacant_pairs[j].ab);
 				
-				__m128i conflict = _mm_packs_epi16(_mm_cmpeq_epi16(a, scheduled_a_b), _mm_cmpeq_epi16(b, scheduled_a_b));
+				simd128_t conflict = simd_pack_i16_to_i8(simd_i16_cmpeq(a, scheduled_a_b), simd_i16_cmpeq(b, scheduled_a_b));
 				
-				if (!_mm_movemask_epi8(conflict))
+				if (!simd_i8_mask(conflict))
 					break;
 			}
 			
-			unsigned lane = first_set_bit((unsigned)_mm_movemask_ps(_mm_castsi128_ps(_mm_cmpeq_epi32(scheduled_a_b, invalid_index))));
+			//unsigned lane = first_set_bit((unsigned)_mm_movemask_ps(_mm_castsi128_ps(_mm_cmpeq_epi32(scheduled_a_b, invalid_index))));
+			unsigned lane = first_set_bit((unsigned)_mm_movemask_ps(simd_icmpeq(scheduled_a_b, invalid_index)));
+			
 #endif
 			
 			ContactSlotV* slot = vacant_slots + j;
@@ -4263,7 +4373,8 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 #ifdef __AVX2__
 			_mm_store_ss((float*)pair->ab + lane, _mm_castsi128_ps(_mm_unpacklo_epi16(simd::extract_low(a), simd::extract_low(b))));
 #else
-			_mm_store_ss((float*)pair->ab + lane, _mm_castsi128_ps(_mm_unpacklo_epi16(a, b)));
+			simd_stx((float*)pair->ab + lane, simd_shuf_xAyBzCwD(a, b));
+			//_mm_store_ss((float*)pair->ab + lane, _mm_castsi128_ps(_mm_unpacklo_epi16(a, b)));
 #endif
 			
 			if (j == vacancy_count) {
