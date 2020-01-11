@@ -52,8 +52,7 @@ static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
 NUDGE_FORCEINLINE simd128_t operator - (simd128_t a) {
-	return simd_neg(a);	//todo(attila): this does 0-a, does the xor version faster or needed?
-	//return _mm_xor_ps(a, _mm_set1_ps(-0.0f));
+	return simd_neg(a);
 }
 
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
@@ -94,26 +93,6 @@ typedef simd128_t simd4_int32;
 
 
 namespace simd128 {
-	/*
-	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
-		return simd_shuf_xAyB(x, y);
-	}
-	 */
-/*
-	NUDGE_FORCEINLINE simd128_t unpackhi32(simd128_t x, simd128_t y) {
-		return simd_shuf_zCwD(x, y);
-	}
-*/
-	/*
-	NUDGE_FORCEINLINE __m128i unpacklo32(__m128i x, __m128i y) {
-		return _mm_unpacklo_epi32(x, y);
-	}
-
-	NUDGE_FORCEINLINE __m128i unpackhi32(__m128i x, __m128i y) {
-		return _mm_unpackhi_epi32(x, y);
-	}
-	 */
-	
 	template<unsigned x0, unsigned x1, unsigned y0, unsigned y1>
 	NUDGE_FORCEINLINE simd128_t concat2x32(simd128_t x, simd128_t y) {
 		return _mm_shuffle_ps(x, y, _MM_SHUFFLE(y1, y0, x1, x0));
@@ -142,39 +121,6 @@ namespace simd {
 	NUDGE_FORCEINLINE unsigned signmask32(__m128i x) {
 		return _mm_movemask_ps(_mm_castsi128_ps(x));
 	}
-	/*
-	NUDGE_FORCEINLINE simd128_t bitwise_xor(simd128_t x, simd128_t y) {
-		return simd_xor(x, y);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd128_t bitwise_or(simd128_t x, simd128_t y) {
-		return simd_or(x, y);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd128_t bitwise_and(simd128_t x, simd128_t y) {
-		return simd_and(x, y);
-	}
-	 */
-/*
-	NUDGE_FORCEINLINE __m128i bitwise_xor(__m128i x, __m128i y) {
-		return _mm_xor_si128(x, y);
-	}
-	
-	NUDGE_FORCEINLINE __m128i bitwise_or(__m128i x, __m128i y) {
-		return _mm_or_si128(x, y);
-	}
-	
-	NUDGE_FORCEINLINE __m128i bitwise_and(__m128i x, __m128i y) {
-		return _mm_and_si128(x, y);
-	}
-	*/
-	
-/*	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
-		return _mm_andnot_si128(x, y);
-	}
-	*/
 	
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
 #if defined(__SSE4_1__) || defined(__AVX__)
@@ -192,33 +138,44 @@ namespace simd {
 }
 
 namespace simd_float {
+	/*
 	NUDGE_FORCEINLINE float extract_first_float(simd4_float x) {
 		return simd_x(x);
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE simd4_float zero4() {
 		return simd_zero();
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE simd4_float make4(float x) {
 		return simd_splat(x);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd4_float make4(float x, float y, float z, float w) {
 		return simd_ld(x, y, z, w);
 	}
-	
+	*/
+	/*
 	NUDGE_FORCEINLINE simd4_float broadcast_load4(const float* p) {
 		return simd_splat(*p);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd4_float load4(const float* p) {
 		return simd_ld(p);
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE void store4(float* p, simd4_float x) {
 		simd_st(p, x);
 	}
+	 */
 	
 	NUDGE_FORCEINLINE void storeu4(float* p, simd4_float x) {
 		_mm_storeu_ps(p, x);
@@ -456,25 +413,33 @@ typedef simd4_float simdv_float;
 typedef simd4_int32 simdv_int32;
 
 namespace simd_float {
+	/*
 	NUDGE_FORCEINLINE simdv_float zerov() {
 		return zero4();
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE simdv_float makev(float x) {
 		return make4(x);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simdv_float broadcast_loadv(const float* p) {
 		return broadcast_load4(p);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simdv_float loadv(const float* p) {
 		return load4(p);
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE void storev(float* p, simdv_float x) {
 		store4(p, x);
 	}
+	 */
 
 }
 
@@ -874,15 +839,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			unsigned b3_index = pair3 >> 16;
 			
 			// Load rotations.
-			simd4_float a_rotation_x = simd_float::load4(transforms[a0_index].rotation);
-			simd4_float a_rotation_y = simd_float::load4(transforms[a1_index].rotation);
-			simd4_float a_rotation_z = simd_float::load4(transforms[a2_index].rotation);
-			simd4_float a_rotation_s = simd_float::load4(transforms[a3_index].rotation);
+			simd4_float a_rotation_x = simd_ld(transforms[a0_index].rotation);
+			simd4_float a_rotation_y = simd_ld(transforms[a1_index].rotation);
+			simd4_float a_rotation_z = simd_ld(transforms[a2_index].rotation);
+			simd4_float a_rotation_s = simd_ld(transforms[a3_index].rotation);
 			
-			simd4_float b_rotation_x = simd_float::load4(transforms[b0_index].rotation);
-			simd4_float b_rotation_y = simd_float::load4(transforms[b1_index].rotation);
-			simd4_float b_rotation_z = simd_float::load4(transforms[b2_index].rotation);
-			simd4_float b_rotation_s = simd_float::load4(transforms[b3_index].rotation);
+			simd4_float b_rotation_x = simd_ld(transforms[b0_index].rotation);
+			simd4_float b_rotation_y = simd_ld(transforms[b1_index].rotation);
+			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
+			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
 			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
 			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
@@ -915,7 +880,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float sy = ky * relative_rotation_s;
 			simd4_float sz = kz * relative_rotation_s;
 			
-			simd4_float one = simd_float::make4(1.0f);
+			simd4_float one = simd_splat(1.0f);
 			
 			simd4_float vx_x = one - yy - zz;
 			simd4_float vx_y = xy + sz;
@@ -930,15 +895,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float vz_z = one - xx - yy;
 			
 			// Load sizes.
-			simd4_float a_size_x = simd_float::load4(colliders[a0_index].size);
-			simd4_float a_size_y = simd_float::load4(colliders[a1_index].size);
-			simd4_float a_size_z = simd_float::load4(colliders[a2_index].size);
-			simd4_float a_size_w = simd_float::load4(colliders[a3_index].size);
+			simd4_float a_size_x = simd_ld(colliders[a0_index].size);
+			simd4_float a_size_y = simd_ld(colliders[a1_index].size);
+			simd4_float a_size_z = simd_ld(colliders[a2_index].size);
+			simd4_float a_size_w = simd_ld(colliders[a3_index].size);
 			
-			simd4_float b_size_x = simd_float::load4(colliders[b0_index].size);
-			simd4_float b_size_y = simd_float::load4(colliders[b1_index].size);
-			simd4_float b_size_z = simd_float::load4(colliders[b2_index].size);
-			simd4_float b_size_w = simd_float::load4(colliders[b3_index].size);
+			simd4_float b_size_x = simd_ld(colliders[b0_index].size);
+			simd4_float b_size_y = simd_ld(colliders[b1_index].size);
+			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
+			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
 			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
 			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
@@ -965,15 +930,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float pbz = a_size_z + vz_x*b_size_x + vz_y*b_size_y + vz_z*b_size_z;
 			
 			// Load positions.
-			simd4_float a_position_x = simd_float::load4(transforms[a0_index].position);
-			simd4_float a_position_y = simd_float::load4(transforms[a1_index].position);
-			simd4_float a_position_z = simd_float::load4(transforms[a2_index].position);
-			simd4_float a_position_w = simd_float::load4(transforms[a3_index].position);
+			simd4_float a_position_x = simd_ld(transforms[a0_index].position);
+			simd4_float a_position_y = simd_ld(transforms[a1_index].position);
+			simd4_float a_position_z = simd_ld(transforms[a2_index].position);
+			simd4_float a_position_w = simd_ld(transforms[a3_index].position);
 			
-			simd4_float b_position_x = simd_float::load4(transforms[b0_index].position);
-			simd4_float b_position_y = simd_float::load4(transforms[b1_index].position);
-			simd4_float b_position_z = simd_float::load4(transforms[b2_index].position);
-			simd4_float b_position_w = simd_float::load4(transforms[b3_index].position);
+			simd4_float b_position_x = simd_ld(transforms[b0_index].position);
+			simd4_float b_position_y = simd_ld(transforms[b1_index].position);
+			simd4_float b_position_z = simd_ld(transforms[b2_index].position);
+			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
 			// Compute relative positions and offset the penetrations.
 			simd4_float delta_x = a_position_x - b_position_x;
@@ -1049,15 +1014,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float pair = simd::blendv32(pair_a_b, pair_b_a, swap);
 			
 			// Store data for pairs with positive penetration.
-			unsigned mask = simd::signmask32(simd_float::cmp_gt(p, simd_float::zero4()));
+			unsigned mask = simd::signmask32(simd_float::cmp_gt(p, simd_zero()));
 			
 			NUDGE_ALIGNED(16) float face_penetration_array[4];
 			NUDGE_ALIGNED(16) uint32_t face_array[4];
 			NUDGE_ALIGNED(16) uint32_t pair_array[4];
 			
-			simd_float::store4(face_penetration_array, p);
-			simd_float::store4((float*)face_array, face);
-			simd_float::store4((float*)pair_array, pair);
+			simd_st(face_penetration_array, p);
+			simd_st((float*)face_array, face);
+			simd_st((float*)pair_array, pair);
 			
 			while (mask) {
 				unsigned index = first_set_bit(mask);
@@ -1111,15 +1076,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			unsigned b3_index = pair3 >> 16;
 			
 			// Load rotations.
-			simd4_float a_rotation_x = simd_float::load4(transforms[a0_index].rotation);
-			simd4_float a_rotation_y = simd_float::load4(transforms[a1_index].rotation);
-			simd4_float a_rotation_z = simd_float::load4(transforms[a2_index].rotation);
-			simd4_float a_rotation_s = simd_float::load4(transforms[a3_index].rotation);
+			simd4_float a_rotation_x = simd_ld(transforms[a0_index].rotation);
+			simd4_float a_rotation_y = simd_ld(transforms[a1_index].rotation);
+			simd4_float a_rotation_z = simd_ld(transforms[a2_index].rotation);
+			simd4_float a_rotation_s = simd_ld(transforms[a3_index].rotation);
 			
-			simd4_float b_rotation_x = simd_float::load4(transforms[b0_index].rotation);
-			simd4_float b_rotation_y = simd_float::load4(transforms[b1_index].rotation);
-			simd4_float b_rotation_z = simd_float::load4(transforms[b2_index].rotation);
-			simd4_float b_rotation_s = simd_float::load4(transforms[b3_index].rotation);
+			simd4_float b_rotation_x = simd_ld(transforms[b0_index].rotation);
+			simd4_float b_rotation_y = simd_ld(transforms[b1_index].rotation);
+			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
+			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
 			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
 			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
@@ -1152,7 +1117,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float sy = ky * relative_rotation_s;
 			simd4_float sz = kz * relative_rotation_s;
 			
-			simd4_float one = simd_float::make4(1.0f);
+			simd4_float one = simd_splat(1.0f);
 			
 			simd4_float vx_x = one - yy - zz;
 			simd4_float vx_y = xy + sz;
@@ -1168,42 +1133,42 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			NUDGE_ALIGNED(16) float a_to_b[4*9];
 			
-			simd_float::store4(a_to_b + 0, vx_x);
-			simd_float::store4(a_to_b + 4, vx_y);
-			simd_float::store4(a_to_b + 8, vx_z);
+			simd_st(a_to_b + 0, vx_x);
+			simd_st(a_to_b + 4, vx_y);
+			simd_st(a_to_b + 8, vx_z);
 			
-			simd_float::store4(a_to_b + 12, vy_x);
-			simd_float::store4(a_to_b + 16, vy_y);
-			simd_float::store4(a_to_b + 20, vy_z);
+			simd_st(a_to_b + 12, vy_x);
+			simd_st(a_to_b + 16, vy_y);
+			simd_st(a_to_b + 20, vy_z);
 			
-			simd_float::store4(a_to_b + 24, vz_x);
-			simd_float::store4(a_to_b + 28, vz_y);
-			simd_float::store4(a_to_b + 32, vz_z);
+			simd_st(a_to_b + 24, vz_x);
+			simd_st(a_to_b + 28, vz_y);
+			simd_st(a_to_b + 32, vz_z);
 			
 			// Load sizes.
-			simd4_float a_size_x = simd_float::load4(colliders[a0_index].size);
-			simd4_float a_size_y = simd_float::load4(colliders[a1_index].size);
-			simd4_float a_size_z = simd_float::load4(colliders[a2_index].size);
-			simd4_float a_size_w = simd_float::load4(colliders[a3_index].size);
+			simd4_float a_size_x = simd_ld(colliders[a0_index].size);
+			simd4_float a_size_y = simd_ld(colliders[a1_index].size);
+			simd4_float a_size_z = simd_ld(colliders[a2_index].size);
+			simd4_float a_size_w = simd_ld(colliders[a3_index].size);
 			
-			simd4_float b_size_x = simd_float::load4(colliders[b0_index].size);
-			simd4_float b_size_y = simd_float::load4(colliders[b1_index].size);
-			simd4_float b_size_z = simd_float::load4(colliders[b2_index].size);
-			simd4_float b_size_w = simd_float::load4(colliders[b3_index].size);
+			simd4_float b_size_x = simd_ld(colliders[b0_index].size);
+			simd4_float b_size_y = simd_ld(colliders[b1_index].size);
+			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
+			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
 			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
 			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Load positions.
-			simd4_float a_position_x = simd_float::load4(transforms[a0_index].position);
-			simd4_float a_position_y = simd_float::load4(transforms[a1_index].position);
-			simd4_float a_position_z = simd_float::load4(transforms[a2_index].position);
-			simd4_float a_position_w = simd_float::load4(transforms[a3_index].position);
+			simd4_float a_position_x = simd_ld(transforms[a0_index].position);
+			simd4_float a_position_y = simd_ld(transforms[a1_index].position);
+			simd4_float a_position_z = simd_ld(transforms[a2_index].position);
+			simd4_float a_position_w = simd_ld(transforms[a3_index].position);
 			
-			simd4_float b_position_x = simd_float::load4(transforms[b0_index].position);
-			simd4_float b_position_y = simd_float::load4(transforms[b1_index].position);
-			simd4_float b_position_z = simd_float::load4(transforms[b2_index].position);
-			simd4_float b_position_w = simd_float::load4(transforms[b3_index].position);
+			simd4_float b_position_x = simd_ld(transforms[b0_index].position);
+			simd4_float b_position_y = simd_ld(transforms[b1_index].position);
+			simd4_float b_position_z = simd_ld(transforms[b2_index].position);
+			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
 			// Compute relative positions and offset the penetrations.
 			simd4_float delta_x = a_position_x - b_position_x;
@@ -1227,24 +1192,24 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			NUDGE_ALIGNED(16) float b_offset_array[3*4];
 			
-			simd_float::store4(b_offset_array + 0, b_offset_x);
-			simd_float::store4(b_offset_array + 4, b_offset_y);
-			simd_float::store4(b_offset_array + 8, b_offset_z);
+			simd_st(b_offset_array + 0, b_offset_x);
+			simd_st(b_offset_array + 4, b_offset_y);
+			simd_st(b_offset_array + 8, b_offset_z);
 			
-			simd4_float face_penetration = simd_float::load4(feature_penetrations + pair_offset);
+			simd4_float face_penetration = simd_ld(feature_penetrations + pair_offset);
 			
 			// Is an edge pair more separating?
 			NUDGE_ALIGNED(16) float edge_penetration_a[4*9];
 			NUDGE_ALIGNED(16) float edge_penetration_b[4*9];
 			
 			for (unsigned i = 0; i < 3; ++i) {
-				simd4_float acx = simd_float::load4(a_to_b + (0*3 + i)*4);
-				simd4_float acy = simd_float::load4(a_to_b + (1*3 + i)*4);
-				simd4_float acz = simd_float::load4(a_to_b + (2*3 + i)*4);
+				simd4_float acx = simd_ld(a_to_b + (0*3 + i)*4);
+				simd4_float acy = simd_ld(a_to_b + (1*3 + i)*4);
+				simd4_float acz = simd_ld(a_to_b + (2*3 + i)*4);
 				
-				simd4_float bcx = simd_float::load4(a_to_b + (i*3 + 0)*4);
-				simd4_float bcy = simd_float::load4(a_to_b + (i*3 + 1)*4);
-				simd4_float bcz = simd_float::load4(a_to_b + (i*3 + 2)*4);
+				simd4_float bcx = simd_ld(a_to_b + (i*3 + 0)*4);
+				simd4_float bcy = simd_ld(a_to_b + (i*3 + 1)*4);
+				simd4_float bcz = simd_ld(a_to_b + (i*3 + 2)*4);
 				
 				simd4_float ac2x = acx*acx;
 				simd4_float ac2y = acy*acy;
@@ -1270,7 +1235,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float r_b1 = bc2z + bc2x;
 				simd4_float r_b2 = bc2x + bc2y;
 				
-				simd4_float nan_threshold = simd_float::make4(1e-3f);
+				simd4_float nan_threshold = simd_splat(1e-3f);
 				
 				r_a0 = simd_or(simd_float::rsqrt(r_a0), simd_float::cmp_le(r_a0, nan_threshold));
 				r_a1 = simd_or(simd_float::rsqrt(r_a1), simd_float::cmp_le(r_a1, nan_threshold));
@@ -1292,13 +1257,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float o1 = simd_float::abs(acz*b_offset_x - acx*b_offset_z);
 				simd4_float o2 = simd_float::abs(acx*b_offset_y - acy*b_offset_x);
 				
-				simd_float::store4(edge_penetration_a + (i*3 + 0)*4, (pa0 - o0) * r_a0);
-				simd_float::store4(edge_penetration_a + (i*3 + 1)*4, (pa1 - o1) * r_a1);
-				simd_float::store4(edge_penetration_a + (i*3 + 2)*4, (pa2 - o2) * r_a2);
+				simd_st(edge_penetration_a + (i*3 + 0)*4, (pa0 - o0) * r_a0);
+				simd_st(edge_penetration_a + (i*3 + 1)*4, (pa1 - o1) * r_a1);
+				simd_st(edge_penetration_a + (i*3 + 2)*4, (pa2 - o2) * r_a2);
 				
-				simd_float::store4(edge_penetration_b + (i*3 + 0)*4, pb0 * r_b0);
-				simd_float::store4(edge_penetration_b + (i*3 + 1)*4, pb1 * r_b1);
-				simd_float::store4(edge_penetration_b + (i*3 + 2)*4, pb2 * r_b2);
+				simd_st(edge_penetration_b + (i*3 + 0)*4, pb0 * r_b0);
+				simd_st(edge_penetration_b + (i*3 + 1)*4, pb1 * r_b1);
+				simd_st(edge_penetration_b + (i*3 + 2)*4, pb2 * r_b2);
 			}
 			
 			simd4_int32 a_edge = simd_int32::make4(0);
@@ -1308,7 +1273,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			for (unsigned i = 0; i < 3; ++i) {
 				for (unsigned j = 0; j < 3; ++j) {
-					simd4_float p = simd_float::load4(edge_penetration_a + (i*3 + j)*4) + simd_float::load4(edge_penetration_b + (j*3 + i)*4);
+					simd4_float p = simd_ld(edge_penetration_a + (i*3 + j)*4) + simd_ld(edge_penetration_b + (j*3 + i)*4);
 					
 					simd4_float mask = simd_float::cmp_gt(penetration, p);
 					
@@ -1318,10 +1283,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				}
 			}
 			
-			simd4_float face_bias = simd_float::make4(1e-3f);
+			simd4_float face_bias = simd_splat(1e-3f);
 			
 			unsigned edge = simd::signmask32(simd_float::cmp_gt(face_penetration, penetration + face_bias));
-			unsigned overlapping = simd::signmask32(simd_float::cmp_gt(penetration, simd_float::zero4()));
+			unsigned overlapping = simd::signmask32(simd_float::cmp_gt(penetration, simd_zero()));
 			
 			unsigned face = ~edge;
 			
@@ -1332,7 +1297,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			NUDGE_ALIGNED(16) int32_t a_edge_array[4];
 			NUDGE_ALIGNED(16) int32_t b_edge_array[4];
 			
-			simd_float::store4(penetration_array, penetration);
+			simd_st(penetration_array, penetration);
 			simd_int32::store4(a_edge_array, a_edge);
 			simd_int32::store4(b_edge_array, b_edge);
 			
@@ -1348,34 +1313,34 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				unsigned b_index = pair >> 16;
 				
 				// Gather.
-				simd4_float dirs = simd_float::make4(a_to_b[(a_face*3 + 0)*4 + index],
-													 a_to_b[(a_face*3 + 1)*4 + index],
-													 a_to_b[(a_face*3 + 2)*4 + index],
-													 0.0f);
+				simd4_float dirs = simd_ld(a_to_b[(a_face*3 + 0)*4 + index],
+										   a_to_b[(a_face*3 + 1)*4 + index],
+										   a_to_b[(a_face*3 + 2)*4 + index],
+										   0.0f);
 				
-				simd4_float c0 = simd_float::make4(a_to_b[(0*3 + 0)*4 + index],
-												   a_to_b[(1*3 + 0)*4 + index],
-												   a_to_b[(2*3 + 0)*4 + index],
-												   0.0f);
+				simd4_float c0 = simd_ld(a_to_b[(0*3 + 0)*4 + index],
+										 a_to_b[(1*3 + 0)*4 + index],
+										 a_to_b[(2*3 + 0)*4 + index],
+										 0.0f);
 				
-				simd4_float c1 = simd_float::make4(a_to_b[(0*3 + 1)*4 + index],
-												   a_to_b[(1*3 + 1)*4 + index],
-												   a_to_b[(2*3 + 1)*4 + index],
-												   0.0f);
+				simd4_float c1 = simd_ld(a_to_b[(0*3 + 1)*4 + index],
+										 a_to_b[(1*3 + 1)*4 + index],
+										 a_to_b[(2*3 + 1)*4 + index],
+										 0.0f);
 				
-				simd4_float c2 = simd_float::make4(a_to_b[(0*3 + 2)*4 + index],
-												   a_to_b[(1*3 + 2)*4 + index],
-												   a_to_b[(2*3 + 2)*4 + index],
-												   0.0f);
+				simd4_float c2 = simd_ld(a_to_b[(0*3 + 2)*4 + index],
+										 a_to_b[(1*3 + 2)*4 + index],
+										 a_to_b[(2*3 + 2)*4 + index],
+										 0.0f);
 				
-				simd4_float b_offset = simd_float::make4(b_offset_array[0*4 + index],
-														 b_offset_array[1*4 + index],
-														 b_offset_array[2*4 + index],
-														 0.0f);
+				simd4_float b_offset = simd_ld(b_offset_array[0*4 + index],
+											   b_offset_array[1*4 + index],
+											   b_offset_array[2*4 + index],
+											   0.0f);
 				
 				// Load sizes.
-				simd4_float a_size = simd_float::load4(colliders[a_index].size);
-				simd4_float b_size = simd_float::load4(colliders[b_index].size);
+				simd4_float a_size = simd_ld(colliders[a_index].size);
+				simd4_float b_size = simd_ld(colliders[b_index].size);
 				
 				// Find most aligned face of b.
 				dirs = simd_float::abs(dirs);
@@ -1430,9 +1395,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float q2 = simd_shuf_xAyB(dx, dy);
 				simd4_float q3 = simd_shuf_zCwD(dx, dy);
 				
-				simd_float::store4(quads + 0, simd128::concat2x32<0,1,0,1>(q0, q2));
-				simd_float::store4(quads + 4, simd128::concat2x32<2,3,2,3>(q0, q2));
-				simd_float::store4(quads + 8, simd128::concat2x32<0,1,0,1>(q1, q3));
+				simd_st(quads + 0, simd128::concat2x32<0,1,0,1>(q0, q2));
+				simd_st(quads + 4, simd128::concat2x32<2,3,2,3>(q0, q2));
+				simd_st(quads + 8, simd128::concat2x32<0,1,0,1>(q1, q3));
 				
 				// Transform so that overlap testing can be done in two dimensions.
 				const float* transformed_x = quads + 4*((a_face+1) % 3);
@@ -1447,8 +1412,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					float* support_x = support + 0;
 					float* support_y = support + 16;
 					
-					simd4_float tx = simd_float::load4(transformed_x);
-					simd4_float ty = simd_float::load4(transformed_y);
+					simd4_float tx = simd_ld(transformed_x);
+					simd4_float ty = simd_ld(transformed_y);
 					
 					simd4_float sxycxy = simd_shuf_xAyB(tx, ty);
 					simd4_float dxy = simd_shuf_zCwD(tx, ty);
@@ -1458,14 +1423,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float cx = simd128::shuffle32<2,2,2,2>(sxycxy);
 					simd4_float cy = simd128::shuffle32<3,3,3,3>(sxycxy);
 					
-					simd4_float sign_npnp = simd_float::make4(-0.0f, 0.0f, -0.0f, 0.0f);
+					simd4_float sign_npnp = simd_ld(-0.0f, 0.0f, -0.0f, 0.0f);
 					
 					// Add corner points to the support if they are part of the intersection.
 					simd128_t corner_mask;
 					simd128_t edge_mask;
 					{
-						simd4_float sign_pnpn = simd_float::make4(0.0f, -0.0f, 0.0f, -0.0f);
-						simd4_float sign_nnpp = simd_float::make4(-0.0f, -0.0f, 0.0f, 0.0f);
+						simd4_float sign_pnpn = simd_ld(0.0f, -0.0f, 0.0f, -0.0f);
+						simd4_float sign_nnpp = simd_ld(-0.0f, -0.0f, 0.0f, 0.0f);
 						
 						simd4_float corner0x = simd_xor(sx, sign_pnpn);
 						simd4_float corner0y = simd_xor(sy, sign_nnpp);
@@ -1497,17 +1462,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						edge_mask = simd_pack_i32_to_i16(simd_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0)),
 														 simd_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1)));
 						
-						simd_float::store4(support_x + 0, corner0x);
-						simd_float::store4(support_y + 0, corner0y);
-						simd_float::store4(support_x + 4, corner1x);
-						simd_float::store4(support_y + 4, corner1y);
+						simd_st(support_x + 0, corner0x);
+						simd_st(support_y + 0, corner0y);
+						simd_st(support_x + 4, corner1x);
+						simd_st(support_y + 4, corner1y);
 					}
 					
 					// Find additional support points by intersecting the edges of the second quad against the bounds of the first.
 					unsigned edge_axis_near;
 					unsigned edge_axis_far;
 					{
-						simd4_float one = simd_float::make4(1.0f);
+						simd4_float one = simd_splat(1.0f);
 						simd4_float rdxy = one/dxy;
 						
 						simd4_float offset_x = simd128::shuffle32<0,0,2,2>(dxy);
@@ -1516,7 +1481,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float pivot_x = cx + simd_xor(simd128::shuffle32<2,2,0,0>(dxy), sign_npnp);
 						simd4_float pivot_y = cy + simd_xor(simd128::shuffle32<3,3,1,1>(dxy), sign_npnp);
 						
-						simd4_float sign_mask = simd_float::make4(-0.0f);
+						simd4_float sign_mask = simd_splat(-0.0f);
 						simd4_float pos_x = simd_or(simd_and(offset_x, sign_mask), sx); // Copy sign.
 						simd4_float pos_y = simd_or(simd_and(offset_y, sign_mask), sy);
 						
@@ -1543,7 +1508,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float bx = pivot_x + offset_x * b;
 						simd4_float by = pivot_y + offset_y * b;
 						
-						simd4_float mask = simd_float::cmp_gt(a + b, simd_float::zero4()); // Make sure -a < b.
+						simd4_float mask = simd_float::cmp_gt(a + b, simd_zero()); // Make sure -a < b.
 						
 						simd4_float mask_a = simd_float::cmp_neq(a, one);
 						simd4_float mask_b = simd_float::cmp_neq(b, one);
@@ -1553,10 +1518,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						
 						edge_mask = simd_iandc(edge_mask, simd_pack_i32_to_i16(mask_a, mask_b));
 						
-						simd_float::store4(support_x + 8, ax);
-						simd_float::store4(support_y + 8, ay);
-						simd_float::store4(support_x + 12, bx);
-						simd_float::store4(support_y + 12, by);
+						simd_st(support_x + 8, ax);
+						simd_st(support_y + 8, ay);
+						simd_st(support_x + 12, bx);
+						simd_st(support_y + 12, by);
 					}
 					
 					mask = simd_i8_mask(simd_pack_i16_to_i8(corner_mask, edge_mask));
@@ -1633,40 +1598,40 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				}
 				
 				// Compute z-plane through face b and calculate z for the support points.
-				simd4_float a_size_transformed = simd_float::load4(transformed_x);
-				simd4_float c_transformed = simd_float::load4(transformed_y);
-				simd4_float dx_transformed = simd_float::load4(transformed_z);
-				simd4_float dy_transformed = simd_float::zero4();
+				simd4_float a_size_transformed = simd_ld(transformed_x);
+				simd4_float c_transformed = simd_ld(transformed_y);
+				simd4_float dx_transformed = simd_ld(transformed_z);
+				simd4_float dy_transformed = simd_zero();
 				
 				simd128::transpose32(a_size_transformed, c_transformed, dx_transformed, dy_transformed);
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
-				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd_xor(zn, simd_float::make4(-0.0f)), simd_aos::dot(c_transformed, zn));
-				plane *= simd_float::make4(1.0f)/simd128::shuffle32<2,2,2,2>(zn);
+				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
+				plane *= simd_splat(1.0f)/simd128::shuffle32<2,2,2,2>(zn);
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
 				
-				simdv_float z_sign = simd_float::zerov();
+				simdv_float z_sign = simd_zero();
 				
 				if (b_offset_neg)
-					z_sign = simd_float::makev(-0.0f);
+					z_sign = simd_splat(-0.0f);
 				
 				simdv_float penetration_offset = simd128::shuffle32<2,2,2,2>(a_size_transformed);
 				unsigned penetration_mask = 0;
 				
 				for (unsigned i = 0; i < 16; i += simdv_width32) {
-					simdv_float x = simd_float::loadv(support + 0 + i);
-					simdv_float y = simd_float::loadv(support + 16 + i);
+					simdv_float x = simd_ld(support + 0 + i);
+					simdv_float y = simd_ld(support + 16 + i);
 					simdv_float z = x*simd128::shuffle32<0,0,0,0>(plane) + y*simd128::shuffle32<1,1,1,1>(plane) + simd128::shuffle32<2,2,2,2>(plane);
 					
 					simdv_float penetration = penetration_offset - simd_xor(z, z_sign);
 					
-					z += penetration * simd_xor(simd_float::makev(0.5f), z_sign);
+					z += penetration * simd_xor(simd_splat(0.5f), z_sign);
 					
-					penetration_mask |= simd::signmask32(simd_float::cmp_gt(penetration, simd_float::zerov())) << i;
+					penetration_mask |= simd::signmask32(simd_float::cmp_gt(penetration, simd_zero())) << i;
 					
-					simd_float::storev(penetrations + i, penetration);
-					simd_float::storev(support + 32 + i, z);
+					simd_st(penetrations + i, penetration);
+					simd_st(support + 32 + i, z);
 				}
 				
 				mask &= penetration_mask;
@@ -1681,11 +1646,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				// Setup rotation matrix from a to world.
 				simd4_float a_to_world0, a_to_world1, a_to_world2;
 				{
-					simd4_float qx_qy_qz_qs = simd_float::load4(transforms[a_index].rotation);
+					simd4_float qx_qy_qz_qs = simd_ld(transforms[a_index].rotation);
 					simd4_float kx_ky_kz_ks = qx_qy_qz_qs + qx_qy_qz_qs;
 					
 					// Make ks negative so that we can create +sx from kx*qs and -sx from ks*qx.
-					kx_ky_kz_ks = simd_xor(kx_ky_kz_ks, simd_float::make4(0.0f, 0.0f, 0.0f, -0.0f));
+					kx_ky_kz_ks = simd_xor(kx_ky_kz_ks, simd_ld(0.0f, 0.0f, 0.0f, -0.0f));
 					
 					//  1.0f - yy - zz, xy + sz, xz - sy
 					a_to_world0 = (simd128::shuffle32<1,0,0,3>(kx_ky_kz_ks) * simd128::shuffle32<1,1,2,3>(qx_qy_qz_qs) +
@@ -1699,22 +1664,22 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					a_to_world2 = (simd128::shuffle32<0,1,0,3>(kx_ky_kz_ks) * simd128::shuffle32<2,2,0,3>(qx_qy_qz_qs) +
 								   simd128::shuffle32<1,3,1,3>(kx_ky_kz_ks) * simd128::shuffle32<3,0,1,3>(qx_qy_qz_qs));
 					
-					a_to_world0 = a_to_world0 - simd_float::make4(1.0f, 0.0f, 0.0f, 0.0f);
-					a_to_world1 = a_to_world1 - simd_float::make4(0.0f, 1.0f, 0.0f, 0.0f);
-					a_to_world2 = a_to_world2 - simd_float::make4(0.0f, 0.0f, 1.0f, 0.0f);
+					a_to_world0 = a_to_world0 - simd_ld(1.0f, 0.0f, 0.0f, 0.0f);
+					a_to_world1 = a_to_world1 - simd_ld(0.0f, 1.0f, 0.0f, 0.0f);
+					a_to_world2 = a_to_world2 - simd_ld(0.0f, 0.0f, 1.0f, 0.0f);
 					
-					a_to_world0 = simd_xor(a_to_world0, simd_float::make4(-0.0f, 0.0f, 0.0f, 0.0f));
-					a_to_world1 = simd_xor(a_to_world1, simd_float::make4(0.0f, -0.0f, 0.0f, 0.0f));
-					a_to_world2 = simd_xor(a_to_world2, simd_float::make4(0.0f, 0.0f, -0.0f, 0.0f));
+					a_to_world0 = simd_xor(a_to_world0, simd_ld(-0.0f, 0.0f, 0.0f, 0.0f));
+					a_to_world1 = simd_xor(a_to_world1, simd_ld(0.0f, -0.0f, 0.0f, 0.0f));
+					a_to_world2 = simd_xor(a_to_world2, simd_ld(0.0f, 0.0f, -0.0f, 0.0f));
 				}
 				
 				// Add valid support points as contacts.
 				simd4_float wn = a_face == 0 ? a_to_world0 : (a_face == 1 ? a_to_world1 : a_to_world2);
 				
 				if (b_offset_neg)
-					wn = simd_xor(wn, simd_float::make4(-0.0f));
+					wn = simd_xor(wn, simd_splat(-0.0f));
 				
-				simd4_float a_position = simd_float::load4(transforms[a_index].position);
+				simd4_float a_position = simd_ld(transforms[a_index].position);
 				
 				uint16_t a_body = (uint16_t)transforms[a_index].body;
 				uint16_t b_body = (uint16_t)transforms[b_index].body;
@@ -1736,7 +1701,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					
 					tag_swap = 16;
 					
-					wn = simd_xor(wn, simd_float::make4(-0.0f));;
+					wn = simd_xor(wn, simd_splat(-0.0f));
 				}
 				
 				uint64_t high_tag = ((uint64_t)a_index << 32) | ((uint64_t)b_index << 48);
@@ -1751,8 +1716,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 
 					float penetration = penetrations[index];
 					
-					simd_float::store4(contacts[count].position, wp);
-					simd_float::store4(contacts[count].normal, wn);
+					simd_st(contacts[count].position, wp);
+					simd_st(contacts[count].normal, wn);
 					
 					contacts[count].penetration = penetration;
 					contacts[count].friction = 0.5f;
@@ -1827,15 +1792,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			unsigned b3_index = pair3 >> 16;
 			
 			// Load rotations.
-			simd4_float a_rotation_x = simd_float::load4(transforms[a0_index].rotation);
-			simd4_float a_rotation_y = simd_float::load4(transforms[a1_index].rotation);
-			simd4_float a_rotation_z = simd_float::load4(transforms[a2_index].rotation);
-			simd4_float a_rotation_s = simd_float::load4(transforms[a3_index].rotation);
+			simd4_float a_rotation_x = simd_ld(transforms[a0_index].rotation);
+			simd4_float a_rotation_y = simd_ld(transforms[a1_index].rotation);
+			simd4_float a_rotation_z = simd_ld(transforms[a2_index].rotation);
+			simd4_float a_rotation_s = simd_ld(transforms[a3_index].rotation);
 			
-			simd4_float b_rotation_x = simd_float::load4(transforms[b0_index].rotation);
-			simd4_float b_rotation_y = simd_float::load4(transforms[b1_index].rotation);
-			simd4_float b_rotation_z = simd_float::load4(transforms[b2_index].rotation);
-			simd4_float b_rotation_s = simd_float::load4(transforms[b3_index].rotation);
+			simd4_float b_rotation_x = simd_ld(transforms[b0_index].rotation);
+			simd4_float b_rotation_y = simd_ld(transforms[b1_index].rotation);
+			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
+			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
 			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
 			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
@@ -1859,17 +1824,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float sy = ky*a_rotation_s;
 				simd4_float sz = kz*a_rotation_s;
 				
-				a_basis_xx = simd_float::make4(1.0f) - yy - zz;
+				a_basis_xx = simd_splat(1.0f) - yy - zz;
 				a_basis_xy = xy + sz;
 				a_basis_xz = xz - sy;
 				
 				a_basis_yx = xy - sz;
-				a_basis_yy = simd_float::make4(1.0f) - xx - zz;
+				a_basis_yy = simd_splat(1.0f) - xx - zz;
 				a_basis_yz = yz + sx;
 				
 				a_basis_zx = xz + sy;
 				a_basis_zy = yz - sx;
-				a_basis_zz = simd_float::make4(1.0f) - xx - yy;
+				a_basis_zz = simd_splat(1.0f) - xx - yy;
 			}
 			
 			simd4_float b_basis_xx, b_basis_xy, b_basis_xz;
@@ -1890,17 +1855,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float sy = ky*b_rotation_s;
 				simd4_float sz = kz*b_rotation_s;
 				
-				b_basis_xx = simd_float::make4(1.0f) - yy - zz;
+				b_basis_xx = simd_splat(1.0f) - yy - zz;
 				b_basis_xy = xy + sz;
 				b_basis_xz = xz - sy;
 				
 				b_basis_yx = xy - sz;
-				b_basis_yy = simd_float::make4(1.0f) - xx - zz;
+				b_basis_yy = simd_splat(1.0f) - xx - zz;
 				b_basis_yz = yz + sx;
 				
 				b_basis_zx = xz + sy;
 				b_basis_zy = yz - sx;
-				b_basis_zz = simd_float::make4(1.0f) - xx - yy;
+				b_basis_zz = simd_splat(1.0f) - xx - yy;
 			}
 			
 			// Load edges.
@@ -1971,15 +1936,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_soa::cross(u_x, u_y, u_z, v_x, v_y, v_z, n_x, n_y, n_z);
 			
 			// Load positions.
-			simd4_float a_position_x = simd_float::load4(transforms[a0_index].position);
-			simd4_float a_position_y = simd_float::load4(transforms[a1_index].position);
-			simd4_float a_position_z = simd_float::load4(transforms[a2_index].position);
-			simd4_float a_position_w = simd_float::load4(transforms[a3_index].position);
+			simd4_float a_position_x = simd_ld(transforms[a0_index].position);
+			simd4_float a_position_y = simd_ld(transforms[a1_index].position);
+			simd4_float a_position_z = simd_ld(transforms[a2_index].position);
+			simd4_float a_position_w = simd_ld(transforms[a3_index].position);
 			
-			simd4_float b_position_x = simd_float::load4(transforms[b0_index].position);
-			simd4_float b_position_y = simd_float::load4(transforms[b1_index].position);
-			simd4_float b_position_z = simd_float::load4(transforms[b2_index].position);
-			simd4_float b_position_w = simd_float::load4(transforms[b3_index].position);
+			simd4_float b_position_x = simd_ld(transforms[b0_index].position);
+			simd4_float b_position_y = simd_ld(transforms[b1_index].position);
+			simd4_float b_position_z = simd_ld(transforms[b2_index].position);
+			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
 			simd128::transpose32(a_position_x, a_position_y, a_position_z, a_position_w);
 			simd128::transpose32(b_position_x, b_position_y, b_position_z, b_position_w);
@@ -1990,7 +1955,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float delta_z = b_position_z - a_position_z;
 			
 			// Flip normal?
-			simd4_float sign_mask = simd_float::make4(-0.0f);
+			simd4_float sign_mask = simd_splat(-0.0f);
 			simd4_float flip_sign = simd_and(n_x*delta_x + n_y*delta_y + n_z*delta_z, sign_mask);
 			
 			n_x = simd_xor(n_x, flip_sign);
@@ -1998,15 +1963,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			n_z = simd_xor(n_z, flip_sign);
 			
 			// Load sizes.
-			simd4_float a_size_x = simd_float::load4(colliders[a0_index].size);
-			simd4_float a_size_y = simd_float::load4(colliders[a1_index].size);
-			simd4_float a_size_z = simd_float::load4(colliders[a2_index].size);
-			simd4_float a_size_w = simd_float::load4(colliders[a3_index].size);
+			simd4_float a_size_x = simd_ld(colliders[a0_index].size);
+			simd4_float a_size_y = simd_ld(colliders[a1_index].size);
+			simd4_float a_size_z = simd_ld(colliders[a2_index].size);
+			simd4_float a_size_w = simd_ld(colliders[a3_index].size);
 			
-			simd4_float b_size_x = simd_float::load4(colliders[b0_index].size);
-			simd4_float b_size_y = simd_float::load4(colliders[b1_index].size);
-			simd4_float b_size_z = simd_float::load4(colliders[b2_index].size);
-			simd4_float b_size_w = simd_float::load4(colliders[b3_index].size);
+			simd4_float b_size_x = simd_ld(colliders[b0_index].size);
+			simd4_float b_size_y = simd_ld(colliders[b1_index].size);
+			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
+			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
 			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
 			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
@@ -2028,9 +1993,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			b_sign_y = simd_and(b_sign_y, sign_mask);
 			b_sign_z = simd_and(b_sign_z, sign_mask);
 			
-			simd4_int32 edge_x = simd_or(simd_int32::shift_right<31-0>(simd_float::asint(a_sign_x)), simd_int32::shift_right<31-16>(simd_float::asint(simd_xor(b_sign_x, simd_float::make4(-0.0f)))));
-			simd4_int32 edge_y = simd_or(simd_int32::shift_right<31-1>(simd_float::asint(a_sign_y)), simd_int32::shift_right<31-17>(simd_float::asint(simd_xor(b_sign_y, simd_float::make4(-0.0f)))));
-			simd4_int32 edge_z = simd_or(simd_int32::shift_right<31-2>(simd_float::asint(a_sign_z)), simd_int32::shift_right<31-18>(simd_float::asint(simd_xor(b_sign_z, simd_float::make4(-0.0f)))));
+			simd4_int32 edge_x = simd_or(simd_int32::shift_right<31-0>(simd_float::asint(a_sign_x)), simd_int32::shift_right<31-16>(simd_float::asint(simd_xor(b_sign_x, simd_splat(-0.0f)))));
+			simd4_int32 edge_y = simd_or(simd_int32::shift_right<31-1>(simd_float::asint(a_sign_y)), simd_int32::shift_right<31-17>(simd_float::asint(simd_xor(b_sign_y, simd_splat(-0.0f)))));
+			simd4_int32 edge_z = simd_or(simd_int32::shift_right<31-2>(simd_float::asint(a_sign_z)), simd_int32::shift_right<31-18>(simd_float::asint(simd_xor(b_sign_z, simd_splat(-0.0f)))));
 			simd4_int32 edge_w = simd_i16_add(simd_i16_add(edge, simd_isplat((1 << 16) | 1)), simd_i16_srl(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 
 //			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
@@ -2095,7 +2060,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float id = o_x*u_x + o_y*u_y + o_z*u_z;
 			simd4_float ie = o_x*v_x + o_y*v_y + o_z*v_z;
 			
-			simd4_float half = simd_float::make4(0.5f);
+			simd4_float half = simd_splat(0.5f);
 			simd4_float ir = half / (ia*ic - ib*ib);
 			
 			simd4_float sa = (ib*ie - ic*id) * ir;
@@ -2107,20 +2072,20 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd_soa::normalize(n_x, n_y, n_z);
 			
-			simd4_float p_w = simd_float::load4(feature_penetrations + i);
-			simd4_float n_w = simd_float::make4(0.5f);
+			simd4_float p_w = simd_ld(feature_penetrations + i);
+			simd4_float n_w = simd_splat(0.5f);
 			
 			simd128::transpose32(p_x, p_y, p_z, p_w);
 			simd128::transpose32(n_x, n_y, n_z, n_w);
 			
-			simd_float::store4(contacts[count + 0].position, p_x);
-			simd_float::store4(contacts[count + 0].normal, n_x);
-			simd_float::store4(contacts[count + 1].position, p_y);
-			simd_float::store4(contacts[count + 1].normal, n_y);
-			simd_float::store4(contacts[count + 2].position, p_z);
-			simd_float::store4(contacts[count + 2].normal, n_z);
-			simd_float::store4(contacts[count + 3].position, p_w);
-			simd_float::store4(contacts[count + 3].normal, n_w);
+			simd_st(contacts[count + 0].position, p_x);
+			simd_st(contacts[count + 0].normal, n_x);
+			simd_st(contacts[count + 1].position, p_y);
+			simd_st(contacts[count + 1].normal, n_y);
+			simd_st(contacts[count + 2].position, p_z);
+			simd_st(contacts[count + 2].normal, n_z);
+			simd_st(contacts[count + 3].position, p_w);
+			simd_st(contacts[count + 3].normal, n_w);
 			
 			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_int32::asfloat(simd_int32::make4(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(simd_float::asint(b_position_w))));
 			simd_float::storeu4((float*)(bodies + count), body_pair);
@@ -2500,10 +2465,10 @@ NUDGE_FORCEINLINE static void load4(const float* data, const T* indices,
 	unsigned i2 = indices[2*index_stride];
 	unsigned i3 = indices[3*index_stride];
 	
-	d0 = simd_float::load4(data + i0*stride_in_floats);
-	d1 = simd_float::load4(data + i1*stride_in_floats);
-	d2 = simd_float::load4(data + i2*stride_in_floats);
-	d3 = simd_float::load4(data + i3*stride_in_floats);
+	d0 = simd_ld(data + i0*stride_in_floats);
+	d1 = simd_ld(data + i1*stride_in_floats);
+	d2 = simd_ld(data + i2*stride_in_floats);
+	d3 = simd_ld(data + i3*stride_in_floats);
 	
 	simd128::transpose32(d0, d1, d2, d3);
 }
@@ -2519,15 +2484,15 @@ NUDGE_FORCEINLINE static void load8(const float* data, const T* indices,
 	unsigned i2 = indices[2*index_stride];
 	unsigned i3 = indices[3*index_stride];
 	
-	d0 = simd_float::load4(data + i0*stride_in_floats);
-	d1 = simd_float::load4(data + i1*stride_in_floats);
-	d2 = simd_float::load4(data + i2*stride_in_floats);
-	d3 = simd_float::load4(data + i3*stride_in_floats);
+	d0 = simd_ld(data + i0*stride_in_floats);
+	d1 = simd_ld(data + i1*stride_in_floats);
+	d2 = simd_ld(data + i2*stride_in_floats);
+	d3 = simd_ld(data + i3*stride_in_floats);
 	
-	d4 = simd_float::load4(data + i0*stride_in_floats + 4);
-	d5 = simd_float::load4(data + i1*stride_in_floats + 4);
-	d6 = simd_float::load4(data + i2*stride_in_floats + 4);
-	d7 = simd_float::load4(data + i3*stride_in_floats + 4);
+	d4 = simd_ld(data + i0*stride_in_floats + 4);
+	d5 = simd_ld(data + i1*stride_in_floats + 4);
+	d6 = simd_ld(data + i2*stride_in_floats + 4);
+	d7 = simd_ld(data + i3*stride_in_floats + 4);
 	
 	simd128::transpose32(d0, d1, d2, d3);
 	simd128::transpose32(d4, d5, d6, d7);
@@ -2547,15 +2512,15 @@ NUDGE_FORCEINLINE static void store8(float* data, const T* indices,
 	unsigned i2 = indices[2*index_stride];
 	unsigned i3 = indices[3*index_stride];
 	
-	simd_float::store4(data + i0*stride_in_floats, d0);
-	simd_float::store4(data + i1*stride_in_floats, d1);
-	simd_float::store4(data + i2*stride_in_floats, d2);
-	simd_float::store4(data + i3*stride_in_floats, d3);
+	simd_st(data + i0*stride_in_floats, d0);
+	simd_st(data + i1*stride_in_floats, d1);
+	simd_st(data + i2*stride_in_floats, d2);
+	simd_st(data + i3*stride_in_floats, d3);
 	
-	simd_float::store4(data + i0*stride_in_floats + 4, d4);
-	simd_float::store4(data + i1*stride_in_floats + 4, d5);
-	simd_float::store4(data + i2*stride_in_floats + 4, d6);
-	simd_float::store4(data + i3*stride_in_floats + 4, d7);
+	simd_st(data + i0*stride_in_floats + 4, d4);
+	simd_st(data + i1*stride_in_floats + 4, d5);
+	simd_st(data + i2*stride_in_floats + 4, d6);
+	simd_st(data + i3*stride_in_floats + 4, d7);
 }
 
 void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies, ColliderData colliders, BodyConnections body_connections, Arena temporary) {
@@ -2645,23 +2610,23 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	}
 	
 	// Morton order using the min corner should improve coherence: After some point, all BBs' min points will be outside a BB's max.
-	simd4_float scene_min128 = simd_float::load4(&aos_bounds[0].min.x);
+	simd4_float scene_min128 = simd_ld(&aos_bounds[0].min.x);
 	simd4_float scene_max128 = scene_min128;
 	
 	for (unsigned i = 1; i < count; ++i) {
-		simd4_float p = simd_float::load4(&aos_bounds[i].min.x);
+		simd4_float p = simd_ld(&aos_bounds[i].min.x);
 		scene_min128 = simd_float::min(scene_min128, p);
 		scene_max128 = simd_float::max(scene_max128, p);
 	}
 	
-	simd4_float scene_scale128 = simd_float::make4((1<<16)-1) * simd_float::recip(scene_max128 - scene_min128);
+	simd4_float scene_scale128 = simd_splat((1<<16)-1) * simd_float::recip(scene_max128 - scene_min128);
 	
 	scene_scale128 = simd_float::min(simd128::shuffle32<0,1,2,2>(scene_scale128), simd128::shuffle32<2,2,0,1>(scene_scale128));
 	scene_scale128 = simd_float::min(scene_scale128, simd128::shuffle32<1,0,3,2>(scene_scale128));
 	scene_min128 = scene_min128 * scene_scale128;
 	
 #ifdef DEBUG
-	if (simd_float::extract_first_float(scene_scale128) < 2.0f)
+	if (simd_x(scene_scale128) < 2.0f)
 		printf("Warning: World bounds are very large, which may decrease performance. Perhaps there's a body in free fall?\n");
 #endif
 	
@@ -2676,10 +2641,10 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	uint64_t* morton_codes = allocate_array<uint64_t>(&temporary, aligned_count, 32);
 	
 	for (unsigned i = 0; i < count; i += simdv_width32) {
-		simd4_float pos_x = simd_float::load4(&aos_bounds[i+0].min.x);
-		simd4_float pos_y = simd_float::load4(&aos_bounds[i+1].min.x);
-		simd4_float pos_z = simd_float::load4(&aos_bounds[i+2].min.x);
-		simd4_float pos_w = simd_float::load4(&aos_bounds[i+3].min.x);
+		simd4_float pos_x = simd_ld(&aos_bounds[i+0].min.x);
+		simd4_float pos_y = simd_ld(&aos_bounds[i+1].min.x);
+		simd4_float pos_z = simd_ld(&aos_bounds[i+2].min.x);
+		simd4_float pos_w = simd_ld(&aos_bounds[i+3].min.x);
 		
 		simd128::transpose32(pos_x, pos_y, pos_z, pos_w);
 		
@@ -2719,12 +2684,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 										min_x, min_y, min_z, min_w,
 										max_x, max_y, max_z, max_w);
 		
-		simd_float::storev(bounds[i >> simdv_width32_log2].min_x, min_x);
-		simd_float::storev(bounds[i >> simdv_width32_log2].max_x, max_x);
-		simd_float::storev(bounds[i >> simdv_width32_log2].min_y, min_y);
-		simd_float::storev(bounds[i >> simdv_width32_log2].max_y, max_y);
-		simd_float::storev(bounds[i >> simdv_width32_log2].min_z, min_z);
-		simd_float::storev(bounds[i >> simdv_width32_log2].max_z, max_z);
+		simd_st(bounds[i >> simdv_width32_log2].min_x, min_x);
+		simd_st(bounds[i >> simdv_width32_log2].max_x, max_x);
+		simd_st(bounds[i >> simdv_width32_log2].min_y, min_y);
+		simd_st(bounds[i >> simdv_width32_log2].max_y, max_y);
+		simd_st(bounds[i >> simdv_width32_log2].min_z, min_z);
+		simd_st(bounds[i >> simdv_width32_log2].max_z, max_z);
 	}
 	
 	for (unsigned i = count; i < aligned_count; ++i) {
@@ -2749,20 +2714,20 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	for (unsigned i = 0; i < coarse_count; ++i) {
 		unsigned start = i << (3 - simdv_width32_log2);
 		
-		simd4_float coarse_min_x = simd_float::load4(bounds[start].min_x);
-		simd4_float coarse_max_x = simd_float::load4(bounds[start].max_x);
-		simd4_float coarse_min_y = simd_float::load4(bounds[start].min_y);
-		simd4_float coarse_max_y = simd_float::load4(bounds[start].max_y);
-		simd4_float coarse_min_z = simd_float::load4(bounds[start].min_z);
-		simd4_float coarse_max_z = simd_float::load4(bounds[start].max_z);
+		simd4_float coarse_min_x = simd_ld(bounds[start].min_x);
+		simd4_float coarse_max_x = simd_ld(bounds[start].max_x);
+		simd4_float coarse_min_y = simd_ld(bounds[start].min_y);
+		simd4_float coarse_max_y = simd_ld(bounds[start].max_y);
+		simd4_float coarse_min_z = simd_ld(bounds[start].min_z);
+		simd4_float coarse_max_z = simd_ld(bounds[start].max_z);
 		
 		// Note that the first operand is returned on NaN. The last padded bounds are NaN, so the earlier bounds should be in the first operand.
-		coarse_min_x = simd_float::min(coarse_min_x, simd_float::load4(bounds[start+1].min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd_float::load4(bounds[start+1].max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd_float::load4(bounds[start+1].min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd_float::load4(bounds[start+1].max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd_float::load4(bounds[start+1].min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd_float::load4(bounds[start+1].max_z));
+		coarse_min_x = simd_float::min(coarse_min_x, simd_ld(bounds[start+1].min_x));
+		coarse_max_x = simd_float::max(coarse_max_x, simd_ld(bounds[start+1].max_x));
+		coarse_min_y = simd_float::min(coarse_min_y, simd_ld(bounds[start+1].min_y));
+		coarse_max_y = simd_float::max(coarse_max_y, simd_ld(bounds[start+1].max_y));
+		coarse_min_z = simd_float::min(coarse_min_z, simd_ld(bounds[start+1].min_z));
+		coarse_max_z = simd_float::max(coarse_max_z, simd_ld(bounds[start+1].max_z));
 		
 		coarse_min_x = simd_float::min(coarse_min_x, simd128::shuffle32<2,3,0,1>(coarse_min_x));
 		coarse_max_x = simd_float::max(coarse_max_x, simd128::shuffle32<2,3,0,1>(coarse_max_x));
@@ -2781,12 +2746,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
 		
-		coarse_bounds[bounds_group].min_x[bounds_lane] = simd_float::extract_first_float(coarse_min_x);
-		coarse_bounds[bounds_group].max_x[bounds_lane] = simd_float::extract_first_float(coarse_max_x);
-		coarse_bounds[bounds_group].min_y[bounds_lane] = simd_float::extract_first_float(coarse_min_y);
-		coarse_bounds[bounds_group].max_y[bounds_lane] = simd_float::extract_first_float(coarse_max_y);
-		coarse_bounds[bounds_group].min_z[bounds_lane] = simd_float::extract_first_float(coarse_min_z);
-		coarse_bounds[bounds_group].max_z[bounds_lane] = simd_float::extract_first_float(coarse_max_z);
+		coarse_bounds[bounds_group].min_x[bounds_lane] = simd_x(coarse_min_x);
+		coarse_bounds[bounds_group].max_x[bounds_lane] = simd_x(coarse_max_x);
+		coarse_bounds[bounds_group].min_y[bounds_lane] = simd_x(coarse_min_y);
+		coarse_bounds[bounds_group].max_y[bounds_lane] = simd_x(coarse_max_y);
+		coarse_bounds[bounds_group].min_z[bounds_lane] = simd_x(coarse_min_z);
+		coarse_bounds[bounds_group].max_z[bounds_lane] = simd_x(coarse_max_z);
 	}
 	
 	for (unsigned i = coarse_count; i < aligned_coarse_count; ++i) {
@@ -2809,12 +2774,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
 		
-		simdv_float min_a_x = simd_float::broadcast_loadv(coarse_bounds[bounds_group].min_x + bounds_lane);
-		simdv_float max_a_x = simd_float::broadcast_loadv(coarse_bounds[bounds_group].max_x + bounds_lane);
-		simdv_float min_a_y = simd_float::broadcast_loadv(coarse_bounds[bounds_group].min_y + bounds_lane);
-		simdv_float max_a_y = simd_float::broadcast_loadv(coarse_bounds[bounds_group].max_y + bounds_lane);
-		simdv_float min_a_z = simd_float::broadcast_loadv(coarse_bounds[bounds_group].min_z + bounds_lane);
-		simdv_float max_a_z = simd_float::broadcast_loadv(coarse_bounds[bounds_group].max_z + bounds_lane);
+		simdv_float min_a_x = simd_splat(coarse_bounds[bounds_group].min_x + bounds_lane);
+		simdv_float max_a_x = simd_splat(coarse_bounds[bounds_group].max_x + bounds_lane);
+		simdv_float min_a_y = simd_splat(coarse_bounds[bounds_group].min_y + bounds_lane);
+		simdv_float max_a_y = simd_splat(coarse_bounds[bounds_group].max_y + bounds_lane);
+		simdv_float min_a_z = simd_splat(coarse_bounds[bounds_group].min_z + bounds_lane);
+		simdv_float max_a_z = simd_splat(coarse_bounds[bounds_group].max_z + bounds_lane);
 		
 		unsigned first = coarse_group_count;
 		
@@ -2825,12 +2790,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned ij_bits = (bounds_group << 8) | (i << 16);
 		
 		for (unsigned j = bounds_group; j < coarse_bounds_count; ++j) {
-			simdv_float min_b_x = simd_float::loadv(coarse_bounds[j].min_x);
-			simdv_float max_b_x = simd_float::loadv(coarse_bounds[j].max_x);
-			simdv_float min_b_y = simd_float::loadv(coarse_bounds[j].min_y);
-			simdv_float max_b_y = simd_float::loadv(coarse_bounds[j].max_y);
-			simdv_float min_b_z = simd_float::loadv(coarse_bounds[j].min_z);
-			simdv_float max_b_z = simd_float::loadv(coarse_bounds[j].max_z);
+			simdv_float min_b_x = simd_ld(coarse_bounds[j].min_x);
+			simdv_float max_b_x = simd_ld(coarse_bounds[j].max_x);
+			simdv_float min_b_y = simd_ld(coarse_bounds[j].min_y);
+			simdv_float max_b_y = simd_ld(coarse_bounds[j].max_y);
+			simdv_float min_b_z = simd_ld(coarse_bounds[j].min_z);
+			simdv_float max_b_z = simd_ld(coarse_bounds[j].max_z);
 			
 			simdv_float inside_x = simd_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
 			simdv_float inside_y = simd_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
@@ -2897,12 +2862,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			unsigned bounds_group = i >> simdv_width32_log2;
 			unsigned bounds_lane = i & (simdv_width32-1);
 			
-			simdv_float min_a_x = simd_float::broadcast_loadv(bounds[bounds_group].min_x + bounds_lane);
-			simdv_float max_a_x = simd_float::broadcast_loadv(bounds[bounds_group].max_x + bounds_lane);
-			simdv_float min_a_y = simd_float::broadcast_loadv(bounds[bounds_group].min_y + bounds_lane);
-			simdv_float max_a_y = simd_float::broadcast_loadv(bounds[bounds_group].max_y + bounds_lane);
-			simdv_float min_a_z = simd_float::broadcast_loadv(bounds[bounds_group].min_z + bounds_lane);
-			simdv_float max_a_z = simd_float::broadcast_loadv(bounds[bounds_group].max_z + bounds_lane);
+			simdv_float min_a_x = simd_splat(bounds[bounds_group].min_x + bounds_lane);
+			simdv_float max_a_x = simd_splat(bounds[bounds_group].max_x + bounds_lane);
+			simdv_float min_a_y = simd_splat(bounds[bounds_group].min_y + bounds_lane);
+			simdv_float max_a_y = simd_splat(bounds[bounds_group].max_y + bounds_lane);
+			simdv_float min_a_z = simd_splat(bounds[bounds_group].min_z + bounds_lane);
+			simdv_float max_a_z = simd_splat(bounds[bounds_group].max_z + bounds_lane);
 			
 			unsigned first = group_count;
 			
@@ -2918,12 +2883,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			unsigned ij_bits = (start << 8) | (i << 19);
 			
 			for (unsigned j = start; j < b_end; ++j) {
-				simdv_float min_b_x = simd_float::loadv(bounds[j].min_x);
-				simdv_float max_b_x = simd_float::loadv(bounds[j].max_x);
-				simdv_float min_b_y = simd_float::loadv(bounds[j].min_y);
-				simdv_float max_b_y = simd_float::loadv(bounds[j].max_y);
-				simdv_float min_b_z = simd_float::loadv(bounds[j].min_z);
-				simdv_float max_b_z = simd_float::loadv(bounds[j].max_z);
+				simdv_float min_b_x = simd_ld(bounds[j].min_x);
+				simdv_float max_b_x = simd_ld(bounds[j].max_x);
+				simdv_float min_b_y = simd_ld(bounds[j].min_y);
+				simdv_float max_b_y = simd_ld(bounds[j].max_y);
+				simdv_float min_b_z = simd_ld(bounds[j].min_z);
+				simdv_float max_b_z = simd_ld(bounds[j].max_z);
 				
 				simdv_float inside_x = simd_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
 				simdv_float inside_y = simd_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
@@ -3816,8 +3781,8 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		unsigned a0 = ab_array[0]; unsigned a1 = ab_array[2]; unsigned a2 = ab_array[4]; unsigned a3 = ab_array[6];
 		unsigned b0 = ab_array[1]; unsigned b1 = ab_array[3]; unsigned b2 = ab_array[5]; unsigned b3 = ab_array[7];
 		
-		simdv_float a_mass_inverse = simd_float::make4(bodies.momentum[a0].unused0, bodies.momentum[a1].unused0, bodies.momentum[a2].unused0, bodies.momentum[a3].unused0);
-		simdv_float b_mass_inverse = simd_float::make4(bodies.momentum[b0].unused0, bodies.momentum[b1].unused0, bodies.momentum[b2].unused0, bodies.momentum[b3].unused0);
+		simdv_float a_mass_inverse = simd_ld(bodies.momentum[a0].unused0, bodies.momentum[a1].unused0, bodies.momentum[a2].unused0, bodies.momentum[a3].unused0);
+		simdv_float b_mass_inverse = simd_ld(bodies.momentum[b0].unused0, bodies.momentum[b1].unused0, bodies.momentum[b2].unused0, bodies.momentum[b3].unused0);
 		
 		simdv_float a_position_x, a_position_y, a_position_z, a_position_w;
 		simdv_float b_position_x, b_position_y, b_position_z, b_position_w;
@@ -3872,10 +3837,10 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simdv_float mass_inverse = a_mass_inverse + b_mass_inverse;
 		simdv_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
 		
-		simdv_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_float::zerov());
-		normal_velocity_to_normal_impulse = simd_and(simd_float::makev(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
+		simdv_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_zero());
+		normal_velocity_to_normal_impulse = simd_and(simd_splat(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
 		
-		simdv_float bias = simd_float::makev(-bias_factor) * simd_float::max(penetration - simd_float::makev(allowed_penetration), simd_float::zerov()) * normal_velocity_to_normal_impulse;
+		simdv_float bias = simd_splat(-bias_factor) * simd_float::max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
 		
 		// Compute a tangent from the normal. Care is taken to compute a smoothly varying basis to improve stability.
 		simdv_float s = simd_float::abs(normal_x);
@@ -3884,7 +3849,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simdv_float u_y = u_x - normal_z;
 		simdv_float u_z = simd_float::madd(normal_x - normal_y, s, normal_y);
 		
-		u_x = simd_xor(u_x, simd_float::makev(-0.0f));
+		u_x = simd_xor(u_x, simd_splat(-0.0f));
 		simd_soa::normalize(u_x, u_y, u_z);
 		
 		// Compute the rest of the basis.
@@ -3938,58 +3903,58 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		constraints[i].a[0] = a0; constraints[i].a[1] = a1; constraints[i].a[2] = a2; constraints[i].a[3] = a3;
 		constraints[i].b[0] = b0; constraints[i].b[1] = b1; constraints[i].b[2] = b2; constraints[i].b[3] = b3;
 		
-		simd_float::storev(constraints[i].n_x, normal_x);
-		simd_float::storev(constraints[i].n_y, normal_y);
-		simd_float::storev(constraints[i].n_z, normal_z);
+		simd_st(constraints[i].n_x, normal_x);
+		simd_st(constraints[i].n_y, normal_y);
+		simd_st(constraints[i].n_z, normal_z);
 		
-		simd_float::storev(constraints[i].pa_x, pa_x);
-		simd_float::storev(constraints[i].pa_y, pa_y);
-		simd_float::storev(constraints[i].pa_z, pa_z);
+		simd_st(constraints[i].pa_x, pa_x);
+		simd_st(constraints[i].pa_y, pa_y);
+		simd_st(constraints[i].pa_z, pa_z);
 		
-		simd_float::storev(constraints[i].pb_x, pb_x);
-		simd_float::storev(constraints[i].pb_y, pb_y);
-		simd_float::storev(constraints[i].pb_z, pb_z);
+		simd_st(constraints[i].pb_x, pb_x);
+		simd_st(constraints[i].pb_y, pb_y);
+		simd_st(constraints[i].pb_z, pb_z);
 		
-		simd_float::storev(constraints[i].normal_velocity_to_normal_impulse, normal_velocity_to_normal_impulse);
+		simd_st(constraints[i].normal_velocity_to_normal_impulse, normal_velocity_to_normal_impulse);
 		
-		simd_float::storev(constraints[i].bias, bias);
-		simd_float::storev(constraints[i].friction, friction);
+		simd_st(constraints[i].bias, bias);
+		simd_st(constraints[i].friction, friction);
 		
-		simd_float::storev(constraints[i].u_x, u_x);
-		simd_float::storev(constraints[i].u_y, u_y);
-		simd_float::storev(constraints[i].u_z, u_z);
+		simd_st(constraints[i].u_x, u_x);
+		simd_st(constraints[i].u_y, u_y);
+		simd_st(constraints[i].u_z, u_z);
 		
-		simd_float::storev(constraints[i].v_x, v_x);
-		simd_float::storev(constraints[i].v_y, v_y);
-		simd_float::storev(constraints[i].v_z, v_z);
+		simd_st(constraints[i].v_x, v_x);
+		simd_st(constraints[i].v_y, v_y);
+		simd_st(constraints[i].v_z, v_z);
 		
-		simd_float::storev(constraints[i].friction_coefficient_x, friction_x);
-		simd_float::storev(constraints[i].friction_coefficient_y, friction_y);
-		simd_float::storev(constraints[i].friction_coefficient_z, friction_z);
+		simd_st(constraints[i].friction_coefficient_x, friction_x);
+		simd_st(constraints[i].friction_coefficient_y, friction_y);
+		simd_st(constraints[i].friction_coefficient_z, friction_z);
 		
-		simd_float::storev(constraints[i].ua_x, -ua_xt);
-		simd_float::storev(constraints[i].ua_y, -ua_yt);
-		simd_float::storev(constraints[i].ua_z, -ua_zt);
+		simd_st(constraints[i].ua_x, -ua_xt);
+		simd_st(constraints[i].ua_y, -ua_yt);
+		simd_st(constraints[i].ua_z, -ua_zt);
 		
-		simd_float::storev(constraints[i].va_x, -va_xt);
-		simd_float::storev(constraints[i].va_y, -va_yt);
-		simd_float::storev(constraints[i].va_z, -va_zt);
+		simd_st(constraints[i].va_x, -va_xt);
+		simd_st(constraints[i].va_y, -va_yt);
+		simd_st(constraints[i].va_z, -va_zt);
 		
-		simd_float::storev(constraints[i].na_x, -na_x);
-		simd_float::storev(constraints[i].na_y, -na_y);
-		simd_float::storev(constraints[i].na_z, -na_z);
+		simd_st(constraints[i].na_x, -na_x);
+		simd_st(constraints[i].na_y, -na_y);
+		simd_st(constraints[i].na_z, -na_z);
 		
-		simd_float::storev(constraints[i].ub_x, ub_xt);
-		simd_float::storev(constraints[i].ub_y, ub_yt);
-		simd_float::storev(constraints[i].ub_z, ub_zt);
+		simd_st(constraints[i].ub_x, ub_xt);
+		simd_st(constraints[i].ub_y, ub_yt);
+		simd_st(constraints[i].ub_z, ub_zt);
 		
-		simd_float::storev(constraints[i].vb_x, vb_xt);
-		simd_float::storev(constraints[i].vb_y, vb_yt);
-		simd_float::storev(constraints[i].vb_z, vb_zt);
+		simd_st(constraints[i].vb_x, vb_xt);
+		simd_st(constraints[i].vb_y, vb_yt);
+		simd_st(constraints[i].vb_z, vb_zt);
 		
-		simd_float::storev(constraints[i].nb_x, nb_x);
-		simd_float::storev(constraints[i].nb_y, nb_y);
-		simd_float::storev(constraints[i].nb_z, nb_z);
+		simd_st(constraints[i].nb_x, nb_x);
+		simd_st(constraints[i].nb_y, nb_y);
+		simd_st(constraints[i].nb_z, nb_z);
 		
 		simdv_float cached_impulse_x, cached_impulse_y, cached_impulse_z, unused0;
 		load4<sizeof(impulses[0]), 1>((const float*)impulses, slot.indices,
@@ -4007,7 +3972,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simdv_float normal_impulse = simd_float::max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_float::zerov());
+		simdv_float normal_impulse = simd_float::max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
 		simdv_float max_friction_impulse = normal_impulse * friction;
 		
 		simdv_float friction_impulse_x = u_x*cached_impulse_x + u_y*cached_impulse_y + u_z*cached_impulse_z;
@@ -4017,7 +3982,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		
 		friction_clamp_scale = simd_float::rsqrt(friction_clamp_scale);
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
-		friction_clamp_scale = simd_float::min(simd_float::makev(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
+		friction_clamp_scale = simd_float::min(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
@@ -4026,13 +3991,13 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simdv_float linear_impulse_y = friction_impulse_x*u_y + friction_impulse_y*v_y + normal_y * normal_impulse;
 		simdv_float linear_impulse_z = friction_impulse_x*u_z + friction_impulse_y*v_z + normal_z * normal_impulse;
 		
-		simdv_float a_angular_impulse_x = friction_impulse_x*simd_float::loadv(constraints[i].ua_x) + friction_impulse_y*simd_float::loadv(constraints[i].va_x) + normal_impulse*simd_float::loadv(constraints[i].na_x);
-		simdv_float a_angular_impulse_y = friction_impulse_x*simd_float::loadv(constraints[i].ua_y) + friction_impulse_y*simd_float::loadv(constraints[i].va_y) + normal_impulse*simd_float::loadv(constraints[i].na_y);
-		simdv_float a_angular_impulse_z = friction_impulse_x*simd_float::loadv(constraints[i].ua_z) + friction_impulse_y*simd_float::loadv(constraints[i].va_z) + normal_impulse*simd_float::loadv(constraints[i].na_z);
+		simdv_float a_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ua_x) + friction_impulse_y * simd_ld(constraints[i].va_x) + normal_impulse * simd_ld(constraints[i].na_x);
+		simdv_float a_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ua_y) + friction_impulse_y * simd_ld(constraints[i].va_y) + normal_impulse * simd_ld(constraints[i].na_y);
+		simdv_float a_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ua_z) + friction_impulse_y * simd_ld(constraints[i].va_z) + normal_impulse * simd_ld(constraints[i].na_z);
 		
-		simdv_float b_angular_impulse_x = friction_impulse_x*simd_float::loadv(constraints[i].ub_x) + friction_impulse_y*simd_float::loadv(constraints[i].vb_x) + normal_impulse*simd_float::loadv(constraints[i].nb_x);
-		simdv_float b_angular_impulse_y = friction_impulse_x*simd_float::loadv(constraints[i].ub_y) + friction_impulse_y*simd_float::loadv(constraints[i].vb_y) + normal_impulse*simd_float::loadv(constraints[i].nb_y);
-		simdv_float b_angular_impulse_z = friction_impulse_x*simd_float::loadv(constraints[i].ub_z) + friction_impulse_y*simd_float::loadv(constraints[i].vb_z) + normal_impulse*simd_float::loadv(constraints[i].nb_z);
+		simdv_float b_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ub_x) + friction_impulse_y * simd_ld(constraints[i].vb_x) + normal_impulse * simd_ld(constraints[i].nb_x);
+		simdv_float b_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ub_y) + friction_impulse_y * simd_ld(constraints[i].vb_y) + normal_impulse * simd_ld(constraints[i].nb_y);
+		simdv_float b_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ub_z) + friction_impulse_y * simd_ld(constraints[i].vb_z) + normal_impulse * simd_ld(constraints[i].nb_z);
 		
 		a_velocity_x -= linear_impulse_x * a_mass_inverse;
 		a_velocity_y -= linear_impulse_y * a_mass_inverse;
@@ -4050,9 +4015,9 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		b_angular_velocity_y += b_angular_impulse_y;
 		b_angular_velocity_z += b_angular_impulse_z;
 		
-		simd_float::storev(constraint_states[i].applied_normal_impulse, normal_impulse);
-		simd_float::storev(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
-		simd_float::storev(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
+		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
+		simd_st(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
+		simd_st(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
 		
 		store8<sizeof(bodies.momentum[0]), 1>((float*)bodies.momentum, constraints[i].a,
 											  a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse,
@@ -4083,9 +4048,9 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 											 a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse,
 											 a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w);
 		
-		simdv_float pa_z = simd_float::loadv(constraint.pa_z);
-		simdv_float pa_x = simd_float::loadv(constraint.pa_x);
-		simdv_float pa_y = simd_float::loadv(constraint.pa_y);
+		simdv_float pa_z = simd_ld(constraint.pa_z);
+		simdv_float pa_x = simd_ld(constraint.pa_x);
+		simdv_float pa_y = simd_ld(constraint.pa_y);
 		
 		simdv_float v_xa = simd_float::madd(a_angular_velocity_y, pa_z, a_velocity_x);
 		simdv_float v_ya = simd_float::madd(a_angular_velocity_z, pa_x, a_velocity_y);
@@ -4097,9 +4062,9 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simdv_float pb_z = simd_float::loadv(constraint.pb_z);
-		simdv_float pb_x = simd_float::loadv(constraint.pb_x);
-		simdv_float pb_y = simd_float::loadv(constraint.pb_y);
+		simdv_float pb_z = simd_ld(constraint.pb_z);
+		simdv_float pb_x = simd_ld(constraint.pb_x);
+		simdv_float pb_y = simd_ld(constraint.pb_y);
 		
 		simdv_float v_xb = simd_float::madd(b_angular_velocity_y, pb_z, b_velocity_x);
 		simdv_float v_yb = simd_float::madd(b_angular_velocity_z, pb_x, b_velocity_y);
@@ -4109,17 +4074,17 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		v_ya = simd_float::madd(b_angular_velocity_x, pb_z, v_ya);
 		v_za = simd_float::madd(b_angular_velocity_y, pb_x, v_za);
 		
-		simdv_float n_x = simd_float::loadv(constraint.n_x);
-		simdv_float fu_x = simd_float::loadv(constraint.u_x);
-		simdv_float fv_x = simd_float::loadv(constraint.v_x);
+		simdv_float n_x = simd_ld(constraint.n_x);
+		simdv_float fu_x = simd_ld(constraint.u_x);
+		simdv_float fv_x = simd_ld(constraint.v_x);
 		
 		v_xb = simd_float::madd(a_angular_velocity_z, pa_y, v_xb);
 		v_yb = simd_float::madd(a_angular_velocity_x, pa_z, v_yb);
 		v_zb = simd_float::madd(a_angular_velocity_y, pa_x, v_zb);
 		
-		simdv_float n_y = simd_float::loadv(constraint.n_y);
-		simdv_float fu_y = simd_float::loadv(constraint.u_y);
-		simdv_float fv_y = simd_float::loadv(constraint.v_y);
+		simdv_float n_y = simd_ld(constraint.n_y);
+		simdv_float fu_y = simd_ld(constraint.u_y);
+		simdv_float fv_y = simd_ld(constraint.v_y);
 		
 		simdv_float v_x = v_xb - v_xa;
 		simdv_float v_y = v_yb - v_ya;
@@ -4129,13 +4094,13 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simdv_float t_x = v_x * fu_x;
 		simdv_float t_y = v_x * fv_x;
 		
-		simdv_float n_z = simd_float::loadv(constraint.n_z);
-		simdv_float fu_z = simd_float::loadv(constraint.u_z);
-		simdv_float fv_z = simd_float::loadv(constraint.v_z);
+		simdv_float n_z = simd_ld(constraint.n_z);
+		simdv_float fu_z = simd_ld(constraint.u_z);
+		simdv_float fv_z = simd_ld(constraint.v_z);
 		
-		simdv_float normal_bias = simd_float::loadv(constraint.bias);
-		simdv_float old_normal_impulse = simd_float::loadv(constraint_states[i].applied_normal_impulse);
-		simdv_float normal_factor = simd_float::loadv(constraint.normal_velocity_to_normal_impulse);
+		simdv_float normal_bias = simd_ld(constraint.bias);
+		simdv_float old_normal_impulse = simd_ld(constraint_states[i].applied_normal_impulse);
+		simdv_float normal_factor = simd_ld(constraint.normal_velocity_to_normal_impulse);
 		
 		t_z = simd_float::madd(n_y, v_y, t_z);
 		t_x = simd_float::madd(v_y, fu_y, t_x);
@@ -4154,42 +4119,42 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simdv_float t_xy = t_x*t_y;
 		simdv_float tl2 = t_xx + t_yy;
 		
-		normal_impulse = simd_float::max(normal_impulse, simd_float::zerov());
+		normal_impulse = simd_float::max(normal_impulse, simd_zero());
 		
 		t_x *= tl2;
 		t_y *= tl2;
 		
-		simd_float::storev(constraint_states[i].applied_normal_impulse, normal_impulse);
+		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
 		
-		simdv_float max_friction_impulse = normal_impulse * simd_float::loadv(constraint.friction);
+		simdv_float max_friction_impulse = normal_impulse * simd_ld(constraint.friction);
 		normal_impulse = normal_impulse - old_normal_impulse;
 		
-		simdv_float friction_x = simd_float::loadv(constraint.friction_coefficient_x);
+		simdv_float friction_x = simd_ld(constraint.friction_coefficient_x);
 		simdv_float friction_factor = t_xx * friction_x;
 		simdv_float linear_impulse_x = n_x * normal_impulse;
 		
-		simdv_float friction_y = simd_float::loadv(constraint.friction_coefficient_y);
+		simdv_float friction_y = simd_ld(constraint.friction_coefficient_y);
 		friction_factor = simd_float::madd(t_yy, friction_y, friction_factor);
 		simdv_float linear_impulse_y = n_y * normal_impulse;
 		
-		simdv_float friction_z = simd_float::loadv(constraint.friction_coefficient_z);
+		simdv_float friction_z = simd_ld(constraint.friction_coefficient_z);
 		friction_factor = simd_float::madd(t_xy, friction_z, friction_factor);
 		simdv_float linear_impulse_z = n_z * normal_impulse;
 		
 		friction_factor = simd_float::recip(friction_factor);
 		
-		simdv_float na_x = simd_float::loadv(constraint.na_x);
-		simdv_float na_y = simd_float::loadv(constraint.na_y);
-		simdv_float na_z = simd_float::loadv(constraint.na_z);
+		simdv_float na_x = simd_ld(constraint.na_x);
+		simdv_float na_y = simd_ld(constraint.na_y);
+		simdv_float na_z = simd_ld(constraint.na_z);
 		
 		a_angular_velocity_x = simd_float::madd(na_x, normal_impulse, a_angular_velocity_x);
 		a_angular_velocity_y = simd_float::madd(na_y, normal_impulse, a_angular_velocity_y);
 		a_angular_velocity_z = simd_float::madd(na_z, normal_impulse, a_angular_velocity_z);
 		
-		simdv_float old_friction_impulse_x = simd_float::loadv(constraint_states[i].applied_friction_impulse_x);
-		simdv_float old_friction_impulse_y = simd_float::loadv(constraint_states[i].applied_friction_impulse_y);
+		simdv_float old_friction_impulse_x = simd_ld(constraint_states[i].applied_friction_impulse_x);
+		simdv_float old_friction_impulse_y = simd_ld(constraint_states[i].applied_friction_impulse_y);
 		
-		friction_factor = simd_float::min(simd_float::makev(1e+6f), friction_factor); // Note: First operand is returned on NaN.
+		friction_factor = simd_float::min(simd_splat(1e+6f), friction_factor); // Note: First operand is returned on NaN.
 		
 		simdv_float friction_impulse_x = t_x*friction_factor;
 		simdv_float friction_impulse_y = t_y*friction_factor;
@@ -4199,9 +4164,9 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		simdv_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
 		
-		simdv_float nb_x = simd_float::loadv(constraint.nb_x);
-		simdv_float nb_y = simd_float::loadv(constraint.nb_y);
-		simdv_float nb_z = simd_float::loadv(constraint.nb_z);
+		simdv_float nb_x = simd_ld(constraint.nb_x);
+		simdv_float nb_y = simd_ld(constraint.nb_y);
+		simdv_float nb_z = simd_ld(constraint.nb_z);
 		
 		friction_clamp_scale = simd_float::rsqrt(friction_clamp_scale);
 		
@@ -4210,13 +4175,13 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		b_angular_velocity_z = simd_float::madd(nb_z, normal_impulse, b_angular_velocity_z);
 		
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
-		friction_clamp_scale = simd_float::min(simd_float::makev(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
+		friction_clamp_scale = simd_float::min(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
 		
-		simd_float::storev(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
-		simd_float::storev(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
+		simd_st(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
+		simd_st(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
 		
 		friction_impulse_x -= old_friction_impulse_x;
 		friction_impulse_y -= old_friction_impulse_y;
@@ -4229,29 +4194,29 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		linear_impulse_y = simd_float::madd(fv_y, friction_impulse_y, linear_impulse_y);
 		linear_impulse_z = simd_float::madd(fv_z, friction_impulse_y, linear_impulse_z);
 		
-		simdv_float a_mass_inverse_neg = simd_xor(a_mass_inverse, simd_float::makev(-0.0f));
+		simdv_float a_mass_inverse_neg = simd_xor(a_mass_inverse, simd_splat(-0.0f));
 		
 		a_velocity_x = simd_float::madd(linear_impulse_x, a_mass_inverse_neg, a_velocity_x);
 		a_velocity_y = simd_float::madd(linear_impulse_y, a_mass_inverse_neg, a_velocity_y);
 		a_velocity_z = simd_float::madd(linear_impulse_z, a_mass_inverse_neg, a_velocity_z);
 		
-		simdv_float ua_x = simd_float::loadv(constraint.ua_x);
-		simdv_float ua_y = simd_float::loadv(constraint.ua_y);
-		simdv_float ua_z = simd_float::loadv(constraint.ua_z);
+		simdv_float ua_x = simd_ld(constraint.ua_x);
+		simdv_float ua_y = simd_ld(constraint.ua_y);
+		simdv_float ua_z = simd_ld(constraint.ua_z);
 		
 		a_angular_velocity_x = simd_float::madd(ua_x, friction_impulse_x, a_angular_velocity_x);
 		a_angular_velocity_y = simd_float::madd(ua_y, friction_impulse_x, a_angular_velocity_y);
 		a_angular_velocity_z = simd_float::madd(ua_z, friction_impulse_x, a_angular_velocity_z);
 		
-		simdv_float va_x = simd_float::loadv(constraint.va_x);
-		simdv_float va_y = simd_float::loadv(constraint.va_y);
-		simdv_float va_z = simd_float::loadv(constraint.va_z);
+		simdv_float va_x = simd_ld(constraint.va_x);
+		simdv_float va_y = simd_ld(constraint.va_y);
+		simdv_float va_z = simd_ld(constraint.va_z);
 		
 		a_angular_velocity_x = simd_float::madd(va_x, friction_impulse_y, a_angular_velocity_x);
 		a_angular_velocity_y = simd_float::madd(va_y, friction_impulse_y, a_angular_velocity_y);
 		a_angular_velocity_z = simd_float::madd(va_z, friction_impulse_y, a_angular_velocity_z);
 		
-		a_angular_velocity_w = simd_float::zerov(); // Reduces register pressure.
+		a_angular_velocity_w = simd_zero(); // Reduces register pressure.
 		
 		store8<sizeof(bodies.momentum[0]), 1>((float*)bodies.momentum, constraint.a,
 											  a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse,
@@ -4261,23 +4226,23 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		b_velocity_y = simd_float::madd(linear_impulse_y, b_mass_inverse, b_velocity_y);
 		b_velocity_z = simd_float::madd(linear_impulse_z, b_mass_inverse, b_velocity_z);
 		
-		simdv_float ub_x = simd_float::loadv(constraint.ub_x);
-		simdv_float ub_y = simd_float::loadv(constraint.ub_y);
-		simdv_float ub_z = simd_float::loadv(constraint.ub_z);
+		simdv_float ub_x = simd_ld(constraint.ub_x);
+		simdv_float ub_y = simd_ld(constraint.ub_y);
+		simdv_float ub_z = simd_ld(constraint.ub_z);
 		
 		b_angular_velocity_x = simd_float::madd(ub_x, friction_impulse_x, b_angular_velocity_x);
 		b_angular_velocity_y = simd_float::madd(ub_y, friction_impulse_x, b_angular_velocity_y);
 		b_angular_velocity_z = simd_float::madd(ub_z, friction_impulse_x, b_angular_velocity_z);
 		
-		simdv_float vb_x = simd_float::loadv(constraint.vb_x);
-		simdv_float vb_y = simd_float::loadv(constraint.vb_y);
-		simdv_float vb_z = simd_float::loadv(constraint.vb_z);
+		simdv_float vb_x = simd_ld(constraint.vb_x);
+		simdv_float vb_y = simd_ld(constraint.vb_y);
+		simdv_float vb_z = simd_ld(constraint.vb_z);
 		
 		b_angular_velocity_x = simd_float::madd(vb_x, friction_impulse_y, b_angular_velocity_x);
 		b_angular_velocity_y = simd_float::madd(vb_y, friction_impulse_y, b_angular_velocity_y);
 		b_angular_velocity_z = simd_float::madd(vb_z, friction_impulse_y, b_angular_velocity_z);
 		
-		b_angular_velocity_w = simd_float::zerov(); // Reduces register pressure.
+		b_angular_velocity_w = simd_zero(); // Reduces register pressure.
 		
 		store8<sizeof(bodies.momentum[0]), 1>((float*)bodies.momentum, constraint.b,
 											  b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
