@@ -199,7 +199,7 @@ namespace simd {
 	NUDGE_FORCEINLINE simd128_t bitwise_and(simd128_t x, simd128_t y) {
 		return simd_and(x, y);
 	}
-
+/*
 	NUDGE_FORCEINLINE __m128i bitwise_xor(__m128i x, __m128i y) {
 		return _mm_xor_si128(x, y);
 	}
@@ -211,6 +211,7 @@ namespace simd {
 	NUDGE_FORCEINLINE __m128i bitwise_and(__m128i x, __m128i y) {
 		return _mm_and_si128(x, y);
 	}
+	*/
 	
 /*	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
 		return _mm_andnot_si128(x, y);
