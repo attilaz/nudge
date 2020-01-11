@@ -270,30 +270,37 @@ namespace simd_float {
 }
 
 namespace simd_int32 {
+	/*
 	NUDGE_FORCEINLINE simd4_int32 zero4() {
 		return simd_zero();
 		//return _mm_setzero_si128();
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x) {
 		return simd_isplat(x);
 		//return _mm_set1_epi32(x);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x, int32_t y, int32_t z, int32_t w) {
 		return simd_ild(x, y, z, w);
 		//return _mm_setr_epi32(x, y, z, w);
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE simd4_int32 load4(const int32_t* p) {
 		return simd_ld(p);
 		//return _mm_load_si128((const __m128i*)p);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE void store4(int32_t* p, simd4_int32 x) {
 		simd_st(p, x);
 		//_mm_store_si128((__m128i*)p, x);
 	}
+	 */
 	
 	NUDGE_FORCEINLINE void storeu4(int32_t* p, simd4_int32 x) {
 		_mm_storeu_ps((float*)p, x);
@@ -419,53 +426,28 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 typedef simd4_float simdv_float;
 typedef simd4_int32 simdv_int32;
 
-namespace simd_float {
-	/*
-	NUDGE_FORCEINLINE simdv_float zerov() {
-		return zero4();
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE simdv_float makev(float x) {
-		return make4(x);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simdv_float broadcast_loadv(const float* p) {
-		return broadcast_load4(p);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simdv_float loadv(const float* p) {
-		return load4(p);
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE void storev(float* p, simdv_float x) {
-		store4(p, x);
-	}
-	 */
-
-}
-
 namespace simd_int32 {
+	/*
 	NUDGE_FORCEINLINE simdv_int32 zerov() {
 		return zero4();
 	}
+	 */
 	
+	/*
 	NUDGE_FORCEINLINE simdv_int32 makev(int32_t x) {
 		return make4(x);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simdv_int32 loadv(const int32_t* p) {
 		return load4(p);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE void storev(int32_t* p, simdv_int32 x) {
 		store4(p, x);
 	}
+	 */
 }
 
 namespace simd_aos {
@@ -1002,11 +984,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float bymf = simd_cmpeq(pbyz, pb);
 			simd4_float bzmf = simd_cmpeq(pbz, pb);
 			
-			simd4_int32 aymi = simd_and(aymf, simd_int32::make4(1));
-			simd4_int32 azmi = simd_and(azmf, simd_int32::make4(1));
+			simd4_int32 aymi = simd_and(aymf, simd_isplat(1));
+			simd4_int32 azmi = simd_and(azmf, simd_isplat(1));
 			
-			simd4_int32 bymi = simd_and(bymf, simd_int32::make4(1));
-			simd4_int32 bzmi = simd_and(bzmf, simd_int32::make4(1));
+			simd4_int32 bymi = simd_and(bymf, simd_isplat(1));
+			simd4_int32 bzmi = simd_and(bzmf, simd_isplat(1));
 			
 			simd4_int32 aface = simd_int32::add(aymi, azmi);
 			simd4_int32 bface = simd_int32::add(bymi, bzmi);
@@ -1014,7 +996,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			// Swap so that collider a has the most separating face.
 			simd4_float swap = simd_cmpeq(pa, p);
 			
-			simd4_float pair_a_b = simd_int32::asfloat(simd_int32::load4((const int32_t*)(pairs + i)));
+			simd4_float pair_a_b = simd_int32::asfloat(simd_ld((const int32_t*)(pairs + i)));
 			simd4_float pair_b_a = simd_int32::asfloat(simd_or(simd_int32::shift_left<16>(pair_a_b), simd_int32::shift_right<16>(pair_a_b)));
 			
 			simd4_float face = simd::blendv32(simd_int32::asfloat(bface), simd_int32::asfloat(aface), swap);
@@ -1273,8 +1255,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd_st(edge_penetration_b + (i*3 + 2)*4, pb2 * r_b2);
 			}
 			
-			simd4_int32 a_edge = simd_int32::make4(0);
-			simd4_int32 b_edge = simd_int32::make4(0);
+			simd4_int32 a_edge = simd_isplat(0);
+			simd4_int32 b_edge = simd_isplat(0);
 			
 			simd4_float penetration = face_penetration;
 			
@@ -1285,8 +1267,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float mask = simd_cmpgt(penetration, p);
 					
 					penetration = simd_float::min(penetration, p); // Note: First operand is returned on NaN.
-					a_edge = simd::blendv32(a_edge, simd_int32::make4(j), mask);
-					b_edge = simd::blendv32(b_edge, simd_int32::make4(i), mask);
+					a_edge = simd::blendv32(a_edge, simd_isplat(j), mask);
+					b_edge = simd::blendv32(b_edge, simd_isplat(i), mask);
 				}
 			}
 			
@@ -1305,8 +1287,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			NUDGE_ALIGNED(16) int32_t b_edge_array[4];
 			
 			simd_st(penetration_array, penetration);
-			simd_int32::store4(a_edge_array, a_edge);
-			simd_int32::store4(b_edge_array, b_edge);
+			simd_st(a_edge_array, a_edge);
+			simd_st(b_edge_array, b_edge);
 			
 			// Do face-face tests.
 			while (face) {
@@ -1876,7 +1858,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			}
 			
 			// Load edges.
-			simd4_int32 edge = simd_int32::load4((const int32_t*)(features + i));
+			simd4_int32 edge = simd_ld((const int32_t*)(features + i));
 			
 			// Select edge directions.
 #ifdef NUDGE_NATIVE_BLENDV32
@@ -2094,10 +2076,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_st(contacts[count + 3].position, p_w);
 			simd_st(contacts[count + 3].normal, n_w);
 			
-			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_int32::asfloat(simd_int32::make4(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(b_position_w)));
+			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_int32::asfloat(simd_isplat(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(b_position_w)));
 			simd_float::storeu4((float*)(bodies + count), body_pair);
 			
-			simd4_int32 pair = simd_or(simd_and(b_position_w, simd_int32::asfloat(simd_int32::make4(0xffff0000))), simd_int32::asfloat(simd_int32::shift_right<16>(a_position_w)));
+			simd4_int32 pair = simd_or(simd_and(b_position_w, simd_int32::asfloat(simd_isplat(0xffff0000))), simd_int32::asfloat(simd_int32::shift_right<16>(a_position_w)));
 			
 			simd_int32::storeu4((int32_t*)tags + count*2 + 0, simd_shuf_xAyB(tag, pair));
 			simd_int32::storeu4((int32_t*)tags + count*2 + 4, simd_shuf_xAyB(tag, pair));
@@ -2232,10 +2214,10 @@ static inline unsigned box_sphere_collide(BoxCollider a, SphereCollider b, Trans
 
 template<unsigned offset>
 static inline void dilate_3(simdv_int32 x, simdv_int32& lo32, simdv_int32& hi32) {
-	simdv_int32 mask0 = simd_int32::makev(0xff);
-	simdv_int32 mask1 = simd_int32::makev(0x0f00f00f);
-	simdv_int32 mask2 = simd_int32::makev(0xc30c30c3);
-	simdv_int32 mask3 = simd_int32::makev(0x49249249);
+	simdv_int32 mask0 = simd_isplat(0xff);
+	simdv_int32 mask1 = simd_isplat(0x0f00f00f);
+	simdv_int32 mask2 = simd_isplat(0xc30c30c3);
+	simdv_int32 mask3 = simd_isplat(0x49249249);
 	
 	simdv_int32 lo24 = x;
 	simdv_int32 hi24 = simd_int32::shift_right<8>(x);
@@ -2639,7 +2621,7 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	
 	simdv_float scene_min = scene_min128;
 	simdv_float scene_scale = scene_scale128;
-	simdv_int32 index = simd_int32::make4(0 << 16, 1 << 16, 2 << 16, 3 << 16);
+	simdv_int32 index = simd_ild(0 << 16, 1 << 16, 2 << 16, 3 << 16);
 	
 	simdv_float scene_min_x = simd128::shuffle32<0,0,0,0>(scene_min);
 	simdv_float scene_min_y = simd128::shuffle32<1,1,1,1>(scene_min);
@@ -2666,10 +2648,10 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		simdv_int32 mi0 = simd_shuf_xAyB(lm, hm);
 		simdv_int32 mi1 = simd_shuf_zCwD(lm, hm);
 		
-		simd_int32::store4((int32_t*)(morton_codes + i) + 0, mi0);
-		simd_int32::store4((int32_t*)(morton_codes + i) + 4, mi1);
+		simd_st((int32_t*)(morton_codes + i) + 0, mi0);
+		simd_st((int32_t*)(morton_codes + i) + 4, mi1);
 		
-		index = simd_int32::add(index, simd_int32::makev(simdv_width32 << 16));
+		index = simd_int32::add(index, simd_isplat(simdv_width32 << 16));
 	}
 	
 	radix_sort_uint64_low48(morton_codes, count, temporary);
@@ -3663,14 +3645,14 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		ContactSlotV* vacant_slot_buckets[bucket_count];
 		unsigned bucket_vacancy_count[bucket_count] = {};
 		
-		simdv_int32 invalid_index = simd_int32::makev(~0u);
+		simdv_int32 invalid_index = simd_isplat(~0u);
 		
 		for (unsigned i = 0; i < bucket_count; ++i) {
 			vacant_pair_buckets[i] = allocate_array<ContactPairV>(&temporary, contacts.count+1, 32);
 			vacant_slot_buckets[i] = allocate_array<ContactSlotV>(&temporary, contacts.count, 32);
 			
 			// Add padding with invalid data so we don't have to range check.
-			simd_int32::storev((int32_t*)vacant_pair_buckets[i]->ab, invalid_index);
+			simd_st((int32_t*)vacant_pair_buckets[i]->ab, invalid_index);
 		}
 		
 		for (unsigned i = 0; i < contacts.count; ++i) {
@@ -3714,14 +3696,14 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 				++vacancy_count;
 			}
 			else if (lane == simdv_width32-1) {
-				simdv_int32 indices = simd_int32::loadv((const int32_t*)slot->indices);
+				simdv_int32 indices = simd_ld((const int32_t*)slot->indices);
 				
 				--vacancy_count;
 				
 				ContactPairV* last_pair = vacant_pairs + vacancy_count;
 				ContactSlotV* last_slot = vacant_slots + vacancy_count;
 				
-				simd_int32::storev((int32_t*)contact_slots[contact_slot_count++].indices, indices);
+				simd_st((int32_t*)contact_slots[contact_slot_count++].indices, indices);
 				
 				*pair = *last_pair;
 				*slot = *last_slot;
@@ -3732,7 +3714,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 			
 			// Store count and maintain padding.
 			bucket_vacancy_count[bucket] = vacancy_count;
-			simd_int32::storev((int32_t*)vacant_pairs[vacancy_count].ab, invalid_index);
+			simd_st((int32_t*)vacant_pairs[vacancy_count].ab, invalid_index);
 		}
 		
 		for (unsigned i = 0; i < bucket_count; ++i) {
@@ -3743,15 +3725,15 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 			// Replace any unset indices with the first one, which is always valid.
 			// This is safe because the slots will just overwrite each other.
 			for (unsigned i = 0; i < vacancy_count; ++i) {
-				simdv_int32 ab = simd_int32::loadv((int32_t*)vacant_pairs[i].ab);
-				simdv_int32 indices = simd_int32::loadv((const int32_t*)vacant_slots[i].indices);
+				simdv_int32 ab = simd_ld((int32_t*)vacant_pairs[i].ab);
+				simdv_int32 indices = simd_ld((const int32_t*)vacant_slots[i].indices);
 				
 				simdv_int32 mask = simd_int32::cmp_eq(ab, invalid_index);
 				simdv_int32 first_index = simd128::shuffle32<0, 0, 0, 0>(indices);
 				
 				indices = simd::blendv32(indices, first_index, mask);
 				
-				simd_int32::storev((int32_t*)contact_slots[contact_slot_count++].indices, indices);
+				simd_st((int32_t*)contact_slots[contact_slot_count++].indices, indices);
 			}
 		}
 	}
