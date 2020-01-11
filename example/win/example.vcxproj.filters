@@ -2,9 +2,52 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\..\nudge.cpp" />
+    <ClCompile Include="..\..\nudge_bx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\nudge.h" />
+    <ClInclude Include="..\..\bx\macros.h">
+      <Filter>bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\bx\platform.h">
+      <Filter>bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\bx\simd_t.h">
+      <Filter>bx</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="bx">
+      <UniqueIdentifier>{19b56269-0281-41c9-86d5-4f390d5c58ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\inline">
+      <UniqueIdentifier>{bf7993b4-73f6-4510-abea-3c65563f9a56}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bx\inline\simd_ni.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd128_langext.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd128_neon.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd128_ref.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd128_sse.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd128_swizzle.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd256_avx.inl">
+      <Filter>bx\inline</Filter>
+    </None>
+    <None Include="..\..\bx\inline\simd256_ref.inl">
+      <Filter>bx\inline</Filter>
+    </None>
   </ItemGroup>
 </Project>

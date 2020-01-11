@@ -22,12 +22,13 @@
 
 #include "nudge.h"
 #include <assert.h>
-#include <immintrin.h>
+//#include <immintrin.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <bx/simd_t.h>
+using namespace bx;
 
 #ifdef _WIN32
 #include <intrin.h>
@@ -62,40 +63,40 @@ static const unsigned simdv_width32_log2 = 3;
 #endif
 
 #ifdef _WIN32
-NUDGE_FORCEINLINE __m128 operator - (__m128 a) {
+NUDGE_FORCEINLINE simd128_t operator - (simd128_t a) {
 	return _mm_xor_ps(a, _mm_set1_ps(-0.0f));
 }
 
-NUDGE_FORCEINLINE __m128 operator + (__m128 a, __m128 b) {
-	return _mm_add_ps(a, b);
+NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
+	return simd_add(a, b);
 }
 
-NUDGE_FORCEINLINE __m128 operator - (__m128 a, __m128 b) {
-	return _mm_sub_ps(a, b);
+NUDGE_FORCEINLINE simd128_t operator - (simd128_t a, simd128_t b) {
+	return simd_sub(a, b);
 }
 
-NUDGE_FORCEINLINE __m128 operator * (__m128 a, __m128 b) {
-	return _mm_mul_ps(a, b);
+NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
+	return simd_mul(a, b);
 }
 
-NUDGE_FORCEINLINE __m128 operator / (__m128 a, __m128 b) {
-	return _mm_div_ps(a, b);
+NUDGE_FORCEINLINE simd128_t operator / (simd128_t a, simd128_t b) {
+	return simd_div(a, b);
 }
 
-NUDGE_FORCEINLINE __m128& operator += (__m128& a, __m128 b) {
-	return a = _mm_add_ps(a, b);
+NUDGE_FORCEINLINE simd128_t& operator += (simd128_t& a, simd128_t b) {
+	return a = simd_add(a, b);
 }
 
-NUDGE_FORCEINLINE __m128& operator -= (__m128& a, __m128 b) {
-	return a = _mm_sub_ps(a, b);
+NUDGE_FORCEINLINE simd128_t& operator -= (simd128_t& a, simd128_t b) {
+	return a = simd_sub(a, b);
 }
 
-NUDGE_FORCEINLINE __m128& operator *= (__m128& a, __m128 b) {
-	return a = _mm_mul_ps(a, b);
+NUDGE_FORCEINLINE simd128_t& operator *= (simd128_t& a, simd128_t b) {
+	return a = simd_mul(a, b);
 }
 
-NUDGE_FORCEINLINE __m128& operator /= (__m128& a, __m128 b) {
-	return a = _mm_div_ps(a, b);
+NUDGE_FORCEINLINE simd128_t& operator /= (simd128_t& a, simd128_t b) {
+	return a = simd_div(a, b);
 }
 #ifdef __AVX2__
 NUDGE_FORCEINLINE __m256 operator - (__m256 a) {
@@ -136,15 +137,15 @@ NUDGE_FORCEINLINE __m256& operator /= (__m256& a, __m256 b) {
 #endif
 #endif
 
-typedef __m128 simd4_float;
+typedef simd128_t simd4_float;
 typedef __m128i simd4_int32;
 
 namespace simd128 {
-	NUDGE_FORCEINLINE __m128 unpacklo32(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
 		return _mm_unpacklo_ps(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128 unpackhi32(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t unpackhi32(simd128_t x, simd128_t y) {
 		return _mm_unpackhi_ps(x, y);
 	}
 
@@ -157,12 +158,12 @@ namespace simd128 {
 	}
 	
 	template<unsigned x0, unsigned x1, unsigned y0, unsigned y1>
-	NUDGE_FORCEINLINE __m128 concat2x32(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t concat2x32(simd128_t x, simd128_t y) {
 		return _mm_shuffle_ps(x, y, _MM_SHUFFLE(y1, y0, x1, x0));
 	}
 	
 	template<unsigned i0, unsigned i1, unsigned i2, unsigned i3>
-	NUDGE_FORCEINLINE __m128 shuffle32(__m128 x) {
+	NUDGE_FORCEINLINE simd128_t shuffle32(simd128_t x) {
 		return _mm_shuffle_ps(x, x, _MM_SHUFFLE(i3, i2, i1, i0));
 	}
 	
@@ -177,7 +178,7 @@ namespace simd128 {
 }
 
 namespace simd {
-	NUDGE_FORCEINLINE unsigned signmask32(__m128 x) {
+	NUDGE_FORCEINLINE unsigned signmask32(simd128_t x) {
 		return _mm_movemask_ps(x);
 	}
 	
@@ -185,19 +186,19 @@ namespace simd {
 		return _mm_movemask_ps(_mm_castsi128_ps(x));
 	}
 	
-	NUDGE_FORCEINLINE __m128 bitwise_xor(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t bitwise_xor(simd128_t x, simd128_t y) {
 		return _mm_xor_ps(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128 bitwise_or(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t bitwise_or(simd128_t x, simd128_t y) {
 		return _mm_or_ps(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128 bitwise_and(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t bitwise_and(simd128_t x, simd128_t y) {
 		return _mm_and_ps(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128 bitwise_notand(__m128 x, __m128 y) {
+	NUDGE_FORCEINLINE simd128_t bitwise_notand(simd128_t x, simd128_t y) {
 		return _mm_andnot_ps(x, y);
 	}
 	
@@ -217,7 +218,7 @@ namespace simd {
 		return _mm_andnot_si128(x, y);
 	}
 	
-	NUDGE_FORCEINLINE __m128 blendv32(__m128 x, __m128 y, __m128 s) {
+	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
 #if defined(__SSE4_1__) || defined(__AVX__)
 #define NUDGE_NATIVE_BLENDV32
 		return _mm_blendv_ps(x, y, s);
