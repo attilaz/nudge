@@ -248,19 +248,15 @@ namespace simd_float {
 	}
 	
 	NUDGE_FORCEINLINE simd4_float broadcast_load4(const float* p) {
-		return _mm_set1_ps(*p);
+		return simd_splat(*p);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float load4(const float* p) {
-		return _mm_load_ps(p);
-	}
-	
-	NUDGE_FORCEINLINE simd4_float loadu4(const float* p) {
-		return _mm_loadu_ps(p);
+		return simd_ld(p);
 	}
 	
 	NUDGE_FORCEINLINE void store4(float* p, simd4_float x) {
-		_mm_store_ps(p, x);
+		simd_st(p, x);
 	}
 	
 	NUDGE_FORCEINLINE void storeu4(float* p, simd4_float x) {
@@ -271,7 +267,7 @@ namespace simd_float {
 #ifdef __FMA__
 		return _mm_fmadd_ps(x, y, z);
 #else
-		return _mm_add_ps(_mm_mul_ps(x, y), z);
+		return simd_madd(x, y, z);
 #endif
 	}
 	
@@ -279,50 +275,57 @@ namespace simd_float {
 #ifdef __FMA__
 		return _mm_fmsub_ps(x, y, z);
 #else
-		return _mm_sub_ps(_mm_mul_ps(x, y), z);
+		return simd_nmsub(x, y, z);	//todo(attila): why 'n'msub
 #endif
 	}
 	
 	// Note: First operand is returned on NaN.
 	NUDGE_FORCEINLINE simd4_float min(simd4_float x, simd4_float y) {
-		return _mm_min_ps(y, x); // Note: For SSE, second operand is returned on NaN.
+		// Note: For SSE, second operand is returned on NaN.
+		// todo: check Nan behaviour for neon
+		 return simd_min(y, x);	
+		//return _mm_min_ps(y, x); 
 	}
 	
 	// Note: First operand is returned on NaN.
 	NUDGE_FORCEINLINE simd4_float max(simd4_float x, simd4_float y) {
-		return _mm_max_ps(y, x); // Note: For SSE, second operand is returned on NaN.
+		// Note: For SSE, second operand is returned on NaN.
+		// todo: check Nan behaviour for neon
+		return simd_max(y, x);	//todo: check this note
 	}
 	
 	NUDGE_FORCEINLINE simd4_float rsqrt(simd4_float x) {
-		return _mm_rsqrt_ps(x);
+		return simd_rsqrt_est(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float recip(simd4_float x) {
-		return _mm_rcp_ps(x);
+		return simd_rcp_est(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float sqrt(simd4_float x) {
-		return _mm_sqrt_ps(x);
+		return simd_sqrt(x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float abs(simd4_float x) {
-		return _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
+		return simd_abs(x);
+		//todo(attila): different impl
+		//return _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cmp_gt(simd4_float x, simd4_float y) {
-		return _mm_cmpgt_ps(x, y);
+		return simd_cmpgt(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cmp_ge(simd4_float x, simd4_float y) {
-		return _mm_cmpge_ps(x, y);
+		return simd_cmpge(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cmp_le(simd4_float x, simd4_float y) {
-		return _mm_cmple_ps(x, y);
+		return simd_cmple(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cmp_eq(simd4_float x, simd4_float y) {
-		return _mm_cmpeq_ps(x, y);
+		return simd_cmpeq(x, y);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cmp_neq(simd4_float x, simd4_float y) {
@@ -353,10 +356,6 @@ namespace simd_int32 {
 	
 	NUDGE_FORCEINLINE simd4_int32 load4(const int32_t* p) {
 		return _mm_load_si128((const __m128i*)p);
-	}
-	
-	NUDGE_FORCEINLINE simd4_int32 loadu4(const int32_t* p) {
-		return _mm_loadu_si128((const __m128i*)p);
 	}
 	
 	NUDGE_FORCEINLINE void store4(int32_t* p, simd4_int32 x) {
@@ -720,17 +719,10 @@ namespace simd_float {
 		return load4(p);
 	}
 	
-	NUDGE_FORCEINLINE simdv_float loaduv(const float* p) {
-		return loadu4(p);
-	}
-	
 	NUDGE_FORCEINLINE void storev(float* p, simdv_float x) {
 		store4(p, x);
 	}
-	
-	NUDGE_FORCEINLINE void storeuv(float* p, simdv_float x) {
-		storeu4(p, x);
-	}
+
 }
 
 namespace simd_int32 {
@@ -746,17 +738,10 @@ namespace simd_int32 {
 		return load4(p);
 	}
 	
-	NUDGE_FORCEINLINE simdv_int32 loaduv(const int32_t* p) {
-		return loadu4(p);
-	}
-	
 	NUDGE_FORCEINLINE void storev(int32_t* p, simdv_int32 x) {
 		store4(p, x);
 	}
-	
-	NUDGE_FORCEINLINE void storeuv(int32_t* p, simdv_int32 x) {
-		storeu4(p, x);
-	}
+
 }
 #elif NUDGE_SIMDV_WIDTH == 256
 typedef simd8_float simdv_float;
@@ -786,10 +771,6 @@ namespace simd_float {
 	NUDGE_FORCEINLINE void storev(float* p, simdv_float x) {
 		store8(p, x);
 	}
-	
-	NUDGE_FORCEINLINE void storeuv(float* p, simdv_float x) {
-		storeu8(p, x);
-	}
 }
 
 namespace simd_int32 {
@@ -812,10 +793,7 @@ namespace simd_int32 {
 	NUDGE_FORCEINLINE void storev(int32_t* p, simdv_int32 x) {
 		store8(p, x);
 	}
-	
-	NUDGE_FORCEINLINE void storeuv(int32_t* p, simdv_int32 x) {
-		storeu8(p, x);
-	}
+
 }
 #endif
 
@@ -2092,10 +2070,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					unsigned index = first_set_bit(mask);
 					mask &= mask-1;
 					
-					simd4_float wp = (a_to_world0 * simd_float::broadcast_load4(support_x + index) +
-									  a_to_world1 * simd_float::broadcast_load4(support_y + index) +
-									  a_to_world2 * simd_float::broadcast_load4(support_z + index) + a_position);
-					
+					simd4_float wp = (a_to_world0 * simd_splat(support_x + index) +
+									  a_to_world1 * simd_splat(support_y + index) +
+									  a_to_world2 * simd_splat(support_z + index) + a_position);
+
 					float penetration = penetrations[index];
 					
 					simd_float::store4(contacts[count].position, wp);

@@ -408,7 +408,7 @@ int main(int argc, const char* argv[]) {
 	}
 	
 	// Add boxes.
-	for (unsigned i = 0; i < 1024; ++i) {
+	for (unsigned i = 0; i < 512; ++i) {
 		float sx = (float)rand() * (1.0f/(float)RAND_MAX) + 0.5f;
 		float sy = (float)rand() * (1.0f/(float)RAND_MAX) + 0.5f;
 		float sz = (float)rand() * (1.0f/(float)RAND_MAX) + 0.5f;
@@ -416,18 +416,18 @@ int main(int argc, const char* argv[]) {
 		unsigned body = add_box(8.0f*sx*sy*sz, sx, sy, sz);
 		
 		bodies.transforms[body].position[0] += (float)rand() * (1.0f/(float)RAND_MAX) * 10.0f - 5.0f;
-		bodies.transforms[body].position[1] += (float)rand() * (1.0f/(float)RAND_MAX) * 300.0f;
+		bodies.transforms[body].position[1] += (float)rand() * (1.0f/(float)RAND_MAX) * 150.0f;
 		bodies.transforms[body].position[2] += (float)rand() * (1.0f/(float)RAND_MAX) * 10.0f - 5.0f;
 	}
 	
 	// Add spheres.
-	for (unsigned i = 0; i < 512; ++i) {
+	for (unsigned i = 0; i < 256; ++i) {
 		float s = (float)rand() * (1.0f/(float)RAND_MAX) + 0.5f;
 		
 		unsigned body = add_sphere(4.18879f*s*s*s, s);
 		
 		bodies.transforms[body].position[0] += (float)rand() * (1.0f/(float)RAND_MAX) * 10.0f - 5.0f;
-		bodies.transforms[body].position[1] += (float)rand() * (1.0f/(float)RAND_MAX) * 300.0f;
+		bodies.transforms[body].position[1] += (float)rand() * (1.0f/(float)RAND_MAX) * 150.0f;
 		bodies.transforms[body].position[2] += (float)rand() * (1.0f/(float)RAND_MAX) * 10.0f - 5.0f;
 	}
 	
