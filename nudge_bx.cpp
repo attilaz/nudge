@@ -569,9 +569,11 @@ namespace simd256 {
 		return _mm256_insertf128_ps(_mm256_castps128_ps256(x), x, 1);
 	}
 
-	NUDGE_FORCEINLINE simd8_int32 broadcast(simd4_int32 x) {
+	/*
+	NUDGE_FORCEINLINE simd8_int32 broadcasti(simd4_int32 x) {
 		return _mm256_insertf128_si256(_mm256_castsi128_si256(x), x, 1);
 	}
+	 */
 }
 
 namespace simd {
