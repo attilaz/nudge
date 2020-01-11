@@ -123,10 +123,6 @@ namespace simd {
 		return _mm_movemask_ps(x);
 	}
 	
-	NUDGE_FORCEINLINE unsigned signmask32(__m128i x) {
-		return _mm_movemask_ps(_mm_castsi128_ps(x));
-	}
-	
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
 #if defined(__SSE4_1__) || defined(__AVX__)
 #define NUDGE_NATIVE_BLENDV32
@@ -135,10 +131,6 @@ namespace simd {
 		s = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(s), 31));
 		return _mm_or_ps(_mm_andnot_ps(s, x), _mm_and_ps(s, y));
 #endif
-	}
-
-	NUDGE_FORCEINLINE __m128i blendv32(__m128i x, __m128i y, __m128i s) {
-		return _mm_castps_si128(blendv32(_mm_castsi128_ps(x), _mm_castsi128_ps(y), _mm_castsi128_ps(s)));
 	}
 }
 
@@ -1688,40 +1680,40 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			v_y = simd::blendv32(v_y, b_basis_zy, b_select_z);
 			v_z = simd::blendv32(v_z, b_basis_zz, b_select_z);
 #else
-			simd4_int32 a_edge = simd::bitwise_and(edge, simd_int32::make4(0xffff));
-			simd4_int32 b_edge = simd_int32::shift_right<16>(edge);
+			simd4_int32 a_edge = simd_and(edge, simd_isplat(0xffff));
+			simd4_int32 b_edge = simd_srl(edge, 16);
 			
-			simd4_float a_select_x = simd_int32::asfloat(simd_int32::cmp_eq(a_edge, simd_int32::zero4()));
-			simd4_float a_select_y = simd_int32::asfloat(simd_int32::cmp_eq(a_edge, simd_int32::make4(1)));
-			simd4_float a_select_z = simd_int32::asfloat(simd_int32::cmp_eq(a_edge, simd_int32::make4(2)));
+			simd4_float a_select_x = simd_icmpeq(a_edge, simd_zero());
+			simd4_float a_select_y = simd_icmpeq(a_edge, simd_isplat(1));
+			simd4_float a_select_z = simd_icmpeq(a_edge, simd_isplat(2));
 			
-			simd4_float b_select_x = simd_int32::asfloat(simd_int32::cmp_eq(b_edge, simd_int32::zero4()));
-			simd4_float b_select_y = simd_int32::asfloat(simd_int32::cmp_eq(b_edge, simd_int32::make4(1)));
-			simd4_float b_select_z = simd_int32::asfloat(simd_int32::cmp_eq(b_edge, simd_int32::make4(2)));
+			simd4_float b_select_x = simd_icmpeq(b_edge, simd_zero());
+			simd4_float b_select_y = simd_icmpeq(b_edge, simd_isplat(1));
+			simd4_float b_select_z = simd_icmpeq(b_edge, simd_isplat(2));
 			
-			simd4_float u_x = simd::bitwise_and(a_basis_xx, a_select_x);
-			simd4_float u_y = simd::bitwise_and(a_basis_xy, a_select_x);
-			simd4_float u_z = simd::bitwise_and(a_basis_xz, a_select_x);
+			simd4_float u_x = simd_and(a_basis_xx, a_select_x);
+			simd4_float u_y = simd_and(a_basis_xy, a_select_x);
+			simd4_float u_z = simd_and(a_basis_xz, a_select_x);
 			
-			simd4_float v_x = simd::bitwise_and(b_basis_xx, b_select_x);
-			simd4_float v_y = simd::bitwise_and(b_basis_xy, b_select_x);
-			simd4_float v_z = simd::bitwise_and(b_basis_xz, b_select_x);
+			simd4_float v_x = simd_and(b_basis_xx, b_select_x);
+			simd4_float v_y = simd_and(b_basis_xy, b_select_x);
+			simd4_float v_z = simd_and(b_basis_xz, b_select_x);
 			
-			u_x = simd::bitwise_or(u_x, simd::bitwise_and(a_basis_yx, a_select_y));
-			u_y = simd::bitwise_or(u_y, simd::bitwise_and(a_basis_yy, a_select_y));
-			u_z = simd::bitwise_or(u_z, simd::bitwise_and(a_basis_yz, a_select_y));
+			u_x = simd_or(u_x, simd_and(a_basis_yx, a_select_y));
+			u_y = simd_or(u_y, simd_and(a_basis_yy, a_select_y));
+			u_z = simd_or(u_z, simd_and(a_basis_yz, a_select_y));
 			
-			v_x = simd::bitwise_or(v_x, simd::bitwise_and(b_basis_yx, b_select_y));
-			v_y = simd::bitwise_or(v_y, simd::bitwise_and(b_basis_yy, b_select_y));
-			v_z = simd::bitwise_or(v_z, simd::bitwise_and(b_basis_yz, b_select_y));
+			v_x = simd_or(v_x, simd_and(b_basis_yx, b_select_y));
+			v_y = simd_or(v_y, simd_and(b_basis_yy, b_select_y));
+			v_z = simd_or(v_z, simd_and(b_basis_yz, b_select_y));
 			
-			u_x = simd::bitwise_or(u_x, simd::bitwise_and(a_basis_zx, a_select_z));
-			u_y = simd::bitwise_or(u_y, simd::bitwise_and(a_basis_zy, a_select_z));
-			u_z = simd::bitwise_or(u_z, simd::bitwise_and(a_basis_zz, a_select_z));
+			u_x = simd_or(u_x, simd_and(a_basis_zx, a_select_z));
+			u_y = simd_or(u_y, simd_and(a_basis_zy, a_select_z));
+			u_z = simd_or(u_z, simd_and(a_basis_zz, a_select_z));
 			
-			v_x = simd::bitwise_or(v_x, simd::bitwise_and(b_basis_zx, b_select_z));
-			v_y = simd::bitwise_or(v_y, simd::bitwise_and(b_basis_zy, b_select_z));
-			v_z = simd::bitwise_or(v_z, simd::bitwise_and(b_basis_zz, b_select_z));
+			v_x = simd_or(v_x, simd_and(b_basis_zx, b_select_z));
+			v_y = simd_or(v_y, simd_and(b_basis_zy, b_select_z));
+			v_z = simd_or(v_z, simd_and(b_basis_zz, b_select_z));
 #endif
 			
 			// Compute axis.
