@@ -143,68 +143,6 @@ namespace simd {
 }
 
 namespace simd_float {
-	/*
-	NUDGE_FORCEINLINE float extract_first_float(simd4_float x) {
-		return simd_x(x);
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE simd4_float zero4() {
-		return simd_zero();
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE simd4_float make4(float x) {
-		return simd_splat(x);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_float make4(float x, float y, float z, float w) {
-		return simd_ld(x, y, z, w);
-	}
-	*/
-	/*
-	NUDGE_FORCEINLINE simd4_float broadcast_load4(const float* p) {
-		return simd_splat(*p);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_float load4(const float* p) {
-		return simd_ld(p);
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE void store4(float* p, simd4_float x) {
-		simd_st(p, x);
-	}
-	 */
-	
-	NUDGE_FORCEINLINE void storeu4(float* p, simd4_float x) {
-		_mm_storeu_ps(p, x);
-	}
-	
-	/*
-	NUDGE_FORCEINLINE simd4_float madd(simd4_float x, simd4_float y, simd4_float z) {
-#ifdef __FMA__
-		return _mm_fmadd_ps(x, y, z);
-#else
-		return simd_madd(x, y, z);
-#endif
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE simd4_float msub(simd4_float x, simd4_float y, simd4_float z) {
-#ifdef __FMA__
-		return _mm_fmsub_ps(x, y, z);
-#else
-		return simd_nmsub(x, y, z);	//todo(attila): why 'n'msub
-#endif
-	}
-	 */
 	
 	// Note: First operand is returned on NaN.
 	NUDGE_FORCEINLINE simd4_float min(simd4_float x, simd4_float y) {
@@ -219,45 +157,12 @@ namespace simd_float {
 		// todo: check Nan behaviour for neon
 		return simd_max(y, x);	//todo: check this note
 	}
-/*
-	NUDGE_FORCEINLINE simd4_float rsqrt(simd4_float x) {
-		return simd_rsqrt_est(x);
-	}
-	*/
-	/*
-	NUDGE_FORCEINLINE simd4_float recip(simd4_float x) {
-		return simd_rcp_est(x);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_float sqrt(simd4_float x) {
-		return simd_sqrt(x);
-	}
-	 */
 	
 	NUDGE_FORCEINLINE simd4_float abs(simd4_float x) {
 		return simd_abs(x);
 		//todo(attila): different impl
 		//return _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
 	}
-	/*
-	NUDGE_FORCEINLINE simd4_float cmp_gt(simd4_float x, simd4_float y) {
-		return simd_cmpgt(x, y);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_float cmp_ge(simd4_float x, simd4_float y) {
-		return simd_cmpge(x, y);
-	}
-	
-	NUDGE_FORCEINLINE simd4_float cmp_le(simd4_float x, simd4_float y) {
-		return simd_cmple(x, y);
-	}
-	
-	NUDGE_FORCEINLINE simd4_float cmp_eq(simd4_float x, simd4_float y) {
-		return simd_cmpeq(x, y);
-	}
-	 */
 	
 	NUDGE_FORCEINLINE simd4_float cmp_neq(simd4_float x, simd4_float y) {
 		return _mm_cmpneq_ps(x, y);
@@ -269,77 +174,13 @@ namespace simd_float {
 	}
 }
 
-namespace simd_int32 {
-	/*
-	NUDGE_FORCEINLINE simd4_int32 zero4() {
-		return simd_zero();
-		//return _mm_setzero_si128();
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x) {
-		return simd_isplat(x);
-		//return _mm_set1_epi32(x);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simd4_int32 make4(int32_t x, int32_t y, int32_t z, int32_t w) {
-		return simd_ild(x, y, z, w);
-		//return _mm_setr_epi32(x, y, z, w);
-	}
-	 */
+// ext
 	
-	/*
-	NUDGE_FORCEINLINE simd4_int32 load4(const int32_t* p) {
-		return simd_ld(p);
-		//return _mm_load_si128((const __m128i*)p);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE void store4(int32_t* p, simd4_int32 x) {
-		simd_st(p, x);
-		//_mm_store_si128((__m128i*)p, x);
-	}
-	 */
-	
-	NUDGE_FORCEINLINE void storeu4(int32_t* p, simd4_int32 x) {
-		_mm_storeu_ps((float*)p, x);
-		//_mm_storeu_si128((__m128*)p, x);
-	}
-	
-	template<unsigned bits>
-	NUDGE_FORCEINLINE simd4_int32 shift_left(simd4_int32 x) {
-		return simd_sll(x, bits);
-		//return _mm_slli_epi32(x, bits);
-	}
-	
-	template<unsigned bits>
-	NUDGE_FORCEINLINE simd4_int32 shift_right(simd4_int32 x) {
-		return simd_srl(x, bits);
-		//return _mm_srli_epi32(x, bits);
-	}
-	
-	NUDGE_FORCEINLINE simd4_int32 add(simd4_int32 x, simd4_int32 y) {
-		return simd_iadd(x, y);
-		//return _mm_add_epi32(x, y);
-	}
-	
-	NUDGE_FORCEINLINE simd4_int32 cmp_eq(simd4_int32 x, simd4_int32 y) {
-		return simd_icmpeq(x, y);
-		//return _mm_cmpeq_epi32(x, y);
-	}
-	
-	NUDGE_FORCEINLINE simd4_float asfloat(simd4_int32 x) {
-		return x;
-		//return _mm_castsi128_ps(x);
-	}
-
-	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
-		return simd_shuf_xAyB(x, y);
-	}
+BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_sse_t _a)
+{
+	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
 }
 
-// ext
 
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 {
@@ -416,38 +257,6 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
-}
-
-/*	NUDGE_FORCEINLINE __m128i bitwise_notand(__m128i x, __m128i y) {
-		return _mm_andnot_si128(x, y);
-	}
-	*/
-
-typedef simd4_float simdv_float;
-typedef simd4_int32 simdv_int32;
-
-namespace simd_int32 {
-	/*
-	NUDGE_FORCEINLINE simdv_int32 zerov() {
-		return zero4();
-	}
-	 */
-	
-	/*
-	NUDGE_FORCEINLINE simdv_int32 makev(int32_t x) {
-		return make4(x);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE simdv_int32 loadv(const int32_t* p) {
-		return load4(p);
-	}
-	 */
-	/*
-	NUDGE_FORCEINLINE void storev(int32_t* p, simdv_int32 x) {
-		store4(p, x);
-	}
-	 */
 }
 
 namespace simd_aos {
@@ -990,16 +799,16 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_int32 bymi = simd_and(bymf, simd_isplat(1));
 			simd4_int32 bzmi = simd_and(bzmf, simd_isplat(1));
 			
-			simd4_int32 aface = simd_int32::add(aymi, azmi);
-			simd4_int32 bface = simd_int32::add(bymi, bzmi);
+			simd4_int32 aface = simd_iadd(aymi, azmi);
+			simd4_int32 bface = simd_iadd(bymi, bzmi);
 			
 			// Swap so that collider a has the most separating face.
 			simd4_float swap = simd_cmpeq(pa, p);
 			
-			simd4_float pair_a_b = simd_int32::asfloat(simd_ld((const int32_t*)(pairs + i)));
-			simd4_float pair_b_a = simd_int32::asfloat(simd_or(simd_int32::shift_left<16>(pair_a_b), simd_int32::shift_right<16>(pair_a_b)));
+			simd4_float pair_a_b = simd_ld((const int32_t*)(pairs + i));
+			simd4_float pair_b_a = simd_or(simd_sll(pair_a_b, 16), simd_srl(pair_a_b, 16));
 			
-			simd4_float face = simd::blendv32(simd_int32::asfloat(bface), simd_int32::asfloat(aface), swap);
+			simd4_float face = simd::blendv32(bface, aface, swap);
 			simd4_float pair = simd::blendv32(pair_a_b, pair_b_a, swap);
 			
 			// Store data for pairs with positive penetration.
@@ -1600,20 +1409,20 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
 				
-				simdv_float z_sign = simd_zero();
+				simd4_float z_sign = simd_zero();
 				
 				if (b_offset_neg)
 					z_sign = simd_splat(-0.0f);
 				
-				simdv_float penetration_offset = simd128::shuffle32<2,2,2,2>(a_size_transformed);
+				simd4_float penetration_offset = simd128::shuffle32<2,2,2,2>(a_size_transformed);
 				unsigned penetration_mask = 0;
 				
 				for (unsigned i = 0; i < 16; i += simdv_width32) {
-					simdv_float x = simd_ld(support + 0 + i);
-					simdv_float y = simd_ld(support + 16 + i);
-					simdv_float z = x*simd128::shuffle32<0,0,0,0>(plane) + y*simd128::shuffle32<1,1,1,1>(plane) + simd128::shuffle32<2,2,2,2>(plane);
+					simd4_float x = simd_ld(support + 0 + i);
+					simd4_float y = simd_ld(support + 16 + i);
+					simd4_float z = x*simd128::shuffle32<0,0,0,0>(plane) + y*simd128::shuffle32<1,1,1,1>(plane) + simd128::shuffle32<2,2,2,2>(plane);
 					
-					simdv_float penetration = penetration_offset - simd_xor(z, z_sign);
+					simd4_float penetration = penetration_offset - simd_xor(z, z_sign);
 					
 					z += penetration * simd_xor(simd_splat(0.5f), z_sign);
 					
@@ -1862,27 +1671,27 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			// Select edge directions.
 #ifdef NUDGE_NATIVE_BLENDV32
-			simd4_int32 a_select_y = simd_int32::shift_left<32-1>(edge); // Shifts the relevant bit to the top.
-			simd4_int32 a_select_z = simd_int32::shift_left<32-2>(edge);
+			simd4_int32 a_select_y = simd_sll(edge, 32-1); // Shifts the relevant bit to the top.
+			simd4_int32 a_select_z = simd_sll(edge, 32-2);
 			
-			simd4_int32 b_select_y = simd_int32::shift_left<16-1>(edge);
-			simd4_int32 b_select_z = simd_int32::shift_left<16-2>(edge);
+			simd4_int32 b_select_y = simd_sll(edge, 16-1);
+			simd4_int32 b_select_z = simd_sll(edge, 16-2);
 			
-			simd4_float u_x = simd::blendv32(a_basis_xx, a_basis_yx, simd_int32::asfloat(a_select_y));
-			simd4_float u_y = simd::blendv32(a_basis_xy, a_basis_yy, simd_int32::asfloat(a_select_y));
-			simd4_float u_z = simd::blendv32(a_basis_xz, a_basis_yz, simd_int32::asfloat(a_select_y));
+			simd4_float u_x = simd::blendv32(a_basis_xx, a_basis_yx, a_select_y);
+			simd4_float u_y = simd::blendv32(a_basis_xy, a_basis_yy, a_select_y);
+			simd4_float u_z = simd::blendv32(a_basis_xz, a_basis_yz, a_select_y);
 			
-			simd4_float v_x = simd::blendv32(b_basis_xx, b_basis_yx, simd_int32::asfloat(b_select_y));
-			simd4_float v_y = simd::blendv32(b_basis_xy, b_basis_yy, simd_int32::asfloat(b_select_y));
-			simd4_float v_z = simd::blendv32(b_basis_xz, b_basis_yz, simd_int32::asfloat(b_select_y));
+			simd4_float v_x = simd::blendv32(b_basis_xx, b_basis_yx, b_select_y);
+			simd4_float v_y = simd::blendv32(b_basis_xy, b_basis_yy, b_select_y);
+			simd4_float v_z = simd::blendv32(b_basis_xz, b_basis_yz, b_select_y);
 			
-			u_x = simd::blendv32(u_x, a_basis_zx, simd_int32::asfloat(a_select_z));
-			u_y = simd::blendv32(u_y, a_basis_zy, simd_int32::asfloat(a_select_z));
-			u_z = simd::blendv32(u_z, a_basis_zz, simd_int32::asfloat(a_select_z));
+			u_x = simd::blendv32(u_x, a_basis_zx, a_select_z);
+			u_y = simd::blendv32(u_y, a_basis_zy, a_select_z);
+			u_z = simd::blendv32(u_z, a_basis_zz, a_select_z);
 			
-			v_x = simd::blendv32(v_x, b_basis_zx, simd_int32::asfloat(b_select_z));
-			v_y = simd::blendv32(v_y, b_basis_zy, simd_int32::asfloat(b_select_z));
-			v_z = simd::blendv32(v_z, b_basis_zz, simd_int32::asfloat(b_select_z));
+			v_x = simd::blendv32(v_x, b_basis_zx, b_select_z);
+			v_y = simd::blendv32(v_y, b_basis_zy, b_select_z);
+			v_z = simd::blendv32(v_z, b_basis_zz, b_select_z);
 #else
 			simd4_int32 a_edge = simd::bitwise_and(edge, simd_int32::make4(0xffff));
 			simd4_int32 b_edge = simd_int32::shift_right<16>(edge);
@@ -1982,9 +1791,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			b_sign_y = simd_and(b_sign_y, sign_mask);
 			b_sign_z = simd_and(b_sign_z, sign_mask);
 			
-			simd4_int32 edge_x = simd_or(simd_int32::shift_right<31-0>(a_sign_x), simd_int32::shift_right<31-16>(simd_xor(b_sign_x, simd_splat(-0.0f))));
-			simd4_int32 edge_y = simd_or(simd_int32::shift_right<31-1>(a_sign_y), simd_int32::shift_right<31-17>(simd_xor(b_sign_y, simd_splat(-0.0f))));
-			simd4_int32 edge_z = simd_or(simd_int32::shift_right<31-2>(a_sign_z), simd_int32::shift_right<31-18>(simd_xor(b_sign_z, simd_splat(-0.0f))));
+			simd4_int32 edge_x = simd_or(simd_srl(a_sign_x, 31-0), simd_srl(simd_xor(b_sign_x, simd_splat(-0.0f)), 31-16));
+			simd4_int32 edge_y = simd_or(simd_srl(a_sign_y, 31-1), simd_srl(simd_xor(b_sign_y, simd_splat(-0.0f)), 31-17));
+			simd4_int32 edge_z = simd_or(simd_srl(a_sign_z, 31-2), simd_srl(simd_xor(b_sign_z, simd_splat(-0.0f)), 31-18));
 			simd4_int32 edge_w = simd_i16_add(simd_i16_add(edge, simd_isplat((1 << 16) | 1)), simd_i16_srl(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 
 //			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
@@ -1994,7 +1803,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd4_int32 tag_hi = simd_or(edge_xy, edge_zw);
 			simd4_int32 tag_lo = simd_iandc(edge_w, tag_hi);
-			tag_hi = simd_int32::shift_left<8>(tag_hi);
+			tag_hi = simd_sll(tag_hi, 8);
 			
 			simd4_int32 tag = simd_or(tag_lo, tag_hi);
 			
@@ -2076,13 +1885,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_st(contacts[count + 3].position, p_w);
 			simd_st(contacts[count + 3].normal, n_w);
 			
-			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_int32::asfloat(simd_isplat(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(b_position_w)));
-			simd_float::storeu4((float*)(bodies + count), body_pair);
+			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_isplat(0xffff)), simd_sll(b_position_w, 16));
+			simd_stu((float*)(bodies + count), body_pair);
 			
-			simd4_int32 pair = simd_or(simd_and(b_position_w, simd_int32::asfloat(simd_isplat(0xffff0000))), simd_int32::asfloat(simd_int32::shift_right<16>(a_position_w)));
+			simd4_int32 pair = simd_or(simd_and(b_position_w, simd_isplat(0xffff0000)), simd_srl(a_position_w, 16));
 			
-			simd_int32::storeu4((int32_t*)tags + count*2 + 0, simd_shuf_xAyB(tag, pair));
-			simd_int32::storeu4((int32_t*)tags + count*2 + 4, simd_shuf_xAyB(tag, pair));
+			simd_stu((int32_t*)tags + count*2 + 0, simd_shuf_xAyB(tag, pair));
+			simd_stu((int32_t*)tags + count*2 + 4, simd_shuf_xAyB(tag, pair));
 			
 			count += 4;
 		}
@@ -2213,38 +2022,38 @@ static inline unsigned box_sphere_collide(BoxCollider a, SphereCollider b, Trans
 }
 
 template<unsigned offset>
-static inline void dilate_3(simdv_int32 x, simdv_int32& lo32, simdv_int32& hi32) {
-	simdv_int32 mask0 = simd_isplat(0xff);
-	simdv_int32 mask1 = simd_isplat(0x0f00f00f);
-	simdv_int32 mask2 = simd_isplat(0xc30c30c3);
-	simdv_int32 mask3 = simd_isplat(0x49249249);
+static inline void dilate_3(simd4_int32 x, simd4_int32& lo32, simd4_int32& hi32) {
+	simd4_int32 mask0 = simd_isplat(0xff);
+	simd4_int32 mask1 = simd_isplat(0x0f00f00f);
+	simd4_int32 mask2 = simd_isplat(0xc30c30c3);
+	simd4_int32 mask3 = simd_isplat(0x49249249);
 	
-	simdv_int32 lo24 = x;
-	simdv_int32 hi24 = simd_int32::shift_right<8>(x);
+	simd4_int32 lo24 = x;
+	simd4_int32 hi24 = simd_srl(x, 8);
 	lo24 = simd_and(lo24, mask0);
 	hi24 = simd_and(hi24, mask0);
 	
-	lo24 = simd_or(lo24, simd_int32::shift_left<8>(lo24));
-	hi24 = simd_or(hi24, simd_int32::shift_left<8>(hi24));
+	lo24 = simd_or(lo24, simd_sll(lo24, 8));
+	hi24 = simd_or(hi24, simd_sll(hi24, 8));
 	lo24 = simd_and(lo24, mask1);
 	hi24 = simd_and(hi24, mask1);
 	
-	lo24 = simd_or(lo24, simd_int32::shift_left<4>(lo24));
-	hi24 = simd_or(hi24, simd_int32::shift_left<4>(hi24));
+	lo24 = simd_or(lo24, simd_sll(lo24, 4));
+	hi24 = simd_or(hi24, simd_sll(hi24, 4));
 	lo24 = simd_and(lo24, mask2);
 	hi24 = simd_and(hi24, mask2);
 	
-	lo24 = simd_or(lo24, simd_int32::shift_left<2>(lo24));
-	hi24 = simd_or(hi24, simd_int32::shift_left<2>(hi24));
+	lo24 = simd_or(lo24, simd_sll(lo24, 2));
+	hi24 = simd_or(hi24, simd_sll(hi24, 2));
 	lo24 = simd_and(lo24, mask3);
 	hi24 = simd_and(hi24, mask3);
 	
-	lo32 = simd_or(simd_int32::shift_left<offset>(lo24), simd_int32::shift_left<24+offset>(hi24));
-	hi32 = simd_int32::shift_right<8-offset>(hi24);
+	lo32 = simd_or(simd_sll(lo24, offset), simd_sll(hi24, 24+offset));
+	hi32 = simd_srl(hi24, 8-offset);
 }
 
-static inline void morton(simdv_int32 x, simdv_int32 y, simdv_int32 z, simdv_int32& lo32, simdv_int32& hi32) {
-	simdv_int32 lx, hx, ly, hy, lz, hz;
+static inline void morton(simd4_int32 x, simd4_int32 y, simd4_int32 z, simd4_int32& lo32, simd4_int32& hi32) {
+	simd4_int32 lx, hx, ly, hy, lz, hz;
 	dilate_3<2>(x, lx, hx);
 	dilate_3<1>(y, ly, hy);
 	dilate_3<0>(z, lz, hz);
@@ -2446,7 +2255,7 @@ static inline void radix_sort_uint32(uint32_t* data, unsigned count, Arena tempo
 
 template<unsigned data_stride, unsigned index_stride, class T>
 NUDGE_FORCEINLINE static void load4(const float* data, const T* indices,
-									simdv_float& d0, simdv_float& d1, simdv_float& d2, simdv_float& d3) {
+									simd4_float& d0, simd4_float& d1, simd4_float& d2, simd4_float& d3) {
 	static const unsigned stride_in_floats = data_stride/sizeof(float);
 	
 	unsigned i0 = indices[0*index_stride];
@@ -2464,8 +2273,8 @@ NUDGE_FORCEINLINE static void load4(const float* data, const T* indices,
 
 template<unsigned data_stride, unsigned index_stride, class T>
 NUDGE_FORCEINLINE static void load8(const float* data, const T* indices,
-									simdv_float& d0, simdv_float& d1, simdv_float& d2, simdv_float& d3,
-									simdv_float& d4, simdv_float& d5, simdv_float& d6, simdv_float& d7) {
+									simd4_float& d0, simd4_float& d1, simd4_float& d2, simd4_float& d3,
+									simd4_float& d4, simd4_float& d5, simd4_float& d6, simd4_float& d7) {
 	static const unsigned stride_in_floats = data_stride/sizeof(float);
 	
 	unsigned i0 = indices[0*index_stride];
@@ -2489,8 +2298,8 @@ NUDGE_FORCEINLINE static void load8(const float* data, const T* indices,
 
 template<unsigned data_stride, unsigned index_stride, class T>
 NUDGE_FORCEINLINE static void store8(float* data, const T* indices,
-									 simdv_float d0, simdv_float d1, simdv_float d2, simdv_float d3,
-									 simdv_float d4, simdv_float d5, simdv_float d6, simdv_float d7) {
+									 simd4_float d0, simd4_float d1, simd4_float d2, simd4_float d3,
+									 simd4_float d4, simd4_float d5, simd4_float d6, simd4_float d7) {
 	static const unsigned stride_in_floats = data_stride/sizeof(float);
 	
 	simd128::transpose32(d0, d1, d2, d3);
@@ -2619,13 +2428,13 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		printf("Warning: World bounds are very large, which may decrease performance. Perhaps there's a body in free fall?\n");
 #endif
 	
-	simdv_float scene_min = scene_min128;
-	simdv_float scene_scale = scene_scale128;
-	simdv_int32 index = simd_ild(0 << 16, 1 << 16, 2 << 16, 3 << 16);
+	simd4_float scene_min = scene_min128;
+	simd4_float scene_scale = scene_scale128;
+	simd4_int32 index = simd_ild(0 << 16, 1 << 16, 2 << 16, 3 << 16);
 	
-	simdv_float scene_min_x = simd128::shuffle32<0,0,0,0>(scene_min);
-	simdv_float scene_min_y = simd128::shuffle32<1,1,1,1>(scene_min);
-	simdv_float scene_min_z = simd128::shuffle32<2,2,2,2>(scene_min);
+	simd4_float scene_min_x = simd128::shuffle32<0,0,0,0>(scene_min);
+	simd4_float scene_min_y = simd128::shuffle32<1,1,1,1>(scene_min);
+	simd4_float scene_min_z = simd128::shuffle32<2,2,2,2>(scene_min);
 	
 	uint64_t* morton_codes = allocate_array<uint64_t>(&temporary, aligned_count, 32);
 	
@@ -2641,17 +2450,17 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		pos_y = simd_nmsub(pos_y, scene_scale, scene_min_y);
 		pos_z = simd_nmsub(pos_z, scene_scale, scene_min_z);
 		
-		simdv_int32 lm, hm;
+		simd4_int32 lm, hm;
 		morton(simd_float::toint(pos_x), simd_float::toint(pos_y), simd_float::toint(pos_z), lm, hm);
 		hm = simd_or(hm, index);
 		
-		simdv_int32 mi0 = simd_shuf_xAyB(lm, hm);
-		simdv_int32 mi1 = simd_shuf_zCwD(lm, hm);
+		simd4_int32 mi0 = simd_shuf_xAyB(lm, hm);
+		simd4_int32 mi1 = simd_shuf_zCwD(lm, hm);
 		
 		simd_st((int32_t*)(morton_codes + i) + 0, mi0);
 		simd_st((int32_t*)(morton_codes + i) + 4, mi1);
 		
-		index = simd_int32::add(index, simd_isplat(simdv_width32 << 16));
+		index = simd_iadd(index, simd_isplat(simdv_width32 << 16));
 	}
 	
 	radix_sort_uint64_low48(morton_codes, count, temporary);
@@ -2667,8 +2476,8 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	AABBV* bounds = allocate_array<AABBV>(&temporary, bounds_count, 32);
 	
 	for (unsigned i = 0; i < count; i += simdv_width32) {
-		simdv_float min_x, min_y, min_z, min_w;
-		simdv_float max_x, max_y, max_z, max_w;
+		simd4_float min_x, min_y, min_z, min_w;
+		simd4_float max_x, max_y, max_z, max_w;
 		load8<sizeof(aos_bounds[0]), 1>(&aos_bounds[0].min.x, sorted_indices + i,
 										min_x, min_y, min_z, min_w,
 										max_x, max_y, max_z, max_w);
@@ -2763,12 +2572,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
 		
-		simdv_float min_a_x = simd_splat(coarse_bounds[bounds_group].min_x + bounds_lane);
-		simdv_float max_a_x = simd_splat(coarse_bounds[bounds_group].max_x + bounds_lane);
-		simdv_float min_a_y = simd_splat(coarse_bounds[bounds_group].min_y + bounds_lane);
-		simdv_float max_a_y = simd_splat(coarse_bounds[bounds_group].max_y + bounds_lane);
-		simdv_float min_a_z = simd_splat(coarse_bounds[bounds_group].min_z + bounds_lane);
-		simdv_float max_a_z = simd_splat(coarse_bounds[bounds_group].max_z + bounds_lane);
+		simd4_float min_a_x = simd_splat(coarse_bounds[bounds_group].min_x + bounds_lane);
+		simd4_float max_a_x = simd_splat(coarse_bounds[bounds_group].max_x + bounds_lane);
+		simd4_float min_a_y = simd_splat(coarse_bounds[bounds_group].min_y + bounds_lane);
+		simd4_float max_a_y = simd_splat(coarse_bounds[bounds_group].max_y + bounds_lane);
+		simd4_float min_a_z = simd_splat(coarse_bounds[bounds_group].min_z + bounds_lane);
+		simd4_float max_a_z = simd_splat(coarse_bounds[bounds_group].max_z + bounds_lane);
 		
 		unsigned first = coarse_group_count;
 		
@@ -2779,16 +2588,16 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned ij_bits = (bounds_group << 8) | (i << 16);
 		
 		for (unsigned j = bounds_group; j < coarse_bounds_count; ++j) {
-			simdv_float min_b_x = simd_ld(coarse_bounds[j].min_x);
-			simdv_float max_b_x = simd_ld(coarse_bounds[j].max_x);
-			simdv_float min_b_y = simd_ld(coarse_bounds[j].min_y);
-			simdv_float max_b_y = simd_ld(coarse_bounds[j].max_y);
-			simdv_float min_b_z = simd_ld(coarse_bounds[j].min_z);
-			simdv_float max_b_z = simd_ld(coarse_bounds[j].max_z);
+			simd4_float min_b_x = simd_ld(coarse_bounds[j].min_x);
+			simd4_float max_b_x = simd_ld(coarse_bounds[j].max_x);
+			simd4_float min_b_y = simd_ld(coarse_bounds[j].min_y);
+			simd4_float max_b_y = simd_ld(coarse_bounds[j].max_y);
+			simd4_float min_b_z = simd_ld(coarse_bounds[j].min_z);
+			simd4_float max_b_z = simd_ld(coarse_bounds[j].max_z);
 			
-			simdv_float inside_x = simd_and(simd_cmpgt(max_b_x, min_a_x), simd_cmpgt(max_a_x, min_b_x));
-			simdv_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
-			simdv_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
+			simd4_float inside_x = simd_and(simd_cmpgt(max_b_x, min_a_x), simd_cmpgt(max_a_x, min_b_x));
+			simd4_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
+			simd4_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
 			
 			unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 			
@@ -2851,12 +2660,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			unsigned bounds_group = i >> simdv_width32_log2;
 			unsigned bounds_lane = i & (simdv_width32-1);
 			
-			simdv_float min_a_x = simd_splat(bounds[bounds_group].min_x + bounds_lane);
-			simdv_float max_a_x = simd_splat(bounds[bounds_group].max_x + bounds_lane);
-			simdv_float min_a_y = simd_splat(bounds[bounds_group].min_y + bounds_lane);
-			simdv_float max_a_y = simd_splat(bounds[bounds_group].max_y + bounds_lane);
-			simdv_float min_a_z = simd_splat(bounds[bounds_group].min_z + bounds_lane);
-			simdv_float max_a_z = simd_splat(bounds[bounds_group].max_z + bounds_lane);
+			simd4_float min_a_x = simd_splat(bounds[bounds_group].min_x + bounds_lane);
+			simd4_float max_a_x = simd_splat(bounds[bounds_group].max_x + bounds_lane);
+			simd4_float min_a_y = simd_splat(bounds[bounds_group].min_y + bounds_lane);
+			simd4_float max_a_y = simd_splat(bounds[bounds_group].max_y + bounds_lane);
+			simd4_float min_a_z = simd_splat(bounds[bounds_group].min_z + bounds_lane);
+			simd4_float max_a_z = simd_splat(bounds[bounds_group].max_z + bounds_lane);
 			
 			unsigned first = group_count;
 			
@@ -2872,16 +2681,16 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			unsigned ij_bits = (start << 8) | (i << 19);
 			
 			for (unsigned j = start; j < b_end; ++j) {
-				simdv_float min_b_x = simd_ld(bounds[j].min_x);
-				simdv_float max_b_x = simd_ld(bounds[j].max_x);
-				simdv_float min_b_y = simd_ld(bounds[j].min_y);
-				simdv_float max_b_y = simd_ld(bounds[j].max_y);
-				simdv_float min_b_z = simd_ld(bounds[j].min_z);
-				simdv_float max_b_z = simd_ld(bounds[j].max_z);
+				simd4_float min_b_x = simd_ld(bounds[j].min_x);
+				simd4_float max_b_x = simd_ld(bounds[j].max_x);
+				simd4_float min_b_y = simd_ld(bounds[j].min_y);
+				simd4_float max_b_y = simd_ld(bounds[j].max_y);
+				simd4_float min_b_z = simd_ld(bounds[j].min_z);
+				simd4_float max_b_z = simd_ld(bounds[j].max_z);
 				
-				simdv_float inside_x = simd_and(simd_cmpgt(max_b_x, min_a_x), simd_cmpgt(max_a_x, min_b_x));
-				simdv_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
-				simdv_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
+				simd4_float inside_x = simd_and(simd_cmpgt(max_b_x, min_a_x), simd_cmpgt(max_a_x, min_b_x));
+				simd4_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
+				simd4_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
 				
 				unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 				
@@ -3645,7 +3454,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		ContactSlotV* vacant_slot_buckets[bucket_count];
 		unsigned bucket_vacancy_count[bucket_count] = {};
 		
-		simdv_int32 invalid_index = simd_isplat(~0u);
+		simd4_int32 invalid_index = simd_isplat(~0u);
 		
 		for (unsigned i = 0; i < bucket_count; ++i) {
 			vacant_pair_buckets[i] = allocate_array<ContactPairV>(&temporary, contacts.count+1, 32);
@@ -3696,7 +3505,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 				++vacancy_count;
 			}
 			else if (lane == simdv_width32-1) {
-				simdv_int32 indices = simd_ld((const int32_t*)slot->indices);
+				simd4_int32 indices = simd_ld((const int32_t*)slot->indices);
 				
 				--vacancy_count;
 				
@@ -3725,11 +3534,11 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 			// Replace any unset indices with the first one, which is always valid.
 			// This is safe because the slots will just overwrite each other.
 			for (unsigned i = 0; i < vacancy_count; ++i) {
-				simdv_int32 ab = simd_ld((int32_t*)vacant_pairs[i].ab);
-				simdv_int32 indices = simd_ld((const int32_t*)vacant_slots[i].indices);
+				simd4_int32 ab = simd_ld((int32_t*)vacant_pairs[i].ab);
+				simd4_int32 indices = simd_ld((const int32_t*)vacant_slots[i].indices);
 				
-				simdv_int32 mask = simd_int32::cmp_eq(ab, invalid_index);
-				simdv_int32 first_index = simd128::shuffle32<0, 0, 0, 0>(indices);
+				simd4_int32 mask = simd_icmpeq(ab, invalid_index);
+				simd4_int32 first_index = simd128::shuffle32<0, 0, 0, 0>(indices);
 				
 				indices = simd::blendv32(indices, first_index, mask);
 				
@@ -3753,8 +3562,8 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		for (unsigned j = 0; j < simdv_width32; ++j)
 			constraint_to_contact[i*simdv_width32 + j] = slot.indices[j];
 		
-		simdv_float position_x, position_y, position_z, penetration;
-		simdv_float normal_x, normal_y, normal_z, friction;
+		simd4_float position_x, position_y, position_z, penetration;
+		simd4_float normal_x, normal_y, normal_z, friction;
 		load8<sizeof(contacts.data[0]), 1>((const float*)contacts.data, slot.indices,
 										   position_x, position_y, position_z, penetration,
 										   normal_x, normal_y, normal_z, friction);
@@ -3770,124 +3579,124 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		unsigned a0 = ab_array[0]; unsigned a1 = ab_array[2]; unsigned a2 = ab_array[4]; unsigned a3 = ab_array[6];
 		unsigned b0 = ab_array[1]; unsigned b1 = ab_array[3]; unsigned b2 = ab_array[5]; unsigned b3 = ab_array[7];
 		
-		simdv_float a_mass_inverse = simd_ld(bodies.momentum[a0].unused0, bodies.momentum[a1].unused0, bodies.momentum[a2].unused0, bodies.momentum[a3].unused0);
-		simdv_float b_mass_inverse = simd_ld(bodies.momentum[b0].unused0, bodies.momentum[b1].unused0, bodies.momentum[b2].unused0, bodies.momentum[b3].unused0);
+		simd4_float a_mass_inverse = simd_ld(bodies.momentum[a0].unused0, bodies.momentum[a1].unused0, bodies.momentum[a2].unused0, bodies.momentum[a3].unused0);
+		simd4_float b_mass_inverse = simd_ld(bodies.momentum[b0].unused0, bodies.momentum[b1].unused0, bodies.momentum[b2].unused0, bodies.momentum[b3].unused0);
 		
-		simdv_float a_position_x, a_position_y, a_position_z, a_position_w;
-		simdv_float b_position_x, b_position_y, b_position_z, b_position_w;
+		simd4_float a_position_x, a_position_y, a_position_z, a_position_w;
+		simd4_float b_position_x, b_position_y, b_position_z, b_position_w;
 		load4<sizeof(bodies.transforms[0]), 2>(bodies.transforms[0].position, ab_array,
 											   a_position_x, a_position_y, a_position_z, a_position_w);
 		load4<sizeof(bodies.transforms[0]), 2>(bodies.transforms[0].position, ab_array + 1,
 											   b_position_x, b_position_y, b_position_z, b_position_w);
 		
-		simdv_float pa_x = position_x - a_position_x;
-		simdv_float pa_y = position_y - a_position_y;
-		simdv_float pa_z = position_z - a_position_z;
+		simd4_float pa_x = position_x - a_position_x;
+		simd4_float pa_y = position_y - a_position_y;
+		simd4_float pa_z = position_z - a_position_z;
 		
-		simdv_float pb_x = position_x - b_position_x;
-		simdv_float pb_y = position_y - b_position_y;
-		simdv_float pb_z = position_z - b_position_z;
+		simd4_float pb_x = position_x - b_position_x;
+		simd4_float pb_y = position_y - b_position_y;
+		simd4_float pb_z = position_z - b_position_z;
 		
-		simdv_float a_momentum_to_velocity_xx, a_momentum_to_velocity_yy, a_momentum_to_velocity_zz, a_momentum_to_velocity_u0;
-		simdv_float a_momentum_to_velocity_xy, a_momentum_to_velocity_xz, a_momentum_to_velocity_yz, a_momentum_to_velocity_u1;
+		simd4_float a_momentum_to_velocity_xx, a_momentum_to_velocity_yy, a_momentum_to_velocity_zz, a_momentum_to_velocity_u0;
+		simd4_float a_momentum_to_velocity_xy, a_momentum_to_velocity_xz, a_momentum_to_velocity_yz, a_momentum_to_velocity_u1;
 		load8<sizeof(momentum_to_velocity[0]), 2>((const float*)momentum_to_velocity, ab_array,
 												  a_momentum_to_velocity_xx, a_momentum_to_velocity_yy, a_momentum_to_velocity_zz, a_momentum_to_velocity_u0,
 												  a_momentum_to_velocity_xy, a_momentum_to_velocity_xz, a_momentum_to_velocity_yz, a_momentum_to_velocity_u1);
 		
-		simdv_float na_xt, na_yt, na_zt;
+		simd4_float na_xt, na_yt, na_zt;
 		simd_soa::cross(pa_x, pa_y, pa_z, normal_x, normal_y, normal_z, na_xt, na_yt, na_zt);
 		
-		simdv_float na_x = a_momentum_to_velocity_xx*na_xt + a_momentum_to_velocity_xy*na_yt + a_momentum_to_velocity_xz*na_zt;
-		simdv_float na_y = a_momentum_to_velocity_xy*na_xt + a_momentum_to_velocity_yy*na_yt + a_momentum_to_velocity_yz*na_zt;
-		simdv_float na_z = a_momentum_to_velocity_xz*na_xt + a_momentum_to_velocity_yz*na_yt + a_momentum_to_velocity_zz*na_zt;
+		simd4_float na_x = a_momentum_to_velocity_xx*na_xt + a_momentum_to_velocity_xy*na_yt + a_momentum_to_velocity_xz*na_zt;
+		simd4_float na_y = a_momentum_to_velocity_xy*na_xt + a_momentum_to_velocity_yy*na_yt + a_momentum_to_velocity_yz*na_zt;
+		simd4_float na_z = a_momentum_to_velocity_xz*na_xt + a_momentum_to_velocity_yz*na_yt + a_momentum_to_velocity_zz*na_zt;
 		
-		simdv_float b_momentum_to_velocity_xx, b_momentum_to_velocity_yy, b_momentum_to_velocity_zz, b_momentum_to_velocity_u0;
-		simdv_float b_momentum_to_velocity_xy, b_momentum_to_velocity_xz, b_momentum_to_velocity_yz, b_momentum_to_velocity_u1;
+		simd4_float b_momentum_to_velocity_xx, b_momentum_to_velocity_yy, b_momentum_to_velocity_zz, b_momentum_to_velocity_u0;
+		simd4_float b_momentum_to_velocity_xy, b_momentum_to_velocity_xz, b_momentum_to_velocity_yz, b_momentum_to_velocity_u1;
 		load8<sizeof(momentum_to_velocity[0]), 2>((const float*)momentum_to_velocity, ab_array + 1,
 												  b_momentum_to_velocity_xx, b_momentum_to_velocity_yy, b_momentum_to_velocity_zz, b_momentum_to_velocity_u0,
 												  b_momentum_to_velocity_xy, b_momentum_to_velocity_xz, b_momentum_to_velocity_yz, b_momentum_to_velocity_u1);
 		
-		simdv_float nb_xt, nb_yt, nb_zt;
+		simd4_float nb_xt, nb_yt, nb_zt;
 		simd_soa::cross(pb_x, pb_y, pb_z, normal_x, normal_y, normal_z, nb_xt, nb_yt, nb_zt);
 		
-		simdv_float nb_x = b_momentum_to_velocity_xx*nb_xt + b_momentum_to_velocity_xy*nb_yt + b_momentum_to_velocity_xz*nb_zt;
-		simdv_float nb_y = b_momentum_to_velocity_xy*nb_xt + b_momentum_to_velocity_yy*nb_yt + b_momentum_to_velocity_yz*nb_zt;
-		simdv_float nb_z = b_momentum_to_velocity_xz*nb_xt + b_momentum_to_velocity_yz*nb_yt + b_momentum_to_velocity_zz*nb_zt;
+		simd4_float nb_x = b_momentum_to_velocity_xx*nb_xt + b_momentum_to_velocity_xy*nb_yt + b_momentum_to_velocity_xz*nb_zt;
+		simd4_float nb_y = b_momentum_to_velocity_xy*nb_xt + b_momentum_to_velocity_yy*nb_yt + b_momentum_to_velocity_yz*nb_zt;
+		simd4_float nb_z = b_momentum_to_velocity_xz*nb_xt + b_momentum_to_velocity_yz*nb_yt + b_momentum_to_velocity_zz*nb_zt;
 		
 		simd_soa::cross(na_x, na_y, na_z, pa_x, pa_y, pa_z, na_xt, na_yt, na_zt);
 		simd_soa::cross(nb_x, nb_y, nb_z, pb_x, pb_y, pb_z, nb_xt, nb_yt, nb_zt);
 		
-		simdv_float normal_impulse_to_rotational_velocity_x = na_xt + nb_xt;
-		simdv_float normal_impulse_to_rotational_velocity_y = na_yt + nb_yt;
-		simdv_float normal_impulse_to_rotational_velocity_z = na_zt + nb_zt;
+		simd4_float normal_impulse_to_rotational_velocity_x = na_xt + nb_xt;
+		simd4_float normal_impulse_to_rotational_velocity_y = na_yt + nb_yt;
+		simd4_float normal_impulse_to_rotational_velocity_z = na_zt + nb_zt;
 		
-		simdv_float r_dot_n = normal_impulse_to_rotational_velocity_x*normal_x + normal_impulse_to_rotational_velocity_y*normal_y + normal_impulse_to_rotational_velocity_z*normal_z;
+		simd4_float r_dot_n = normal_impulse_to_rotational_velocity_x*normal_x + normal_impulse_to_rotational_velocity_y*normal_y + normal_impulse_to_rotational_velocity_z*normal_z;
 		
-		simdv_float mass_inverse = a_mass_inverse + b_mass_inverse;
-		simdv_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
+		simd4_float mass_inverse = a_mass_inverse + b_mass_inverse;
+		simd4_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
 		
-		simdv_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_zero());
+		simd4_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_zero());
 		normal_velocity_to_normal_impulse = simd_and(simd_splat(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
 		
-		simdv_float bias = simd_splat(-bias_factor) * simd_float::max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
+		simd4_float bias = simd_splat(-bias_factor) * simd_float::max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
 		
 		// Compute a tangent from the normal. Care is taken to compute a smoothly varying basis to improve stability.
-		simdv_float s = simd_float::abs(normal_x);
+		simd4_float s = simd_float::abs(normal_x);
 		
-		simdv_float u_x = normal_z*s;
-		simdv_float u_y = u_x - normal_z;
-		simdv_float u_z = simd_madd(normal_x - normal_y, s, normal_y);
+		simd4_float u_x = normal_z*s;
+		simd4_float u_y = u_x - normal_z;
+		simd4_float u_z = simd_madd(normal_x - normal_y, s, normal_y);
 		
 		u_x = simd_xor(u_x, simd_splat(-0.0f));
 		simd_soa::normalize(u_x, u_y, u_z);
 		
 		// Compute the rest of the basis.
-		simdv_float v_x, v_y, v_z;
+		simd4_float v_x, v_y, v_z;
 		simd_soa::cross(u_x, u_y, u_z, normal_x, normal_y, normal_z, v_x, v_y, v_z);
 		
-		simdv_float ua_x, ua_y, ua_z, va_x, va_y, va_z;
+		simd4_float ua_x, ua_y, ua_z, va_x, va_y, va_z;
 		simd_soa::cross(pa_x, pa_y, pa_z, u_x, u_y, u_z, ua_x, ua_y, ua_z);
 		simd_soa::cross(pa_x, pa_y, pa_z, v_x, v_y, v_z, va_x, va_y, va_z);
 		
-		simdv_float ub_x, ub_y, ub_z, vb_x, vb_y, vb_z;
+		simd4_float ub_x, ub_y, ub_z, vb_x, vb_y, vb_z;
 		simd_soa::cross(pb_x, pb_y, pb_z, u_x, u_y, u_z, ub_x, ub_y, ub_z);
 		simd_soa::cross(pb_x, pb_y, pb_z, v_x, v_y, v_z, vb_x, vb_y, vb_z);
 		
-		simdv_float a_duu = a_momentum_to_velocity_xx*ua_x*ua_x + a_momentum_to_velocity_yy*ua_y*ua_y + a_momentum_to_velocity_zz*ua_z*ua_z;
-		simdv_float a_dvv = a_momentum_to_velocity_xx*va_x*va_x + a_momentum_to_velocity_yy*va_y*va_y + a_momentum_to_velocity_zz*va_z*va_z;
-		simdv_float a_duv = a_momentum_to_velocity_xx*ua_x*va_x + a_momentum_to_velocity_yy*ua_y*va_y + a_momentum_to_velocity_zz*ua_z*va_z;
+		simd4_float a_duu = a_momentum_to_velocity_xx*ua_x*ua_x + a_momentum_to_velocity_yy*ua_y*ua_y + a_momentum_to_velocity_zz*ua_z*ua_z;
+		simd4_float a_dvv = a_momentum_to_velocity_xx*va_x*va_x + a_momentum_to_velocity_yy*va_y*va_y + a_momentum_to_velocity_zz*va_z*va_z;
+		simd4_float a_duv = a_momentum_to_velocity_xx*ua_x*va_x + a_momentum_to_velocity_yy*ua_y*va_y + a_momentum_to_velocity_zz*ua_z*va_z;
 		
-		simdv_float a_suu = a_momentum_to_velocity_xy*ua_x*ua_y + a_momentum_to_velocity_xz*ua_x*ua_z + a_momentum_to_velocity_yz*ua_y*ua_z;
-		simdv_float a_svv = a_momentum_to_velocity_xy*va_x*va_y + a_momentum_to_velocity_xz*va_x*va_z + a_momentum_to_velocity_yz*va_y*va_z;
-		simdv_float a_suv = a_momentum_to_velocity_xy*(ua_x*va_y + ua_y*va_x) + a_momentum_to_velocity_xz*(ua_x*va_z + ua_z*va_x) + a_momentum_to_velocity_yz*(ua_y*va_z + ua_z*va_y);
+		simd4_float a_suu = a_momentum_to_velocity_xy*ua_x*ua_y + a_momentum_to_velocity_xz*ua_x*ua_z + a_momentum_to_velocity_yz*ua_y*ua_z;
+		simd4_float a_svv = a_momentum_to_velocity_xy*va_x*va_y + a_momentum_to_velocity_xz*va_x*va_z + a_momentum_to_velocity_yz*va_y*va_z;
+		simd4_float a_suv = a_momentum_to_velocity_xy*(ua_x*va_y + ua_y*va_x) + a_momentum_to_velocity_xz*(ua_x*va_z + ua_z*va_x) + a_momentum_to_velocity_yz*(ua_y*va_z + ua_z*va_y);
 		
-		simdv_float b_duu = b_momentum_to_velocity_xx*ub_x*ub_x + b_momentum_to_velocity_yy*ub_y*ub_y + b_momentum_to_velocity_zz*ub_z*ub_z;
-		simdv_float b_dvv = b_momentum_to_velocity_xx*vb_x*vb_x + b_momentum_to_velocity_yy*vb_y*vb_y + b_momentum_to_velocity_zz*vb_z*vb_z;
-		simdv_float b_duv = b_momentum_to_velocity_xx*ub_x*vb_x + b_momentum_to_velocity_yy*ub_y*vb_y + b_momentum_to_velocity_zz*ub_z*vb_z;
+		simd4_float b_duu = b_momentum_to_velocity_xx*ub_x*ub_x + b_momentum_to_velocity_yy*ub_y*ub_y + b_momentum_to_velocity_zz*ub_z*ub_z;
+		simd4_float b_dvv = b_momentum_to_velocity_xx*vb_x*vb_x + b_momentum_to_velocity_yy*vb_y*vb_y + b_momentum_to_velocity_zz*vb_z*vb_z;
+		simd4_float b_duv = b_momentum_to_velocity_xx*ub_x*vb_x + b_momentum_to_velocity_yy*ub_y*vb_y + b_momentum_to_velocity_zz*ub_z*vb_z;
 		
-		simdv_float b_suu = b_momentum_to_velocity_xy*ub_x*ub_y + b_momentum_to_velocity_xz*ub_x*ub_z + b_momentum_to_velocity_yz*ub_y*ub_z;
-		simdv_float b_svv = b_momentum_to_velocity_xy*vb_x*vb_y + b_momentum_to_velocity_xz*vb_x*vb_z + b_momentum_to_velocity_yz*vb_y*vb_z;
-		simdv_float b_suv = b_momentum_to_velocity_xy*(ub_x*vb_y + ub_y*vb_x) + b_momentum_to_velocity_xz*(ub_x*vb_z + ub_z*vb_x) + b_momentum_to_velocity_yz*(ub_y*vb_z + ub_z*vb_y);
+		simd4_float b_suu = b_momentum_to_velocity_xy*ub_x*ub_y + b_momentum_to_velocity_xz*ub_x*ub_z + b_momentum_to_velocity_yz*ub_y*ub_z;
+		simd4_float b_svv = b_momentum_to_velocity_xy*vb_x*vb_y + b_momentum_to_velocity_xz*vb_x*vb_z + b_momentum_to_velocity_yz*vb_y*vb_z;
+		simd4_float b_suv = b_momentum_to_velocity_xy*(ub_x*vb_y + ub_y*vb_x) + b_momentum_to_velocity_xz*(ub_x*vb_z + ub_z*vb_x) + b_momentum_to_velocity_yz*(ub_y*vb_z + ub_z*vb_y);
 		
-		simdv_float friction_x = mass_inverse + a_duu + a_suu + a_suu + b_duu + b_suu + b_suu;
-		simdv_float friction_y = mass_inverse + a_dvv + a_svv + a_svv + b_dvv + b_svv + b_svv;
-		simdv_float friction_z = a_duv + a_duv + a_suv + a_suv + b_duv + b_duv + b_suv + b_suv;
+		simd4_float friction_x = mass_inverse + a_duu + a_suu + a_suu + b_duu + b_suu + b_suu;
+		simd4_float friction_y = mass_inverse + a_dvv + a_svv + a_svv + b_dvv + b_svv + b_svv;
+		simd4_float friction_z = a_duv + a_duv + a_suv + a_suv + b_duv + b_duv + b_suv + b_suv;
 		
-		simdv_float ua_xt = a_momentum_to_velocity_xx*ua_x + a_momentum_to_velocity_xy*ua_y + a_momentum_to_velocity_xz*ua_z;
-		simdv_float ua_yt = a_momentum_to_velocity_xy*ua_x + a_momentum_to_velocity_yy*ua_y + a_momentum_to_velocity_yz*ua_z;
-		simdv_float ua_zt = a_momentum_to_velocity_xz*ua_x + a_momentum_to_velocity_yz*ua_y + a_momentum_to_velocity_zz*ua_z;
+		simd4_float ua_xt = a_momentum_to_velocity_xx*ua_x + a_momentum_to_velocity_xy*ua_y + a_momentum_to_velocity_xz*ua_z;
+		simd4_float ua_yt = a_momentum_to_velocity_xy*ua_x + a_momentum_to_velocity_yy*ua_y + a_momentum_to_velocity_yz*ua_z;
+		simd4_float ua_zt = a_momentum_to_velocity_xz*ua_x + a_momentum_to_velocity_yz*ua_y + a_momentum_to_velocity_zz*ua_z;
 		
-		simdv_float va_xt = a_momentum_to_velocity_xx*va_x + a_momentum_to_velocity_xy*va_y + a_momentum_to_velocity_xz*va_z;
-		simdv_float va_yt = a_momentum_to_velocity_xy*va_x + a_momentum_to_velocity_yy*va_y + a_momentum_to_velocity_yz*va_z;
-		simdv_float va_zt = a_momentum_to_velocity_xz*va_x + a_momentum_to_velocity_yz*va_y + a_momentum_to_velocity_zz*va_z;
+		simd4_float va_xt = a_momentum_to_velocity_xx*va_x + a_momentum_to_velocity_xy*va_y + a_momentum_to_velocity_xz*va_z;
+		simd4_float va_yt = a_momentum_to_velocity_xy*va_x + a_momentum_to_velocity_yy*va_y + a_momentum_to_velocity_yz*va_z;
+		simd4_float va_zt = a_momentum_to_velocity_xz*va_x + a_momentum_to_velocity_yz*va_y + a_momentum_to_velocity_zz*va_z;
 		
-		simdv_float ub_xt = b_momentum_to_velocity_xx*ub_x + b_momentum_to_velocity_xy*ub_y + b_momentum_to_velocity_xz*ub_z;
-		simdv_float ub_yt = b_momentum_to_velocity_xy*ub_x + b_momentum_to_velocity_yy*ub_y + b_momentum_to_velocity_yz*ub_z;
-		simdv_float ub_zt = b_momentum_to_velocity_xz*ub_x + b_momentum_to_velocity_yz*ub_y + b_momentum_to_velocity_zz*ub_z;
+		simd4_float ub_xt = b_momentum_to_velocity_xx*ub_x + b_momentum_to_velocity_xy*ub_y + b_momentum_to_velocity_xz*ub_z;
+		simd4_float ub_yt = b_momentum_to_velocity_xy*ub_x + b_momentum_to_velocity_yy*ub_y + b_momentum_to_velocity_yz*ub_z;
+		simd4_float ub_zt = b_momentum_to_velocity_xz*ub_x + b_momentum_to_velocity_yz*ub_y + b_momentum_to_velocity_zz*ub_z;
 		
-		simdv_float vb_xt = b_momentum_to_velocity_xx*vb_x + b_momentum_to_velocity_xy*vb_y + b_momentum_to_velocity_xz*vb_z;
-		simdv_float vb_yt = b_momentum_to_velocity_xy*vb_x + b_momentum_to_velocity_yy*vb_y + b_momentum_to_velocity_yz*vb_z;
-		simdv_float vb_zt = b_momentum_to_velocity_xz*vb_x + b_momentum_to_velocity_yz*vb_y + b_momentum_to_velocity_zz*vb_z;
+		simd4_float vb_xt = b_momentum_to_velocity_xx*vb_x + b_momentum_to_velocity_xy*vb_y + b_momentum_to_velocity_xz*vb_z;
+		simd4_float vb_yt = b_momentum_to_velocity_xy*vb_x + b_momentum_to_velocity_yy*vb_y + b_momentum_to_velocity_yz*vb_z;
+		simd4_float vb_zt = b_momentum_to_velocity_xz*vb_x + b_momentum_to_velocity_yz*vb_y + b_momentum_to_velocity_zz*vb_z;
 		
 		constraints[i].a[0] = a0; constraints[i].a[1] = a1; constraints[i].a[2] = a2; constraints[i].a[3] = a3;
 		constraints[i].b[0] = b0; constraints[i].b[1] = b1; constraints[i].b[2] = b2; constraints[i].b[3] = b3;
@@ -3945,29 +3754,29 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd_st(constraints[i].nb_y, nb_y);
 		simd_st(constraints[i].nb_z, nb_z);
 		
-		simdv_float cached_impulse_x, cached_impulse_y, cached_impulse_z, unused0;
+		simd4_float cached_impulse_x, cached_impulse_y, cached_impulse_z, unused0;
 		load4<sizeof(impulses[0]), 1>((const float*)impulses, slot.indices,
 									  cached_impulse_x, cached_impulse_y, cached_impulse_z, unused0);
 		
-		simdv_float a_velocity_x, a_velocity_y, a_velocity_z;
-		simdv_float a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w;
+		simd4_float a_velocity_x, a_velocity_y, a_velocity_z;
+		simd4_float a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w;
 		load8<sizeof(bodies.momentum[0]), 1>((const float*)bodies.momentum, constraints[i].a,
 											 a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse,
 											 a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w);
 		
-		simdv_float b_velocity_x, b_velocity_y, b_velocity_z;
-		simdv_float b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w;
+		simd4_float b_velocity_x, b_velocity_y, b_velocity_z;
+		simd4_float b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w;
 		load8<sizeof(bodies.momentum[0]), 1>((const float*)bodies.momentum, constraints[i].b,
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simdv_float normal_impulse = simd_float::max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
-		simdv_float max_friction_impulse = normal_impulse * friction;
+		simd4_float normal_impulse = simd_float::max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
+		simd4_float max_friction_impulse = normal_impulse * friction;
 		
-		simdv_float friction_impulse_x = u_x*cached_impulse_x + u_y*cached_impulse_y + u_z*cached_impulse_z;
-		simdv_float friction_impulse_y = v_x*cached_impulse_x + v_y*cached_impulse_y + v_z*cached_impulse_z;
+		simd4_float friction_impulse_x = u_x*cached_impulse_x + u_y*cached_impulse_y + u_z*cached_impulse_z;
+		simd4_float friction_impulse_y = v_x*cached_impulse_x + v_y*cached_impulse_y + v_z*cached_impulse_z;
 		
-		simdv_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
+		simd4_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
 		
 		friction_clamp_scale = simd_rsqrt_est(friction_clamp_scale);
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
@@ -3976,17 +3785,17 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
 		
-		simdv_float linear_impulse_x = friction_impulse_x*u_x + friction_impulse_y*v_x + normal_x * normal_impulse;
-		simdv_float linear_impulse_y = friction_impulse_x*u_y + friction_impulse_y*v_y + normal_y * normal_impulse;
-		simdv_float linear_impulse_z = friction_impulse_x*u_z + friction_impulse_y*v_z + normal_z * normal_impulse;
+		simd4_float linear_impulse_x = friction_impulse_x*u_x + friction_impulse_y*v_x + normal_x * normal_impulse;
+		simd4_float linear_impulse_y = friction_impulse_x*u_y + friction_impulse_y*v_y + normal_y * normal_impulse;
+		simd4_float linear_impulse_z = friction_impulse_x*u_z + friction_impulse_y*v_z + normal_z * normal_impulse;
 		
-		simdv_float a_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ua_x) + friction_impulse_y * simd_ld(constraints[i].va_x) + normal_impulse * simd_ld(constraints[i].na_x);
-		simdv_float a_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ua_y) + friction_impulse_y * simd_ld(constraints[i].va_y) + normal_impulse * simd_ld(constraints[i].na_y);
-		simdv_float a_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ua_z) + friction_impulse_y * simd_ld(constraints[i].va_z) + normal_impulse * simd_ld(constraints[i].na_z);
+		simd4_float a_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ua_x) + friction_impulse_y * simd_ld(constraints[i].va_x) + normal_impulse * simd_ld(constraints[i].na_x);
+		simd4_float a_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ua_y) + friction_impulse_y * simd_ld(constraints[i].va_y) + normal_impulse * simd_ld(constraints[i].na_y);
+		simd4_float a_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ua_z) + friction_impulse_y * simd_ld(constraints[i].va_z) + normal_impulse * simd_ld(constraints[i].na_z);
 		
-		simdv_float b_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ub_x) + friction_impulse_y * simd_ld(constraints[i].vb_x) + normal_impulse * simd_ld(constraints[i].nb_x);
-		simdv_float b_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ub_y) + friction_impulse_y * simd_ld(constraints[i].vb_y) + normal_impulse * simd_ld(constraints[i].nb_y);
-		simdv_float b_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ub_z) + friction_impulse_y * simd_ld(constraints[i].vb_z) + normal_impulse * simd_ld(constraints[i].nb_z);
+		simd4_float b_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ub_x) + friction_impulse_y * simd_ld(constraints[i].vb_x) + normal_impulse * simd_ld(constraints[i].nb_x);
+		simd4_float b_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ub_y) + friction_impulse_y * simd_ld(constraints[i].vb_y) + normal_impulse * simd_ld(constraints[i].nb_y);
+		simd4_float b_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ub_z) + friction_impulse_y * simd_ld(constraints[i].vb_z) + normal_impulse * simd_ld(constraints[i].nb_z);
 		
 		a_velocity_x -= linear_impulse_x * a_mass_inverse;
 		a_velocity_y -= linear_impulse_y * a_mass_inverse;
@@ -4031,65 +3840,65 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 	for (unsigned i = 0; i < constraint_batches; ++i) {
 		const ContactConstraintV& constraint = constraints[i];
 		
-		simdv_float a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse;
-		simdv_float a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w;
+		simd4_float a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse;
+		simd4_float a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w;
 		load8<sizeof(bodies.momentum[0]), 1>((const float*)bodies.momentum, constraint.a,
 											 a_velocity_x, a_velocity_y, a_velocity_z, a_mass_inverse,
 											 a_angular_velocity_x, a_angular_velocity_y, a_angular_velocity_z, a_angular_velocity_w);
 		
-		simdv_float pa_z = simd_ld(constraint.pa_z);
-		simdv_float pa_x = simd_ld(constraint.pa_x);
-		simdv_float pa_y = simd_ld(constraint.pa_y);
+		simd4_float pa_z = simd_ld(constraint.pa_z);
+		simd4_float pa_x = simd_ld(constraint.pa_x);
+		simd4_float pa_y = simd_ld(constraint.pa_y);
 		
-		simdv_float v_xa = simd_madd(a_angular_velocity_y, pa_z, a_velocity_x);
-		simdv_float v_ya = simd_madd(a_angular_velocity_z, pa_x, a_velocity_y);
-		simdv_float v_za = simd_madd(a_angular_velocity_x, pa_y, a_velocity_z);
+		simd4_float v_xa = simd_madd(a_angular_velocity_y, pa_z, a_velocity_x);
+		simd4_float v_ya = simd_madd(a_angular_velocity_z, pa_x, a_velocity_y);
+		simd4_float v_za = simd_madd(a_angular_velocity_x, pa_y, a_velocity_z);
 		
-		simdv_float b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse;
-		simdv_float b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w;
+		simd4_float b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse;
+		simd4_float b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w;
 		load8<sizeof(bodies.momentum[0]), 1>((const float*)bodies.momentum, constraint.b,
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simdv_float pb_z = simd_ld(constraint.pb_z);
-		simdv_float pb_x = simd_ld(constraint.pb_x);
-		simdv_float pb_y = simd_ld(constraint.pb_y);
+		simd4_float pb_z = simd_ld(constraint.pb_z);
+		simd4_float pb_x = simd_ld(constraint.pb_x);
+		simd4_float pb_y = simd_ld(constraint.pb_y);
 		
-		simdv_float v_xb = simd_madd(b_angular_velocity_y, pb_z, b_velocity_x);
-		simdv_float v_yb = simd_madd(b_angular_velocity_z, pb_x, b_velocity_y);
-		simdv_float v_zb = simd_madd(b_angular_velocity_x, pb_y, b_velocity_z);
+		simd4_float v_xb = simd_madd(b_angular_velocity_y, pb_z, b_velocity_x);
+		simd4_float v_yb = simd_madd(b_angular_velocity_z, pb_x, b_velocity_y);
+		simd4_float v_zb = simd_madd(b_angular_velocity_x, pb_y, b_velocity_z);
 		
 		v_xa = simd_madd(b_angular_velocity_z, pb_y, v_xa);
 		v_ya = simd_madd(b_angular_velocity_x, pb_z, v_ya);
 		v_za = simd_madd(b_angular_velocity_y, pb_x, v_za);
 		
-		simdv_float n_x = simd_ld(constraint.n_x);
-		simdv_float fu_x = simd_ld(constraint.u_x);
-		simdv_float fv_x = simd_ld(constraint.v_x);
+		simd4_float n_x = simd_ld(constraint.n_x);
+		simd4_float fu_x = simd_ld(constraint.u_x);
+		simd4_float fv_x = simd_ld(constraint.v_x);
 		
 		v_xb = simd_madd(a_angular_velocity_z, pa_y, v_xb);
 		v_yb = simd_madd(a_angular_velocity_x, pa_z, v_yb);
 		v_zb = simd_madd(a_angular_velocity_y, pa_x, v_zb);
 		
-		simdv_float n_y = simd_ld(constraint.n_y);
-		simdv_float fu_y = simd_ld(constraint.u_y);
-		simdv_float fv_y = simd_ld(constraint.v_y);
+		simd4_float n_y = simd_ld(constraint.n_y);
+		simd4_float fu_y = simd_ld(constraint.u_y);
+		simd4_float fv_y = simd_ld(constraint.v_y);
 		
-		simdv_float v_x = v_xb - v_xa;
-		simdv_float v_y = v_yb - v_ya;
-		simdv_float v_z = v_zb - v_za;
+		simd4_float v_x = v_xb - v_xa;
+		simd4_float v_y = v_yb - v_ya;
+		simd4_float v_z = v_zb - v_za;
 		
-		simdv_float t_z = n_x * v_x;
-		simdv_float t_x = v_x * fu_x;
-		simdv_float t_y = v_x * fv_x;
+		simd4_float t_z = n_x * v_x;
+		simd4_float t_x = v_x * fu_x;
+		simd4_float t_y = v_x * fv_x;
 		
-		simdv_float n_z = simd_ld(constraint.n_z);
-		simdv_float fu_z = simd_ld(constraint.u_z);
-		simdv_float fv_z = simd_ld(constraint.v_z);
+		simd4_float n_z = simd_ld(constraint.n_z);
+		simd4_float fu_z = simd_ld(constraint.u_z);
+		simd4_float fv_z = simd_ld(constraint.v_z);
 		
-		simdv_float normal_bias = simd_ld(constraint.bias);
-		simdv_float old_normal_impulse = simd_ld(constraint_states[i].applied_normal_impulse);
-		simdv_float normal_factor = simd_ld(constraint.normal_velocity_to_normal_impulse);
+		simd4_float normal_bias = simd_ld(constraint.bias);
+		simd4_float old_normal_impulse = simd_ld(constraint_states[i].applied_normal_impulse);
+		simd4_float normal_factor = simd_ld(constraint.normal_velocity_to_normal_impulse);
 		
 		t_z = simd_madd(n_y, v_y, t_z);
 		t_x = simd_madd(v_y, fu_y, t_x);
@@ -4101,12 +3910,12 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		t_x = simd_madd(v_z, fu_z, t_x);
 		t_y = simd_madd(v_z, fv_z, t_y);
 		
-		simdv_float normal_impulse = simd_madd(normal_factor, t_z, normal_bias);
+		simd4_float normal_impulse = simd_madd(normal_factor, t_z, normal_bias);
 		
-		simdv_float t_xx = t_x*t_x;
-		simdv_float t_yy = t_y*t_y;
-		simdv_float t_xy = t_x*t_y;
-		simdv_float tl2 = t_xx + t_yy;
+		simd4_float t_xx = t_x*t_x;
+		simd4_float t_yy = t_y*t_y;
+		simd4_float t_xy = t_x*t_y;
+		simd4_float tl2 = t_xx + t_yy;
 		
 		normal_impulse = simd_float::max(normal_impulse, simd_zero());
 		
@@ -4115,47 +3924,47 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
 		
-		simdv_float max_friction_impulse = normal_impulse * simd_ld(constraint.friction);
+		simd4_float max_friction_impulse = normal_impulse * simd_ld(constraint.friction);
 		normal_impulse = normal_impulse - old_normal_impulse;
 		
-		simdv_float friction_x = simd_ld(constraint.friction_coefficient_x);
-		simdv_float friction_factor = t_xx * friction_x;
-		simdv_float linear_impulse_x = n_x * normal_impulse;
+		simd4_float friction_x = simd_ld(constraint.friction_coefficient_x);
+		simd4_float friction_factor = t_xx * friction_x;
+		simd4_float linear_impulse_x = n_x * normal_impulse;
 		
-		simdv_float friction_y = simd_ld(constraint.friction_coefficient_y);
+		simd4_float friction_y = simd_ld(constraint.friction_coefficient_y);
 		friction_factor = simd_madd(t_yy, friction_y, friction_factor);
-		simdv_float linear_impulse_y = n_y * normal_impulse;
+		simd4_float linear_impulse_y = n_y * normal_impulse;
 		
-		simdv_float friction_z = simd_ld(constraint.friction_coefficient_z);
+		simd4_float friction_z = simd_ld(constraint.friction_coefficient_z);
 		friction_factor = simd_madd(t_xy, friction_z, friction_factor);
-		simdv_float linear_impulse_z = n_z * normal_impulse;
+		simd4_float linear_impulse_z = n_z * normal_impulse;
 		
 		friction_factor = simd_rcp_est(friction_factor);
 		
-		simdv_float na_x = simd_ld(constraint.na_x);
-		simdv_float na_y = simd_ld(constraint.na_y);
-		simdv_float na_z = simd_ld(constraint.na_z);
+		simd4_float na_x = simd_ld(constraint.na_x);
+		simd4_float na_y = simd_ld(constraint.na_y);
+		simd4_float na_z = simd_ld(constraint.na_z);
 		
 		a_angular_velocity_x = simd_madd(na_x, normal_impulse, a_angular_velocity_x);
 		a_angular_velocity_y = simd_madd(na_y, normal_impulse, a_angular_velocity_y);
 		a_angular_velocity_z = simd_madd(na_z, normal_impulse, a_angular_velocity_z);
 		
-		simdv_float old_friction_impulse_x = simd_ld(constraint_states[i].applied_friction_impulse_x);
-		simdv_float old_friction_impulse_y = simd_ld(constraint_states[i].applied_friction_impulse_y);
+		simd4_float old_friction_impulse_x = simd_ld(constraint_states[i].applied_friction_impulse_x);
+		simd4_float old_friction_impulse_y = simd_ld(constraint_states[i].applied_friction_impulse_y);
 		
 		friction_factor = simd_float::min(simd_splat(1e+6f), friction_factor); // Note: First operand is returned on NaN.
 		
-		simdv_float friction_impulse_x = t_x*friction_factor;
-		simdv_float friction_impulse_y = t_y*friction_factor;
+		simd4_float friction_impulse_x = t_x*friction_factor;
+		simd4_float friction_impulse_y = t_y*friction_factor;
 		
 		friction_impulse_x = old_friction_impulse_x - friction_impulse_x; // Note: Friction impulse has the wrong sign until this point. This is really an addition.
 		friction_impulse_y = old_friction_impulse_y - friction_impulse_y;
 		
-		simdv_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
+		simd4_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
 		
-		simdv_float nb_x = simd_ld(constraint.nb_x);
-		simdv_float nb_y = simd_ld(constraint.nb_y);
-		simdv_float nb_z = simd_ld(constraint.nb_z);
+		simd4_float nb_x = simd_ld(constraint.nb_x);
+		simd4_float nb_y = simd_ld(constraint.nb_y);
+		simd4_float nb_z = simd_ld(constraint.nb_z);
 		
 		friction_clamp_scale = simd_rsqrt_est(friction_clamp_scale);
 		
@@ -4183,23 +3992,23 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		linear_impulse_y = simd_madd(fv_y, friction_impulse_y, linear_impulse_y);
 		linear_impulse_z = simd_madd(fv_z, friction_impulse_y, linear_impulse_z);
 		
-		simdv_float a_mass_inverse_neg = simd_xor(a_mass_inverse, simd_splat(-0.0f));
+		simd4_float a_mass_inverse_neg = simd_xor(a_mass_inverse, simd_splat(-0.0f));
 		
 		a_velocity_x = simd_madd(linear_impulse_x, a_mass_inverse_neg, a_velocity_x);
 		a_velocity_y = simd_madd(linear_impulse_y, a_mass_inverse_neg, a_velocity_y);
 		a_velocity_z = simd_madd(linear_impulse_z, a_mass_inverse_neg, a_velocity_z);
 		
-		simdv_float ua_x = simd_ld(constraint.ua_x);
-		simdv_float ua_y = simd_ld(constraint.ua_y);
-		simdv_float ua_z = simd_ld(constraint.ua_z);
+		simd4_float ua_x = simd_ld(constraint.ua_x);
+		simd4_float ua_y = simd_ld(constraint.ua_y);
+		simd4_float ua_z = simd_ld(constraint.ua_z);
 		
 		a_angular_velocity_x = simd_madd(ua_x, friction_impulse_x, a_angular_velocity_x);
 		a_angular_velocity_y = simd_madd(ua_y, friction_impulse_x, a_angular_velocity_y);
 		a_angular_velocity_z = simd_madd(ua_z, friction_impulse_x, a_angular_velocity_z);
 		
-		simdv_float va_x = simd_ld(constraint.va_x);
-		simdv_float va_y = simd_ld(constraint.va_y);
-		simdv_float va_z = simd_ld(constraint.va_z);
+		simd4_float va_x = simd_ld(constraint.va_x);
+		simd4_float va_y = simd_ld(constraint.va_y);
+		simd4_float va_z = simd_ld(constraint.va_z);
 		
 		a_angular_velocity_x = simd_madd(va_x, friction_impulse_y, a_angular_velocity_x);
 		a_angular_velocity_y = simd_madd(va_y, friction_impulse_y, a_angular_velocity_y);
@@ -4215,17 +4024,17 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		b_velocity_y = simd_madd(linear_impulse_y, b_mass_inverse, b_velocity_y);
 		b_velocity_z = simd_madd(linear_impulse_z, b_mass_inverse, b_velocity_z);
 		
-		simdv_float ub_x = simd_ld(constraint.ub_x);
-		simdv_float ub_y = simd_ld(constraint.ub_y);
-		simdv_float ub_z = simd_ld(constraint.ub_z);
+		simd4_float ub_x = simd_ld(constraint.ub_x);
+		simd4_float ub_y = simd_ld(constraint.ub_y);
+		simd4_float ub_z = simd_ld(constraint.ub_z);
 		
 		b_angular_velocity_x = simd_madd(ub_x, friction_impulse_x, b_angular_velocity_x);
 		b_angular_velocity_y = simd_madd(ub_y, friction_impulse_x, b_angular_velocity_y);
 		b_angular_velocity_z = simd_madd(ub_z, friction_impulse_x, b_angular_velocity_z);
 		
-		simdv_float vb_x = simd_ld(constraint.vb_x);
-		simdv_float vb_y = simd_ld(constraint.vb_y);
-		simdv_float vb_z = simd_ld(constraint.vb_z);
+		simd4_float vb_x = simd_ld(constraint.vb_x);
+		simd4_float vb_y = simd_ld(constraint.vb_y);
+		simd4_float vb_z = simd_ld(constraint.vb_z);
 		
 		b_angular_velocity_x = simd_madd(vb_x, friction_impulse_y, b_angular_velocity_x);
 		b_angular_velocity_y = simd_madd(vb_y, friction_impulse_y, b_angular_velocity_y);
