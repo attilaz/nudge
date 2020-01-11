@@ -143,14 +143,17 @@ typedef simd128_t simd4_int32;
 
 
 namespace simd128 {
+	/*
 	NUDGE_FORCEINLINE simd128_t unpacklo32(simd128_t x, simd128_t y) {
 		return simd_shuf_xAyB(x, y);
 	}
-	
+	 */
+/*
 	NUDGE_FORCEINLINE simd128_t unpackhi32(simd128_t x, simd128_t y) {
 		return simd_shuf_zCwD(x, y);
 	}
-
+*/
+	/*
 	NUDGE_FORCEINLINE __m128i unpacklo32(__m128i x, __m128i y) {
 		return _mm_unpacklo_epi32(x, y);
 	}
@@ -158,6 +161,7 @@ namespace simd128 {
 	NUDGE_FORCEINLINE __m128i unpackhi32(__m128i x, __m128i y) {
 		return _mm_unpackhi_epi32(x, y);
 	}
+	 */
 	
 	template<unsigned x0, unsigned x1, unsigned y0, unsigned y1>
 	NUDGE_FORCEINLINE simd128_t concat2x32(simd128_t x, simd128_t y) {
@@ -187,18 +191,21 @@ namespace simd {
 	NUDGE_FORCEINLINE unsigned signmask32(__m128i x) {
 		return _mm_movemask_ps(_mm_castsi128_ps(x));
 	}
-	
+	/*
 	NUDGE_FORCEINLINE simd128_t bitwise_xor(simd128_t x, simd128_t y) {
 		return simd_xor(x, y);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd128_t bitwise_or(simd128_t x, simd128_t y) {
 		return simd_or(x, y);
 	}
-	
+	 */
+	/*
 	NUDGE_FORCEINLINE simd128_t bitwise_and(simd128_t x, simd128_t y) {
 		return simd_and(x, y);
 	}
+	 */
 /*
 	NUDGE_FORCEINLINE __m128i bitwise_xor(__m128i x, __m128i y) {
 		return _mm_xor_si128(x, y);
@@ -501,6 +508,7 @@ typedef __m256 simd8_float;
 typedef __m256i simd8_int32;
 
 namespace simd128 {
+#if 0
 	NUDGE_FORCEINLINE __m256 unpacklo32(__m256 x, __m256 y) {
 		return _mm256_unpacklo_ps(x, y);
 	}
@@ -508,7 +516,7 @@ namespace simd128 {
 	NUDGE_FORCEINLINE __m256 unpackhi32(__m256 x, __m256 y) {
 		return _mm256_unpackhi_ps(x, y);
 	}
-
+#endif
 	NUDGE_FORCEINLINE __m256i unpacklo32(__m256i x, __m256i y) {
 		return _mm256_unpacklo_epi32(x, y);
 	}
@@ -1455,11 +1463,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float bymf = simd_float::cmp_eq(pbyz, pb);
 			simd4_float bzmf = simd_float::cmp_eq(pbz, pb);
 			
-			simd4_int32 aymi = simd::bitwise_and(simd_float::asint(aymf), simd_int32::make4(1));
-			simd4_int32 azmi = simd::bitwise_and(simd_float::asint(azmf), simd_int32::make4(1));
+			simd4_int32 aymi = simd_and(simd_float::asint(aymf), simd_int32::make4(1));
+			simd4_int32 azmi = simd_and(simd_float::asint(azmf), simd_int32::make4(1));
 			
-			simd4_int32 bymi = simd::bitwise_and(simd_float::asint(bymf), simd_int32::make4(1));
-			simd4_int32 bzmi = simd::bitwise_and(simd_float::asint(bzmf), simd_int32::make4(1));
+			simd4_int32 bymi = simd_and(simd_float::asint(bymf), simd_int32::make4(1));
+			simd4_int32 bzmi = simd_and(simd_float::asint(bzmf), simd_int32::make4(1));
 			
 			simd4_int32 aface = simd_int32::add(aymi, azmi);
 			simd4_int32 bface = simd_int32::add(bymi, bzmi);
@@ -1468,7 +1476,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float swap = simd_float::cmp_eq(pa, p);
 			
 			simd4_float pair_a_b = simd_int32::asfloat(simd_int32::load4((const int32_t*)(pairs + i)));
-			simd4_float pair_b_a = simd_int32::asfloat(simd::bitwise_or(simd_int32::shift_left<16>(simd_float::asint(pair_a_b)), simd_int32::shift_right<16>(simd_float::asint(pair_a_b))));
+			simd4_float pair_b_a = simd_int32::asfloat(simd_or(simd_int32::shift_left<16>(simd_float::asint(pair_a_b)), simd_int32::shift_right<16>(simd_float::asint(pair_a_b))));
 			
 			simd4_float face = simd::blendv32(simd_int32::asfloat(bface), simd_int32::asfloat(aface), swap);
 			simd4_float pair = simd::blendv32(pair_a_b, pair_b_a, swap);
@@ -1697,13 +1705,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				simd4_float nan_threshold = simd_float::make4(1e-3f);
 				
-				r_a0 = simd::bitwise_or(simd_float::rsqrt(r_a0), simd_float::cmp_le(r_a0, nan_threshold));
-				r_a1 = simd::bitwise_or(simd_float::rsqrt(r_a1), simd_float::cmp_le(r_a1, nan_threshold));
-				r_a2 = simd::bitwise_or(simd_float::rsqrt(r_a2), simd_float::cmp_le(r_a2, nan_threshold));
+				r_a0 = simd_or(simd_float::rsqrt(r_a0), simd_float::cmp_le(r_a0, nan_threshold));
+				r_a1 = simd_or(simd_float::rsqrt(r_a1), simd_float::cmp_le(r_a1, nan_threshold));
+				r_a2 = simd_or(simd_float::rsqrt(r_a2), simd_float::cmp_le(r_a2, nan_threshold));
 				
-				r_b0 = simd::bitwise_or(simd_float::rsqrt(r_b0), simd_float::cmp_le(r_b0, nan_threshold));
-				r_b1 = simd::bitwise_or(simd_float::rsqrt(r_b1), simd_float::cmp_le(r_b1, nan_threshold));
-				r_b2 = simd::bitwise_or(simd_float::rsqrt(r_b2), simd_float::cmp_le(r_b2, nan_threshold));
+				r_b0 = simd_or(simd_float::rsqrt(r_b0), simd_float::cmp_le(r_b0, nan_threshold));
+				r_b1 = simd_or(simd_float::rsqrt(r_b1), simd_float::cmp_le(r_b1, nan_threshold));
+				r_b2 = simd_or(simd_float::rsqrt(r_b2), simd_float::cmp_le(r_b2, nan_threshold));
 				
 				simd4_float pa0 = aacy*a_size_z + aacz*a_size_y;
 				simd4_float pa1 = aacz*a_size_x + aacx*a_size_z;
@@ -1835,7 +1843,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float dx = c1;
 				simd4_float dy = c2;
 				
-				unsigned b_positive_face_bit = simd::signmask32(simd::bitwise_xor(b_offset, c)) & (1 << a_face);
+				unsigned b_positive_face_bit = simd::signmask32(simd_xor(b_offset, c)) & (1 << a_face);
 				unsigned b_offset_neg = simd::signmask32(b_offset) & (1 << a_face);
 				
 				if (!b_positive_face_bit)
@@ -1850,10 +1858,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				// a.size.z, c.z, dx.z, dy.z
 				NUDGE_ALIGNED(16) float quads[4*3];
 				
-				simd4_float q0 = simd128::unpacklo32(a_size, c);
-				simd4_float q1 = simd128::unpackhi32(a_size, c);
-				simd4_float q2 = simd128::unpacklo32(dx, dy);
-				simd4_float q3 = simd128::unpackhi32(dx, dy);
+				simd4_float q0 = simd_shuf_xAyB(a_size, c);
+				simd4_float q1 = simd_shuf_zCwD(a_size, c);
+				simd4_float q2 = simd_shuf_xAyB(dx, dy);
+				simd4_float q3 = simd_shuf_zCwD(dx, dy);
 				
 				simd_float::store4(quads + 0, simd128::concat2x32<0,1,0,1>(q0, q2));
 				simd_float::store4(quads + 4, simd128::concat2x32<2,3,2,3>(q0, q2));
@@ -1875,8 +1883,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float tx = simd_float::load4(transformed_x);
 					simd4_float ty = simd_float::load4(transformed_y);
 					
-					simd4_float sxycxy = simd128::unpacklo32(tx, ty);
-					simd4_float dxy = simd128::unpackhi32(tx, ty);
+					simd4_float sxycxy = simd_shuf_xAyB(tx, ty);
+					simd4_float dxy = simd_shuf_zCwD(tx, ty);
 					
 					simd4_float sx = simd128::shuffle32<0,0,0,0>(sxycxy);
 					simd4_float sy = simd128::shuffle32<1,1,1,1>(sxycxy);
@@ -1892,11 +1900,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float sign_pnpn = simd_float::make4(0.0f, -0.0f, 0.0f, -0.0f);
 						simd4_float sign_nnpp = simd_float::make4(-0.0f, -0.0f, 0.0f, 0.0f);
 						
-						simd4_float corner0x = simd::bitwise_xor(sx, sign_pnpn);
-						simd4_float corner0y = simd::bitwise_xor(sy, sign_nnpp);
+						simd4_float corner0x = simd_xor(sx, sign_pnpn);
+						simd4_float corner0y = simd_xor(sy, sign_nnpp);
 						
-						simd4_float corner1x = cx + simd::bitwise_xor(simd128::shuffle32<0,0,0,0>(dxy), sign_npnp) + simd::bitwise_xor(simd128::shuffle32<2,2,2,2>(dxy), sign_nnpp);
-						simd4_float corner1y = cy + simd::bitwise_xor(simd128::shuffle32<1,1,1,1>(dxy), sign_npnp) + simd::bitwise_xor(simd128::shuffle32<3,3,3,3>(dxy), sign_nnpp);
+						simd4_float corner1x = cx + simd_xor(simd128::shuffle32<0,0,0,0>(dxy), sign_npnp) + simd_xor(simd128::shuffle32<2,2,2,2>(dxy), sign_nnpp);
+						simd4_float corner1y = cy + simd_xor(simd128::shuffle32<1,1,1,1>(dxy), sign_npnp) + simd_xor(simd128::shuffle32<3,3,3,3>(dxy), sign_nnpp);
 						
 						simd4_float k = (simd128::concat2x32<2,2,0,0>(sxycxy, dxy) * simd128::shuffle32<3,1,3,1>(dxy) -
 										 simd128::concat2x32<3,3,1,1>(sxycxy, dxy) * simd128::shuffle32<2,0,2,0>(dxy));
@@ -1907,20 +1915,20 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						
 						simd4_float sdxy = dxy * simd128::shuffle32<1,0,1,0>(sxycxy);
 						
-						simd4_float delta_x = ox + simd::bitwise_xor(simd128::shuffle32<2,2,2,2>(sdxy), sign_nnpp) + simd::bitwise_xor(simd128::shuffle32<3,3,3,3>(sdxy), sign_npnp);
-						simd4_float delta_y = oy + simd::bitwise_xor(simd128::shuffle32<0,0,0,0>(sdxy), sign_nnpp) + simd::bitwise_xor(simd128::shuffle32<1,1,1,1>(sdxy), sign_npnp);
+						simd4_float delta_x = ox + simd_xor(simd128::shuffle32<2,2,2,2>(sdxy), sign_nnpp) + simd_xor(simd128::shuffle32<3,3,3,3>(sdxy), sign_npnp);
+						simd4_float delta_y = oy + simd_xor(simd128::shuffle32<0,0,0,0>(sdxy), sign_nnpp) + simd_xor(simd128::shuffle32<1,1,1,1>(sdxy), sign_npnp);
 						
 						simd4_float inside_x = simd_float::cmp_le(simd_float::abs(corner1x), sx);
 						simd4_float inside_y = simd_float::cmp_le(simd_float::abs(corner1y), sy);
 						
 						simd4_float mask0 = simd_float::cmp_le(simd_float::max(simd_float::abs(delta_x), simd_float::abs(delta_y)), delta_max);
-						simd4_float mask1 = simd::bitwise_and(inside_x, inside_y);
+						simd4_float mask1 = simd_and(inside_x, inside_y);
 						
 						corner_mask = simd_pack_i32_to_i16(mask0, mask1);
 						
 						// Don't allow edge intersections if both vertices are inside.
-						edge_mask = simd_pack_i32_to_i16(simd::bitwise_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0)),
-														 simd::bitwise_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1)));
+						edge_mask = simd_pack_i32_to_i16(simd_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0)),
+														 simd_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1)));
 						
 						simd_float::store4(support_x + 0, corner0x);
 						simd_float::store4(support_y + 0, corner0y);
@@ -1938,12 +1946,12 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float offset_x = simd128::shuffle32<0,0,2,2>(dxy);
 						simd4_float offset_y = simd128::shuffle32<1,1,3,3>(dxy);
 						
-						simd4_float pivot_x = cx + simd::bitwise_xor(simd128::shuffle32<2,2,0,0>(dxy), sign_npnp);
-						simd4_float pivot_y = cy + simd::bitwise_xor(simd128::shuffle32<3,3,1,1>(dxy), sign_npnp);
+						simd4_float pivot_x = cx + simd_xor(simd128::shuffle32<2,2,0,0>(dxy), sign_npnp);
+						simd4_float pivot_y = cy + simd_xor(simd128::shuffle32<3,3,1,1>(dxy), sign_npnp);
 						
 						simd4_float sign_mask = simd_float::make4(-0.0f);
-						simd4_float pos_x = simd::bitwise_or(simd::bitwise_and(offset_x, sign_mask), sx); // Copy sign.
-						simd4_float pos_y = simd::bitwise_or(simd::bitwise_and(offset_y, sign_mask), sy);
+						simd4_float pos_x = simd_or(simd_and(offset_x, sign_mask), sx); // Copy sign.
+						simd4_float pos_y = simd_or(simd_and(offset_y, sign_mask), sy);
 						
 						simd4_float rx = simd128::shuffle32<0,0,2,2>(rdxy);
 						simd4_float ry = simd128::shuffle32<1,1,3,3>(rdxy);
@@ -1973,8 +1981,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float mask_a = simd_float::cmp_neq(a, one);
 						simd4_float mask_b = simd_float::cmp_neq(b, one);
 						
-						mask_a = simd::bitwise_and(mask_a, mask);
-						mask_b = simd::bitwise_and(mask_b, mask);
+						mask_a = simd_and(mask_a, mask);
+						mask_b = simd_and(mask_b, mask);
 						
 						edge_mask = simd_iandc(edge_mask, simd_pack_i32_to_i16(mask_a, mask_b));
 						
@@ -2066,7 +2074,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd128::transpose32(a_size_transformed, c_transformed, dx_transformed, dy_transformed);
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
-				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd::bitwise_xor(zn, simd_float::make4(-0.0f)), simd_aos::dot(c_transformed, zn));
+				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd_xor(zn, simd_float::make4(-0.0f)), simd_aos::dot(c_transformed, zn));
 				plane *= simd_float::make4(1.0f)/simd128::shuffle32<2,2,2,2>(zn);
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
@@ -2093,9 +2101,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simdv_float y = simd_float::loadv(support + 16 + i);
 					simdv_float z = x*simd128::shuffle32<0,0,0,0>(plane) + y*simd128::shuffle32<1,1,1,1>(plane) + simd128::shuffle32<2,2,2,2>(plane);
 					
-					simdv_float penetration = penetration_offset - simd::bitwise_xor(z, z_sign);
+					simdv_float penetration = penetration_offset - simd_xor(z, z_sign);
 					
-					z += penetration * simd::bitwise_xor(simd_float::makev(0.5f), z_sign);
+					z += penetration * simd_xor(simd_float::makev(0.5f), z_sign);
 					
 					penetration_mask |= simd::signmask32(simd_float::cmp_gt(penetration, simd_float::zerov())) << i;
 					
@@ -2119,7 +2127,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float kx_ky_kz_ks = qx_qy_qz_qs + qx_qy_qz_qs;
 					
 					// Make ks negative so that we can create +sx from kx*qs and -sx from ks*qx.
-					kx_ky_kz_ks = simd::bitwise_xor(kx_ky_kz_ks, simd_float::make4(0.0f, 0.0f, 0.0f, -0.0f));
+					kx_ky_kz_ks = simd_xor(kx_ky_kz_ks, simd_float::make4(0.0f, 0.0f, 0.0f, -0.0f));
 					
 					//  1.0f - yy - zz, xy + sz, xz - sy
 					a_to_world0 = (simd128::shuffle32<1,0,0,3>(kx_ky_kz_ks) * simd128::shuffle32<1,1,2,3>(qx_qy_qz_qs) +
@@ -2137,16 +2145,16 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					a_to_world1 = a_to_world1 - simd_float::make4(0.0f, 1.0f, 0.0f, 0.0f);
 					a_to_world2 = a_to_world2 - simd_float::make4(0.0f, 0.0f, 1.0f, 0.0f);
 					
-					a_to_world0 = simd::bitwise_xor(a_to_world0, simd_float::make4(-0.0f, 0.0f, 0.0f, 0.0f));
-					a_to_world1 = simd::bitwise_xor(a_to_world1, simd_float::make4(0.0f, -0.0f, 0.0f, 0.0f));
-					a_to_world2 = simd::bitwise_xor(a_to_world2, simd_float::make4(0.0f, 0.0f, -0.0f, 0.0f));
+					a_to_world0 = simd_xor(a_to_world0, simd_float::make4(-0.0f, 0.0f, 0.0f, 0.0f));
+					a_to_world1 = simd_xor(a_to_world1, simd_float::make4(0.0f, -0.0f, 0.0f, 0.0f));
+					a_to_world2 = simd_xor(a_to_world2, simd_float::make4(0.0f, 0.0f, -0.0f, 0.0f));
 				}
 				
 				// Add valid support points as contacts.
 				simd4_float wn = a_face == 0 ? a_to_world0 : (a_face == 1 ? a_to_world1 : a_to_world2);
 				
 				if (b_offset_neg)
-					wn = simd::bitwise_xor(wn, simd_float::make4(-0.0f));
+					wn = simd_xor(wn, simd_float::make4(-0.0f));
 				
 				simd4_float a_position = simd_float::load4(transforms[a_index].position);
 				
@@ -2170,7 +2178,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					
 					tag_swap = 16;
 					
-					wn = simd::bitwise_xor(wn, simd_float::make4(-0.0f));;
+					wn = simd_xor(wn, simd_float::make4(-0.0f));;
 				}
 				
 				uint64_t high_tag = ((uint64_t)a_index << 32) | ((uint64_t)b_index << 48);
@@ -2425,11 +2433,11 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			// Flip normal?
 			simd4_float sign_mask = simd_float::make4(-0.0f);
-			simd4_float flip_sign = simd::bitwise_and(n_x*delta_x + n_y*delta_y + n_z*delta_z, sign_mask);
+			simd4_float flip_sign = simd_and(n_x*delta_x + n_y*delta_y + n_z*delta_z, sign_mask);
 			
-			n_x = simd::bitwise_xor(n_x, flip_sign);
-			n_y = simd::bitwise_xor(n_y, flip_sign);
-			n_z = simd::bitwise_xor(n_z, flip_sign);
+			n_x = simd_xor(n_x, flip_sign);
+			n_y = simd_xor(n_y, flip_sign);
+			n_z = simd_xor(n_z, flip_sign);
 			
 			// Load sizes.
 			simd4_float a_size_x = simd_float::load4(colliders[a0_index].size);
@@ -2454,37 +2462,37 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_sign_y = b_basis_yx*n_x + b_basis_yy*n_y + b_basis_yz*n_z;
 			simd4_float b_sign_z = b_basis_zx*n_x + b_basis_zy*n_y + b_basis_zz*n_z;
 			
-			a_sign_x = simd::bitwise_and(a_sign_x, sign_mask);
-			a_sign_y = simd::bitwise_and(a_sign_y, sign_mask);
-			a_sign_z = simd::bitwise_and(a_sign_z, sign_mask);
+			a_sign_x = simd_and(a_sign_x, sign_mask);
+			a_sign_y = simd_and(a_sign_y, sign_mask);
+			a_sign_z = simd_and(a_sign_z, sign_mask);
 			
-			b_sign_x = simd::bitwise_and(b_sign_x, sign_mask);
-			b_sign_y = simd::bitwise_and(b_sign_y, sign_mask);
-			b_sign_z = simd::bitwise_and(b_sign_z, sign_mask);
+			b_sign_x = simd_and(b_sign_x, sign_mask);
+			b_sign_y = simd_and(b_sign_y, sign_mask);
+			b_sign_z = simd_and(b_sign_z, sign_mask);
 			
-			simd4_int32 edge_x = simd::bitwise_or(simd_int32::shift_right<31-0>(simd_float::asint(a_sign_x)), simd_int32::shift_right<31-16>(simd_float::asint(simd::bitwise_xor(b_sign_x, simd_float::make4(-0.0f)))));
-			simd4_int32 edge_y = simd::bitwise_or(simd_int32::shift_right<31-1>(simd_float::asint(a_sign_y)), simd_int32::shift_right<31-17>(simd_float::asint(simd::bitwise_xor(b_sign_y, simd_float::make4(-0.0f)))));
-			simd4_int32 edge_z = simd::bitwise_or(simd_int32::shift_right<31-2>(simd_float::asint(a_sign_z)), simd_int32::shift_right<31-18>(simd_float::asint(simd::bitwise_xor(b_sign_z, simd_float::make4(-0.0f)))));
+			simd4_int32 edge_x = simd_or(simd_int32::shift_right<31-0>(simd_float::asint(a_sign_x)), simd_int32::shift_right<31-16>(simd_float::asint(simd_xor(b_sign_x, simd_float::make4(-0.0f)))));
+			simd4_int32 edge_y = simd_or(simd_int32::shift_right<31-1>(simd_float::asint(a_sign_y)), simd_int32::shift_right<31-17>(simd_float::asint(simd_xor(b_sign_y, simd_float::make4(-0.0f)))));
+			simd4_int32 edge_z = simd_or(simd_int32::shift_right<31-2>(simd_float::asint(a_sign_z)), simd_int32::shift_right<31-18>(simd_float::asint(simd_xor(b_sign_z, simd_float::make4(-0.0f)))));
 			simd4_int32 edge_w = simd_i16_add(simd_i16_add(edge, simd_isplat((1 << 16) | 1)), simd_i16_srl(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 
 //			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 			
-			simd4_int32 edge_xy = simd::bitwise_or(edge_x, edge_y);
-			simd4_int32 edge_zw = simd::bitwise_or(edge_z, edge_w);
+			simd4_int32 edge_xy = simd_or(edge_x, edge_y);
+			simd4_int32 edge_zw = simd_or(edge_z, edge_w);
 			
-			simd4_int32 tag_hi = simd::bitwise_or(edge_xy, edge_zw);
+			simd4_int32 tag_hi = simd_or(edge_xy, edge_zw);
 			simd4_int32 tag_lo = simd_iandc(edge_w, tag_hi);
 			tag_hi = simd_int32::shift_left<8>(tag_hi);
 			
-			simd4_int32 tag = simd::bitwise_or(tag_lo, tag_hi);
+			simd4_int32 tag = simd_or(tag_lo, tag_hi);
 			
-			a_size_x = simd::bitwise_xor(a_size_x, a_sign_x);
-			a_size_y = simd::bitwise_xor(a_size_y, a_sign_y);
-			a_size_z = simd::bitwise_xor(a_size_z, a_sign_z);
+			a_size_x = simd_xor(a_size_x, a_sign_x);
+			a_size_y = simd_xor(a_size_y, a_sign_y);
+			a_size_z = simd_xor(a_size_z, a_sign_z);
 			
-			b_size_x = simd::bitwise_xor(b_size_x, b_sign_x);
-			b_size_y = simd::bitwise_xor(b_size_y, b_sign_y);
-			b_size_z = simd::bitwise_xor(b_size_z, b_sign_z);
+			b_size_x = simd_xor(b_size_x, b_sign_x);
+			b_size_y = simd_xor(b_size_y, b_sign_y);
+			b_size_z = simd_xor(b_size_z, b_sign_z);
 			
 			a_basis_xx *= a_size_x;
 			a_basis_xy *= a_size_x;
@@ -2556,13 +2564,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_float::store4(contacts[count + 3].position, p_w);
 			simd_float::store4(contacts[count + 3].normal, n_w);
 			
-			simd4_float body_pair = simd::bitwise_or(simd::bitwise_and(a_position_w, simd_int32::asfloat(simd_int32::make4(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(simd_float::asint(b_position_w))));
+			simd4_float body_pair = simd_or(simd_and(a_position_w, simd_int32::asfloat(simd_int32::make4(0xffff))), simd_int32::asfloat(simd_int32::shift_left<16>(simd_float::asint(b_position_w))));
 			simd_float::storeu4((float*)(bodies + count), body_pair);
 			
-			simd4_int32 pair = simd_float::asint(simd::bitwise_or(simd::bitwise_and(b_position_w, simd_int32::asfloat(simd_int32::make4(0xffff0000))), simd_int32::asfloat(simd_int32::shift_right<16>(simd_float::asint(a_position_w)))));
+			simd4_int32 pair = simd_float::asint(simd_or(simd_and(b_position_w, simd_int32::asfloat(simd_int32::make4(0xffff0000))), simd_int32::asfloat(simd_int32::shift_right<16>(simd_float::asint(a_position_w)))));
 			
-			simd_int32::storeu4((int32_t*)tags + count*2 + 0, simd128::unpacklo32(tag, pair));
-			simd_int32::storeu4((int32_t*)tags + count*2 + 4, simd128::unpackhi32(tag, pair));
+			simd_int32::storeu4((int32_t*)tags + count*2 + 0, simd_shuf_xAyB(tag, pair));
+			simd_int32::storeu4((int32_t*)tags + count*2 + 4, simd_shuf_xAyB(tag, pair));
 			
 			count += 4;
 		}
@@ -2701,25 +2709,25 @@ static inline void dilate_3(simdv_int32 x, simdv_int32& lo32, simdv_int32& hi32)
 	
 	simdv_int32 lo24 = x;
 	simdv_int32 hi24 = simd_int32::shift_right<8>(x);
-	lo24 = simd::bitwise_and(lo24, mask0);
-	hi24 = simd::bitwise_and(hi24, mask0);
+	lo24 = simd_and(lo24, mask0);
+	hi24 = simd_and(hi24, mask0);
 	
-	lo24 = simd::bitwise_or(lo24, simd_int32::shift_left<8>(lo24));
-	hi24 = simd::bitwise_or(hi24, simd_int32::shift_left<8>(hi24));
-	lo24 = simd::bitwise_and(lo24, mask1);
-	hi24 = simd::bitwise_and(hi24, mask1);
+	lo24 = simd_or(lo24, simd_int32::shift_left<8>(lo24));
+	hi24 = simd_or(hi24, simd_int32::shift_left<8>(hi24));
+	lo24 = simd_and(lo24, mask1);
+	hi24 = simd_and(hi24, mask1);
 	
-	lo24 = simd::bitwise_or(lo24, simd_int32::shift_left<4>(lo24));
-	hi24 = simd::bitwise_or(hi24, simd_int32::shift_left<4>(hi24));
-	lo24 = simd::bitwise_and(lo24, mask2);
-	hi24 = simd::bitwise_and(hi24, mask2);
+	lo24 = simd_or(lo24, simd_int32::shift_left<4>(lo24));
+	hi24 = simd_or(hi24, simd_int32::shift_left<4>(hi24));
+	lo24 = simd_and(lo24, mask2);
+	hi24 = simd_and(hi24, mask2);
 	
-	lo24 = simd::bitwise_or(lo24, simd_int32::shift_left<2>(lo24));
-	hi24 = simd::bitwise_or(hi24, simd_int32::shift_left<2>(hi24));
-	lo24 = simd::bitwise_and(lo24, mask3);
-	hi24 = simd::bitwise_and(hi24, mask3);
+	lo24 = simd_or(lo24, simd_int32::shift_left<2>(lo24));
+	hi24 = simd_or(hi24, simd_int32::shift_left<2>(hi24));
+	lo24 = simd_and(lo24, mask3);
+	hi24 = simd_and(hi24, mask3);
 	
-	lo32 = simd::bitwise_or(simd_int32::shift_left<offset>(lo24), simd_int32::shift_left<24+offset>(hi24));
+	lo32 = simd_or(simd_int32::shift_left<offset>(lo24), simd_int32::shift_left<24+offset>(hi24));
 	hi32 = simd_int32::shift_right<8-offset>(hi24);
 }
 
@@ -2729,8 +2737,8 @@ static inline void morton(simdv_int32 x, simdv_int32 y, simdv_int32 z, simdv_int
 	dilate_3<1>(y, ly, hy);
 	dilate_3<0>(z, lz, hz);
 	
-	lo32 = simd::bitwise_or(simd::bitwise_or(lx, ly), lz);
-	hi32 = simd::bitwise_or(simd::bitwise_or(hx, hy), hz);
+	lo32 = simd_or(simd_or(lx, ly), lz);
+	hi32 = simd_or(simd_or(hx, hy), hz);
 }
 
 static inline void radix_sort_uint64_low48(uint64_t* data, unsigned count, Arena temporary) {
@@ -3235,10 +3243,10 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		
 		simdv_int32 lm, hm;
 		morton(simd_float::toint(pos_x), simd_float::toint(pos_y), simd_float::toint(pos_z), lm, hm);
-		hm = simd::bitwise_or(hm, index);
+		hm = simd_or(hm, index);
 		
-		simdv_int32 mi0 = simd128::unpacklo32(lm, hm);
-		simdv_int32 mi1 = simd128::unpackhi32(lm, hm);
+		simdv_int32 mi0 = simd_shuf_xAyB(lm, hm);
+		simdv_int32 mi1 = simd_shuf_zCwD(lm, hm);
 		
 #if NUDGE_SIMDV_WIDTH == 256
 		simd_int32::store8((int32_t*)(morton_codes + i) + 0, simd256::permute128<0,2>(mi0, mi1));
@@ -3392,11 +3400,11 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			simdv_float min_b_z = simd_float::loadv(coarse_bounds[j].min_z);
 			simdv_float max_b_z = simd_float::loadv(coarse_bounds[j].max_z);
 			
-			simdv_float inside_x = simd::bitwise_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
-			simdv_float inside_y = simd::bitwise_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
-			simdv_float inside_z = simd::bitwise_and(simd_float::cmp_gt(max_b_z, min_a_z), simd_float::cmp_gt(max_a_z, min_b_z));
+			simdv_float inside_x = simd_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
+			simdv_float inside_y = simd_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
+			simdv_float inside_z = simd_and(simd_float::cmp_gt(max_b_z, min_a_z), simd_float::cmp_gt(max_a_z, min_b_z));
 			
-			unsigned mask = simd::signmask32(simd::bitwise_and(simd::bitwise_and(inside_x, inside_y), inside_z));
+			unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 			
 			coarse_groups[coarse_group_count] = mask | ij_bits;
 			coarse_group_count += mask != 0;
@@ -3538,11 +3546,11 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 				simdv_float min_b_z = simd_float::loadv(bounds[j].min_z);
 				simdv_float max_b_z = simd_float::loadv(bounds[j].max_z);
 				
-				simdv_float inside_x = simd::bitwise_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
-				simdv_float inside_y = simd::bitwise_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
-				simdv_float inside_z = simd::bitwise_and(simd_float::cmp_gt(max_b_z, min_a_z), simd_float::cmp_gt(max_a_z, min_b_z));
+				simdv_float inside_x = simd_and(simd_float::cmp_gt(max_b_x, min_a_x), simd_float::cmp_gt(max_a_x, min_b_x));
+				simdv_float inside_y = simd_and(simd_float::cmp_gt(max_b_y, min_a_y), simd_float::cmp_gt(max_a_y, min_b_y));
+				simdv_float inside_z = simd_and(simd_float::cmp_gt(max_b_z, min_a_z), simd_float::cmp_gt(max_a_z, min_b_z));
 				
-				unsigned mask = simd::signmask32(simd::bitwise_and(simd::bitwise_and(inside_x, inside_y), inside_z));
+				unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 				
 				groups[group_count] = mask | ij_bits;
 				group_count += mask != 0;
@@ -4529,7 +4537,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simdv_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
 		
 		simdv_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_float::zerov());
-		normal_velocity_to_normal_impulse = simd::bitwise_and(simd_float::makev(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
+		normal_velocity_to_normal_impulse = simd_and(simd_float::makev(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
 		
 		simdv_float bias = simd_float::makev(-bias_factor) * simd_float::max(penetration - simd_float::makev(allowed_penetration), simd_float::zerov()) * normal_velocity_to_normal_impulse;
 		
@@ -4540,7 +4548,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simdv_float u_y = u_x - normal_z;
 		simdv_float u_z = simd_float::madd(normal_x - normal_y, s, normal_y);
 		
-		u_x = simd::bitwise_xor(u_x, simd_float::makev(-0.0f));
+		u_x = simd_xor(u_x, simd_float::makev(-0.0f));
 		simd_soa::normalize(u_x, u_y, u_z);
 		
 		// Compute the rest of the basis.
@@ -4890,7 +4898,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		linear_impulse_y = simd_float::madd(fv_y, friction_impulse_y, linear_impulse_y);
 		linear_impulse_z = simd_float::madd(fv_z, friction_impulse_y, linear_impulse_z);
 		
-		simdv_float a_mass_inverse_neg = simd::bitwise_xor(a_mass_inverse, simd_float::makev(-0.0f));
+		simdv_float a_mass_inverse_neg = simd_xor(a_mass_inverse, simd_float::makev(-0.0f));
 		
 		a_velocity_x = simd_float::madd(linear_impulse_x, a_mass_inverse_neg, a_velocity_x);
 		a_velocity_y = simd_float::madd(linear_impulse_y, a_mass_inverse_neg, a_velocity_y);
