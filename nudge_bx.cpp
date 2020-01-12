@@ -23,6 +23,8 @@
 // questions:
 //	simd_madd	fma / _mm_fmadd_ps
 //	simd_nmsub(x, y, z);	why 'n'msub (fma)
+//  slower... simd128::concat2x32<2,2,0,0>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_zzzz(sxycxy), simd_swiz_xxxx(dxy));
+//            simd128::concat2x32<3,3,1,1>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_wwww(sxycxy), simd_swiz_yyyy(dxy));
 
 
 #include "nudge.h"
@@ -98,11 +100,6 @@ typedef simd128_t simd4_int32;
 
 
 namespace simd128 {
-	template<unsigned x0, unsigned x1, unsigned y0, unsigned y1>
-	NUDGE_FORCEINLINE simd128_t concat2x32(simd128_t x, simd128_t y) {
-		return _mm_shuffle_ps(x, y, _MM_SHUFFLE(y1, y0, x1, x0));
-	}
-	
 	NUDGE_FORCEINLINE void transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
 		_MM_TRANSPOSE4_PS(x, y, z, w);
 	}
@@ -152,6 +149,17 @@ namespace simd_float {
 }
 
 // ext
+
+BX_SIMD_FORCE_INLINE simd128_t simd_swiz_zzAA(simd128_t _a, simd128_t _b)
+{
+	return simd_shuf_xyAB(simd_swiz_zzzz(_a), simd_swiz_xxxx(_b));
+}
+
+BX_SIMD_FORCE_INLINE simd128_t simd_swiz_wwBB(simd128_t _a, simd128_t _b)
+{
+	return simd_shuf_xyAB(simd_swiz_wwww(_a), simd_swiz_yyyy(_b));
+}
+
 	
 BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_sse_t _a)
 {
@@ -1170,9 +1178,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float q2 = simd_shuf_xAyB(dx, dy);
 				simd4_float q3 = simd_shuf_zCwD(dx, dy);
 				
-				simd_st(quads + 0, simd128::concat2x32<0,1,0,1>(q0, q2));
-				simd_st(quads + 4, simd128::concat2x32<2,3,2,3>(q0, q2));
-				simd_st(quads + 8, simd128::concat2x32<0,1,0,1>(q1, q3));
+				simd_st(quads + 0, simd_shuf_xyAB(q0, q2));
+				simd_st(quads + 4, simd_shuf_zwCD(q0, q2));
+				simd_st(quads + 8, simd_shuf_xyAB(q1, q3));
 				
 				// Transform so that overlap testing can be done in two dimensions.
 				const float* transformed_x = quads + 4*((a_face+1) % 3);
@@ -1213,8 +1221,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float corner1x = cx + simd_xor(simd_swiz_xxxx(dxy), sign_npnp) + simd_xor(simd_swiz_zzzz(dxy), sign_nnpp);
 						simd4_float corner1y = cy + simd_xor(simd_swiz_yyyy(dxy), sign_npnp) + simd_xor(simd_swiz_wwww(dxy), sign_nnpp);
 						
-						simd4_float k = (simd128::concat2x32<2,2,0,0>(sxycxy, dxy) * simd_swiz_wywy(dxy) -
-										 simd128::concat2x32<3,3,1,1>(sxycxy, dxy) * simd_swiz_zxzx(dxy));
+						simd4_float k = (simd_swiz_zzAA(sxycxy, dxy) * simd_swiz_wywy(dxy) -
+										 simd_swiz_wwBB(sxycxy, dxy) * simd_swiz_zxzx(dxy));
 						
 						simd4_float ox = simd_swiz_xxxx(k);
 						simd4_float oy = simd_swiz_yyyy(k);
@@ -1381,7 +1389,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd128::transpose32(a_size_transformed, c_transformed, dx_transformed, dy_transformed);
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
-				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
+				simd4_float plane = simd_shuf_xyAB(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
 				plane *= simd_splat(1.0f)/simd_swiz_zzzz(zn);
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
