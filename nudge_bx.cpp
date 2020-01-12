@@ -98,10 +98,17 @@ NUDGE_FORCEINLINE simd128_t& operator /= (simd128_t& a, simd128_t b) {
 typedef simd128_t simd4_float;
 typedef simd128_t simd4_int32;
 
-
 namespace simd128 {
+	
 	NUDGE_FORCEINLINE void transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
-		_MM_TRANSPOSE4_PS(x, y, z, w);
+		const simd128_t tmp0 = simd_shuf_xAyB(x, y);
+		const simd128_t tmp2 = simd_shuf_xAyB(z, w);
+		const simd128_t tmp1 = simd_shuf_zCwD(x, y);
+		const simd128_t tmp3 = simd_shuf_zCwD(z, w);
+		x = simd_shuf_ABxy(tmp2, tmp0);
+		y = simd_shuf_CDzw(tmp2, tmp0);
+		z = simd_shuf_ABxy(tmp3, tmp1);
+		w = simd_shuf_CDzw(tmp3, tmp1);
 	}
 }
 
@@ -1781,8 +1788,6 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_int32 edge_z = simd_or(simd_srl(a_sign_z, 31-2), simd_srl(simd_xor(b_sign_z, simd_splat(-0.0f)), 31-18));
 			simd4_int32 edge_w = simd_i16_add(simd_i16_add(edge, simd_isplat((1 << 16) | 1)), simd_i16_srl(edge, 1)); // Calculates 1 << edge (valid for 0-2).
 
-//			simd4_int32 edge_w = _mm_add_epi16(_mm_add_epi16(edge, _mm_set1_epi16(1)), _mm_srli_epi16(edge, 1)); // Calculates 1 << edge (valid for 0-2).
-			
 			simd4_int32 edge_xy = simd_or(edge_x, edge_y);
 			simd4_int32 edge_zw = simd_or(edge_z, edge_w);
 			
@@ -3478,7 +3483,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 					break;
 			}
 			
-			unsigned lane = first_set_bit((unsigned)_mm_movemask_ps(simd_icmpeq(scheduled_a_b, invalid_index)));
+			unsigned lane = first_set_bit((unsigned)simd::signmask32(simd_icmpeq(scheduled_a_b, invalid_index)));
 			ContactSlotV* slot = vacant_slots + j;
 			ContactPairV* pair = vacant_pairs + j;
 			
