@@ -103,16 +103,6 @@ namespace simd128 {
 		return _mm_shuffle_ps(x, y, _MM_SHUFFLE(y1, y0, x1, x0));
 	}
 	
-	template<unsigned i0, unsigned i1, unsigned i2, unsigned i3>
-	NUDGE_FORCEINLINE simd128_t shuffle32(simd128_t x) {
-		return _mm_shuffle_ps(x, x, _MM_SHUFFLE(i3, i2, i1, i0));
-	}
-	
-	template<unsigned i0, unsigned i1, unsigned i2, unsigned i3>
-	NUDGE_FORCEINLINE __m128i shuffle32(__m128i x) {
-		return _mm_shuffle_epi32(x, _MM_SHUFFLE(i3, i2, i1, i0));
-	}
-	
 	NUDGE_FORCEINLINE void transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
 		_MM_TRANSPOSE4_PS(x, y, z, w);
 	}
@@ -249,12 +239,12 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 namespace simd_aos {
 	NUDGE_FORCEINLINE simd4_float dot(simd4_float a, simd4_float b) {
 		simd4_float c = a*b;
-		return simd128::shuffle32<0,0,0,0>(c) + simd128::shuffle32<1,1,1,1>(c) + simd128::shuffle32<2,2,2,2>(c);
+		return simd_swiz_xxxx(c) + simd_swiz_yyyy(c) + simd_swiz_zzzz(c);
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cross(simd4_float a, simd4_float b) {
-		simd4_float c = simd128::shuffle32<1,2,0,0>(a) * simd128::shuffle32<2,0,1,0>(b);
-		simd4_float d = simd128::shuffle32<2,0,1,0>(a) * simd128::shuffle32<1,2,0,0>(b);
+		simd4_float c = simd_swiz_yzxx(a) * simd_swiz_zxyx(b);
+		simd4_float d = simd_swiz_zxyx(a) * simd_swiz_yzxx(b);
 		return c - d;
 	}
 }
@@ -1130,14 +1120,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				// Find most aligned face of b.
 				dirs = simd_float::abs(dirs);
 				
-				simd4_float max_dir = simd_float::max(simd128::shuffle32<0,2,1,3>(dirs), simd128::shuffle32<0,0,0,0>(dirs));
+				simd4_float max_dir = simd_float::max(simd_swiz_xzyw(dirs), simd_swiz_xxxx(dirs));
 				
 				unsigned dir_mask = simd::signmask32(simd_cmpge(dirs, max_dir));
 				
 				// Compute the coordinates of the two quad faces.
-				c0 *= simd128::shuffle32<0,0,0,0>(b_size);
-				c1 *= simd128::shuffle32<1,1,1,1>(b_size);
-				c2 *= simd128::shuffle32<2,2,2,2>(b_size);
+				c0 *= simd_swiz_xxxx(b_size);
+				c1 *= simd_swiz_yyyy(b_size);
+				c2 *= simd_swiz_zzzz(b_size);
 				
 				unsigned b_face = 0;
 				
@@ -1203,10 +1193,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd4_float sxycxy = simd_shuf_xAyB(tx, ty);
 					simd4_float dxy = simd_shuf_zCwD(tx, ty);
 					
-					simd4_float sx = simd128::shuffle32<0,0,0,0>(sxycxy);
-					simd4_float sy = simd128::shuffle32<1,1,1,1>(sxycxy);
-					simd4_float cx = simd128::shuffle32<2,2,2,2>(sxycxy);
-					simd4_float cy = simd128::shuffle32<3,3,3,3>(sxycxy);
+					simd4_float sx = simd_swiz_xxxx(sxycxy);
+					simd4_float sy = simd_swiz_yyyy(sxycxy);
+					simd4_float cx = simd_swiz_zzzz(sxycxy);
+					simd4_float cy = simd_swiz_wwww(sxycxy);
 					
 					simd4_float sign_npnp = simd_ld(-0.0f, 0.0f, -0.0f, 0.0f);
 					
@@ -1220,20 +1210,20 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float corner0x = simd_xor(sx, sign_pnpn);
 						simd4_float corner0y = simd_xor(sy, sign_nnpp);
 						
-						simd4_float corner1x = cx + simd_xor(simd128::shuffle32<0,0,0,0>(dxy), sign_npnp) + simd_xor(simd128::shuffle32<2,2,2,2>(dxy), sign_nnpp);
-						simd4_float corner1y = cy + simd_xor(simd128::shuffle32<1,1,1,1>(dxy), sign_npnp) + simd_xor(simd128::shuffle32<3,3,3,3>(dxy), sign_nnpp);
+						simd4_float corner1x = cx + simd_xor(simd_swiz_xxxx(dxy), sign_npnp) + simd_xor(simd_swiz_zzzz(dxy), sign_nnpp);
+						simd4_float corner1y = cy + simd_xor(simd_swiz_yyyy(dxy), sign_npnp) + simd_xor(simd_swiz_wwww(dxy), sign_nnpp);
 						
-						simd4_float k = (simd128::concat2x32<2,2,0,0>(sxycxy, dxy) * simd128::shuffle32<3,1,3,1>(dxy) -
-										 simd128::concat2x32<3,3,1,1>(sxycxy, dxy) * simd128::shuffle32<2,0,2,0>(dxy));
+						simd4_float k = (simd128::concat2x32<2,2,0,0>(sxycxy, dxy) * simd_swiz_wywy(dxy) -
+										 simd128::concat2x32<3,3,1,1>(sxycxy, dxy) * simd_swiz_zxzx(dxy));
 						
-						simd4_float ox = simd128::shuffle32<0,0,0,0>(k);
-						simd4_float oy = simd128::shuffle32<1,1,1,1>(k);
-						simd4_float delta_max = simd_float::abs(simd128::shuffle32<2,2,2,2>(k));
+						simd4_float ox = simd_swiz_xxxx(k);
+						simd4_float oy = simd_swiz_yyyy(k);
+						simd4_float delta_max = simd_float::abs(simd_swiz_zzzz(k));
 						
-						simd4_float sdxy = dxy * simd128::shuffle32<1,0,1,0>(sxycxy);
+						simd4_float sdxy = dxy * simd_swiz_yxyx(sxycxy);
 						
-						simd4_float delta_x = ox + simd_xor(simd128::shuffle32<2,2,2,2>(sdxy), sign_nnpp) + simd_xor(simd128::shuffle32<3,3,3,3>(sdxy), sign_npnp);
-						simd4_float delta_y = oy + simd_xor(simd128::shuffle32<0,0,0,0>(sdxy), sign_nnpp) + simd_xor(simd128::shuffle32<1,1,1,1>(sdxy), sign_npnp);
+						simd4_float delta_x = ox + simd_xor(simd_swiz_zzzz(sdxy), sign_nnpp) + simd_xor(simd_swiz_wwww(sdxy), sign_npnp);
+						simd4_float delta_y = oy + simd_xor(simd_swiz_xxxx(sdxy), sign_nnpp) + simd_xor(simd_swiz_yyyy(sdxy), sign_npnp);
 						
 						simd4_float inside_x = simd_cmple(simd_float::abs(corner1x), sx);
 						simd4_float inside_y = simd_cmple(simd_float::abs(corner1y), sy);
@@ -1244,8 +1234,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						corner_mask = simd_pack_i32_to_i16(mask0, mask1);
 						
 						// Don't allow edge intersections if both vertices are inside.
-						edge_mask = simd_pack_i32_to_i16(simd_and(simd128::shuffle32<3,2,0,2>(mask0), simd128::shuffle32<1,0,1,3>(mask0)),
-														 simd_and(simd128::shuffle32<1,3,2,3>(mask1), simd128::shuffle32<0,2,0,1>(mask1)));
+						edge_mask = simd_pack_i32_to_i16(simd_and(simd_swiz_wzxz(mask0), simd_swiz_yxyw(mask0)),
+														 simd_and(simd_swiz_ywzw(mask1), simd_swiz_xzxy(mask1)));
 						
 						simd_st(support_x + 0, corner0x);
 						simd_st(support_y + 0, corner0y);
@@ -1260,18 +1250,18 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float one = simd_splat(1.0f);
 						simd4_float rdxy = one/dxy;
 						
-						simd4_float offset_x = simd128::shuffle32<0,0,2,2>(dxy);
-						simd4_float offset_y = simd128::shuffle32<1,1,3,3>(dxy);
+						simd4_float offset_x = simd_swiz_xxzz(dxy);
+						simd4_float offset_y = simd_swiz_yyww(dxy);
 						
-						simd4_float pivot_x = cx + simd_xor(simd128::shuffle32<2,2,0,0>(dxy), sign_npnp);
-						simd4_float pivot_y = cy + simd_xor(simd128::shuffle32<3,3,1,1>(dxy), sign_npnp);
+						simd4_float pivot_x = cx + simd_xor(simd_swiz_zzxx(dxy), sign_npnp);
+						simd4_float pivot_y = cy + simd_xor(simd_swiz_wwyy(dxy), sign_npnp);
 						
 						simd4_float sign_mask = simd_splat(-0.0f);
 						simd4_float pos_x = simd_or(simd_and(offset_x, sign_mask), sx); // Copy sign.
 						simd4_float pos_y = simd_or(simd_and(offset_y, sign_mask), sy);
 						
-						simd4_float rx = simd128::shuffle32<0,0,2,2>(rdxy);
-						simd4_float ry = simd128::shuffle32<1,1,3,3>(rdxy);
+						simd4_float rx = simd_swiz_xxzz(rdxy);
+						simd4_float ry = simd_swiz_yyww(rdxy);
 						
 						simd4_float near_x = (pos_x + pivot_x) * rx;
 						simd4_float far_x = (pos_x - pivot_x) * rx;
@@ -1392,7 +1382,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
 				simd4_float plane = simd128::concat2x32<0,1,0,1>(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
-				plane *= simd_splat(1.0f)/simd128::shuffle32<2,2,2,2>(zn);
+				plane *= simd_splat(1.0f)/simd_swiz_zzzz(zn);
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
 				
@@ -1401,13 +1391,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				if (b_offset_neg)
 					z_sign = simd_splat(-0.0f);
 				
-				simd4_float penetration_offset = simd128::shuffle32<2,2,2,2>(a_size_transformed);
+				simd4_float penetration_offset = simd_swiz_zzzz(a_size_transformed);
 				unsigned penetration_mask = 0;
 				
 				for (unsigned i = 0; i < 16; i += simdv_width32) {
 					simd4_float x = simd_ld(support + 0 + i);
 					simd4_float y = simd_ld(support + 16 + i);
-					simd4_float z = x*simd128::shuffle32<0,0,0,0>(plane) + y*simd128::shuffle32<1,1,1,1>(plane) + simd128::shuffle32<2,2,2,2>(plane);
+					simd4_float z = x*simd_swiz_xxxx(plane) + y*simd_swiz_yyyy(plane) + simd_swiz_zzzz(plane);
 					
 					simd4_float penetration = penetration_offset - simd_xor(z, z_sign);
 					
@@ -1438,16 +1428,16 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					kx_ky_kz_ks = simd_xor(kx_ky_kz_ks, simd_ld(0.0f, 0.0f, 0.0f, -0.0f));
 					
 					//  1.0f - yy - zz, xy + sz, xz - sy
-					a_to_world0 = (simd128::shuffle32<1,0,0,3>(kx_ky_kz_ks) * simd128::shuffle32<1,1,2,3>(qx_qy_qz_qs) +
-								   simd128::shuffle32<2,2,3,3>(kx_ky_kz_ks) * simd128::shuffle32<2,3,1,3>(qx_qy_qz_qs));
+					a_to_world0 = (simd_swiz_yxxw(kx_ky_kz_ks) * simd_swiz_yyzw(qx_qy_qz_qs) +
+								   simd_swiz_zzww(kx_ky_kz_ks) * simd_swiz_zwyw(qx_qy_qz_qs));
 					
 					// xy - sz, 1.0f - zz - xx, yz + sx
-					a_to_world1 = (simd128::shuffle32<0,2,1,3>(kx_ky_kz_ks) * simd128::shuffle32<1,2,2,3>(qx_qy_qz_qs) +
-								   simd128::shuffle32<3,0,0,3>(kx_ky_kz_ks) * simd128::shuffle32<2,0,3,3>(qx_qy_qz_qs));
+					a_to_world1 = (simd_swiz_xzyw(kx_ky_kz_ks) * simd_swiz_yzzw(qx_qy_qz_qs) +
+								   simd_swiz_wxxw(kx_ky_kz_ks) * simd_swiz_zxww(qx_qy_qz_qs));
 					
 					// xz + sy, yz - sx, 1.0f - xx - yy
-					a_to_world2 = (simd128::shuffle32<0,1,0,3>(kx_ky_kz_ks) * simd128::shuffle32<2,2,0,3>(qx_qy_qz_qs) +
-								   simd128::shuffle32<1,3,1,3>(kx_ky_kz_ks) * simd128::shuffle32<3,0,1,3>(qx_qy_qz_qs));
+					a_to_world2 = (simd_swiz_xyxw(kx_ky_kz_ks) * simd_swiz_zzxw(qx_qy_qz_qs) +
+								   simd_swiz_ywyw(kx_ky_kz_ks) * simd_swiz_wxyw(qx_qy_qz_qs));
 					
 					a_to_world0 = a_to_world0 - simd_ld(1.0f, 0.0f, 0.0f, 0.0f);
 					a_to_world1 = a_to_world1 - simd_ld(0.0f, 1.0f, 0.0f, 0.0f);
@@ -2406,8 +2396,8 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	
 	simd4_float scene_scale128 = simd_splat((1<<16)-1) * simd_rcp_est(scene_max128 - scene_min128);
 	
-	scene_scale128 = simd_float::min(simd128::shuffle32<0,1,2,2>(scene_scale128), simd128::shuffle32<2,2,0,1>(scene_scale128));
-	scene_scale128 = simd_float::min(scene_scale128, simd128::shuffle32<1,0,3,2>(scene_scale128));
+	scene_scale128 = simd_float::min(simd_swiz_xyzz(scene_scale128), simd_swiz_zzxy(scene_scale128));
+	scene_scale128 = simd_float::min(scene_scale128, simd_swiz_yxwz(scene_scale128));
 	scene_min128 = scene_min128 * scene_scale128;
 	
 #ifdef DEBUG
@@ -2419,9 +2409,9 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	simd4_float scene_scale = scene_scale128;
 	simd4_int32 index = simd_ild(0 << 16, 1 << 16, 2 << 16, 3 << 16);
 	
-	simd4_float scene_min_x = simd128::shuffle32<0,0,0,0>(scene_min);
-	simd4_float scene_min_y = simd128::shuffle32<1,1,1,1>(scene_min);
-	simd4_float scene_min_z = simd128::shuffle32<2,2,2,2>(scene_min);
+	simd4_float scene_min_x = simd_swiz_xxxx(scene_min);
+	simd4_float scene_min_y = simd_swiz_yyyy(scene_min);
+	simd4_float scene_min_z = simd_swiz_zzzz(scene_min);
 	
 	uint64_t* morton_codes = allocate_array<uint64_t>(&temporary, aligned_count, 32);
 	
@@ -2514,19 +2504,19 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		coarse_min_z = simd_float::min(coarse_min_z, simd_ld(bounds[start+1].min_z));
 		coarse_max_z = simd_float::max(coarse_max_z, simd_ld(bounds[start+1].max_z));
 		
-		coarse_min_x = simd_float::min(coarse_min_x, simd128::shuffle32<2,3,0,1>(coarse_min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd128::shuffle32<2,3,0,1>(coarse_max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd128::shuffle32<2,3,0,1>(coarse_min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd128::shuffle32<2,3,0,1>(coarse_max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd128::shuffle32<2,3,0,1>(coarse_min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd128::shuffle32<2,3,0,1>(coarse_max_z));
+		coarse_min_x = simd_float::min(coarse_min_x, simd_swiz_zwxy(coarse_min_x));
+		coarse_max_x = simd_float::max(coarse_max_x, simd_swiz_zwxy(coarse_max_x));
+		coarse_min_y = simd_float::min(coarse_min_y, simd_swiz_zwxy(coarse_min_y));
+		coarse_max_y = simd_float::max(coarse_max_y, simd_swiz_zwxy(coarse_max_y));
+		coarse_min_z = simd_float::min(coarse_min_z, simd_swiz_zwxy(coarse_min_z));
+		coarse_max_z = simd_float::max(coarse_max_z, simd_swiz_zwxy(coarse_max_z));
 		
-		coarse_min_x = simd_float::min(coarse_min_x, simd128::shuffle32<1,0,3,2>(coarse_min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd128::shuffle32<1,0,3,2>(coarse_max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd128::shuffle32<1,0,3,2>(coarse_min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd128::shuffle32<1,0,3,2>(coarse_max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd128::shuffle32<1,0,3,2>(coarse_min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd128::shuffle32<1,0,3,2>(coarse_max_z));
+		coarse_min_x = simd_float::min(coarse_min_x, simd_swiz_yxwz(coarse_min_x));
+		coarse_max_x = simd_float::max(coarse_max_x, simd_swiz_yxwz(coarse_max_x));
+		coarse_min_y = simd_float::min(coarse_min_y, simd_swiz_yxwz(coarse_min_y));
+		coarse_max_y = simd_float::max(coarse_max_y, simd_swiz_yxwz(coarse_max_y));
+		coarse_min_z = simd_float::min(coarse_min_z, simd_swiz_yxwz(coarse_min_z));
+		coarse_max_z = simd_float::max(coarse_max_z, simd_swiz_yxwz(coarse_max_z));
 		
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
@@ -3525,7 +3515,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 				simd4_int32 indices = simd_ld((const int32_t*)vacant_slots[i].indices);
 				
 				simd4_int32 mask = simd_icmpeq(ab, invalid_index);
-				simd4_int32 first_index = simd128::shuffle32<0, 0, 0, 0>(indices);
+				simd4_int32 first_index = simd_swiz_xxxx(indices);
 				
 				indices = simd::blendv32(indices, first_index, mask);
 				
