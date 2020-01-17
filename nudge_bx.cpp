@@ -150,12 +150,12 @@ namespace simd_float {
 
 // ext
 	//todo: add this to bx
-BX_SIMD_FORCE_INLINE simd4_float simd_cmpneq(simd4_float x, simd4_float y) {
+BX_SIMD_FORCE_INLINE simd4_float simd_cmpneq(simd128_t x, simd128_t y) {
 	return _mm_cmpneq_ps(x, y);
 }
 
 	//todo: add this to bx ??
-BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_sse_t _a)
+BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 {
 	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
 }
