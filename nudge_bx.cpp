@@ -29,7 +29,6 @@
 
 #include "nudge.h"
 #include <assert.h>
-//#include <immintrin.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -144,19 +143,21 @@ namespace simd_float {
 		return simd_max(y, x);	//todo: check this note
 	}
 	
-	NUDGE_FORCEINLINE simd4_float abs(simd4_float x) {
-		return simd_abs(x);
-		//todo(attila): different impl
-		//return _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
-	}
-	
-	NUDGE_FORCEINLINE simd4_float cmp_neq(simd4_float x, simd4_float y) {
-		return _mm_cmpneq_ps(x, y);
-	}
 }
 
 // ext
+	//todo: add this to bx
+BX_SIMD_FORCE_INLINE simd4_float simd_cmpneq(simd4_float x, simd4_float y) {
+	return _mm_cmpneq_ps(x, y);
+}
 
+	//todo: add this to bx ??
+BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_sse_t _a)
+{
+	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
+}
+
+	//todo: these are slow implementations
 BX_SIMD_FORCE_INLINE simd128_t simd_swiz_zzAA(simd128_t _a, simd128_t _b)
 {
 	return simd_shuf_xyAB(simd_swiz_zzzz(_a), simd_swiz_xxxx(_b));
@@ -166,13 +167,6 @@ BX_SIMD_FORCE_INLINE simd128_t simd_swiz_wwBB(simd128_t _a, simd128_t _b)
 {
 	return simd_shuf_xyAB(simd_swiz_wwww(_a), simd_swiz_yyyy(_b));
 }
-
-	
-BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_sse_t _a)
-{
-	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
-}
-
 
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 {
@@ -699,17 +693,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Compute the penetration.
-			vx_x = simd_float::abs(vx_x);
-			vx_y = simd_float::abs(vx_y);
-			vx_z = simd_float::abs(vx_z);
+			vx_x = simd_abs(vx_x);
+			vx_y = simd_abs(vx_y);
+			vx_z = simd_abs(vx_z);
 			
-			vy_x = simd_float::abs(vy_x);
-			vy_y = simd_float::abs(vy_y);
-			vy_z = simd_float::abs(vy_z);
+			vy_x = simd_abs(vy_x);
+			vy_y = simd_abs(vy_y);
+			vy_z = simd_abs(vy_z);
 			
-			vz_x = simd_float::abs(vz_x);
-			vz_y = simd_float::abs(vz_y);
-			vz_z = simd_float::abs(vz_z);
+			vz_x = simd_abs(vz_x);
+			vz_y = simd_abs(vz_y);
+			vz_z = simd_abs(vz_z);
 			
 			simd4_float pax = b_size_x + vx_x*a_size_x + vy_x*a_size_y + vz_x*a_size_z;
 			simd4_float pay = b_size_y + vx_y*a_size_x + vy_y*a_size_y + vz_y*a_size_z;
@@ -750,9 +744,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float a_offset_y = u_y + delta_y - b_rotation_s * t_y;
 			simd4_float a_offset_z = u_z + delta_z - b_rotation_s * t_z;
 			
-			pax -= simd_float::abs(a_offset_x);
-			pay -= simd_float::abs(a_offset_y);
-			paz -= simd_float::abs(a_offset_z);
+			pax -= simd_abs(a_offset_x);
+			pay -= simd_abs(a_offset_y);
+			paz -= simd_abs(a_offset_z);
 			
 			simd_soa::cross(delta_x, delta_y, delta_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
 			t_x += t_x;
@@ -765,9 +759,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_offset_y = u_y - delta_y - a_rotation_s * t_y;
 			simd4_float b_offset_z = u_z - delta_z - a_rotation_s * t_z;
 			
-			pbx -= simd_float::abs(b_offset_x);
-			pby -= simd_float::abs(b_offset_y);
-			pbz -= simd_float::abs(b_offset_z);
+			pbx -= simd_abs(b_offset_x);
+			pby -= simd_abs(b_offset_y);
+			pbz -= simd_abs(b_offset_z);
 			
 			// Reduce face penetrations.
 			simd4_float payz = simd_float::min(pay, paz);
@@ -1009,13 +1003,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float bc2y = bcy*bcy;
 				simd4_float bc2z = bcz*bcz;
 				
-				simd4_float aacx = simd_float::abs(acx);
-				simd4_float aacy = simd_float::abs(acy);
-				simd4_float aacz = simd_float::abs(acz);
+				simd4_float aacx = simd_abs(acx);
+				simd4_float aacy = simd_abs(acy);
+				simd4_float aacz = simd_abs(acz);
 				
-				simd4_float abcx = simd_float::abs(bcx);
-				simd4_float abcy = simd_float::abs(bcy);
-				simd4_float abcz = simd_float::abs(bcz);
+				simd4_float abcx = simd_abs(bcx);
+				simd4_float abcy = simd_abs(bcy);
+				simd4_float abcz = simd_abs(bcz);
 				
 				simd4_float r_a0 = ac2y + ac2z;
 				simd4_float r_a1 = ac2z + ac2x;
@@ -1043,9 +1037,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float pb1 = abcz*b_size_x + abcx*b_size_z;
 				simd4_float pb2 = abcx*b_size_y + abcy*b_size_x;
 				
-				simd4_float o0 = simd_float::abs(acy*b_offset_z - acz*b_offset_y);
-				simd4_float o1 = simd_float::abs(acz*b_offset_x - acx*b_offset_z);
-				simd4_float o2 = simd_float::abs(acx*b_offset_y - acy*b_offset_x);
+				simd4_float o0 = simd_abs(acy*b_offset_z - acz*b_offset_y);
+				simd4_float o1 = simd_abs(acz*b_offset_x - acx*b_offset_z);
+				simd4_float o2 = simd_abs(acx*b_offset_y - acy*b_offset_x);
 				
 				simd_st(edge_penetration_a + (i*3 + 0)*4, (pa0 - o0) * r_a0);
 				simd_st(edge_penetration_a + (i*3 + 1)*4, (pa1 - o1) * r_a1);
@@ -1133,7 +1127,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float b_size = simd_ld(colliders[b_index].size);
 				
 				// Find most aligned face of b.
-				dirs = simd_float::abs(dirs);
+				dirs = simd_abs(dirs);
 				
 				simd4_float max_dir = simd_float::max(simd_swiz_xzyw(dirs), simd_swiz_xxxx(dirs));
 				
@@ -1233,17 +1227,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						
 						simd4_float ox = simd_swiz_xxxx(k);
 						simd4_float oy = simd_swiz_yyyy(k);
-						simd4_float delta_max = simd_float::abs(simd_swiz_zzzz(k));
+						simd4_float delta_max = simd_abs(simd_swiz_zzzz(k));
 						
 						simd4_float sdxy = dxy * simd_swiz_yxyx(sxycxy);
 						
 						simd4_float delta_x = ox + simd_xor(simd_swiz_zzzz(sdxy), sign_nnpp) + simd_xor(simd_swiz_wwww(sdxy), sign_npnp);
 						simd4_float delta_y = oy + simd_xor(simd_swiz_xxxx(sdxy), sign_nnpp) + simd_xor(simd_swiz_yyyy(sdxy), sign_npnp);
 						
-						simd4_float inside_x = simd_cmple(simd_float::abs(corner1x), sx);
-						simd4_float inside_y = simd_cmple(simd_float::abs(corner1y), sy);
+						simd4_float inside_x = simd_cmple(simd_abs(corner1x), sx);
+						simd4_float inside_y = simd_cmple(simd_abs(corner1y), sy);
 						
-						simd4_float mask0 = simd_cmple(simd_float::max(simd_float::abs(delta_x), simd_float::abs(delta_y)), delta_max);
+						simd4_float mask0 = simd_cmple(simd_float::max(simd_abs(delta_x), simd_abs(delta_y)), delta_max);
 						simd4_float mask1 = simd_and(inside_x, inside_y);
 						
 						corner_mask = simd_pack_i32_to_i16(mask0, mask1);
@@ -1300,8 +1294,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						
 						simd4_float mask = simd_cmpgt(a + b, simd_zero()); // Make sure -a < b.
 						
-						simd4_float mask_a = simd_float::cmp_neq(a, one);
-						simd4_float mask_b = simd_float::cmp_neq(b, one);
+						simd4_float mask_a = simd_cmpneq(a, one);
+						simd4_float mask_b = simd_cmpneq(b, one);
 						
 						mask_a = simd_and(mask_a, mask);
 						mask_b = simd_and(mask_b, mask);
@@ -3625,13 +3619,13 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float mass_inverse = a_mass_inverse + b_mass_inverse;
 		simd4_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
 		
-		simd4_float nonzero = simd_float::cmp_neq(normal_velocity_to_normal_impulse, simd_zero());
+		simd4_float nonzero = simd_cmpneq(normal_velocity_to_normal_impulse, simd_zero());
 		normal_velocity_to_normal_impulse = simd_and(simd_splat(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
 		
 		simd4_float bias = simd_splat(-bias_factor) * simd_float::max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
 		
 		// Compute a tangent from the normal. Care is taken to compute a smoothly varying basis to improve stability.
-		simd4_float s = simd_float::abs(normal_x);
+		simd4_float s = simd_abs(normal_x);
 		
 		simd4_float u_x = normal_z*s;
 		simd4_float u_y = u_x - normal_z;
