@@ -448,7 +448,7 @@ static inline unsigned first_set_bit(unsigned x) {
 	_BitScanForward(&r, x);
 	return r;
 }
-#else
+#else	// this is fine for clang/gcc
 static inline unsigned first_set_bit(unsigned x) {
 	return __builtin_ctz(x);
 }
