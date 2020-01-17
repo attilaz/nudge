@@ -148,19 +148,7 @@ namespace simd_float {
 	}
 }
 
-// ext
-	//todo: add this to bx
-BX_SIMD_FORCE_INLINE simd4_float simd_cmpneq(simd128_t x, simd128_t y) {
-	return _mm_cmpneq_ps(x, y);
-}
-
-	//todo: add this to bx ??
-BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
-{
-	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
-}
-
-	//todo: these are slow implementations
+//todo: these are slow implementations
 BX_SIMD_FORCE_INLINE simd128_t simd_swiz_zzAA(simd128_t _a, simd128_t _b)
 {
 	return simd_shuf_xyAB(simd_swiz_zzzz(_a), simd_swiz_xxxx(_b));
@@ -171,26 +159,27 @@ BX_SIMD_FORCE_INLINE simd128_t simd_swiz_wwBB(simd128_t _a, simd128_t _b)
 	return simd_shuf_xyAB(simd_swiz_wwww(_a), simd_swiz_yyyy(_b));
 }
 
-BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
-{
-	const __m128i a = _mm_castps_si128(_a);
-	const __m128i b = _mm_castps_si128(_b);
-	const __m128i add = _mm_packs_epi32(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(add);
+// these needs neon impl
 
-	return result;
+// ext
+//neon docs: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0472k/chr1359125038862.html
+//			 https://developer.arm.com/architectures/instruction-sets/simd-isas/neon/intrinsics
+// to read:  https://people.xiph.org/~tterribe/daala/neon_tutorial.pdf
+
+	//todo: add this to bx
+	// neon: vmvn_u32 for result
+BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t x, simd128_t y) {
+	return _mm_cmpneq_ps(x, y);
 }
 
-BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
+	//todo: add this to bx ??
+	//neon: unaligned is same as aligned store
+BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 {
-	const __m128i a = _mm_castps_si128(_a);
-	const __m128i b = _mm_castps_si128(_b);
-	const __m128i add = _mm_packs_epi16(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(add);
-
-	return result;
+	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
 }
 
+// neon int16x4_t vadd_s16 (int16x4_t a, int16x4_t b)
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 {
 	const __m128i a = _mm_castps_si128(_a);
@@ -201,16 +190,19 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 	return result;
 }
 
+// neon: uint16x4_t vceq_s16(int16x4_t a, int16x4_t b);
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
-	const __m128i add = _mm_cmpeq_epi16(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(add);
+	const __m128i cmp = _mm_cmpeq_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(cmp);
 
 	return result;
 }
 
+// neon: int16x4_t  vshr_n_s16(int16x4_t a, __constrange(1,16) int b);   // VSHR.S16 d0,d0,#16
+// templated version for constant
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 {
 	const __m128i a = _mm_castps_si128(_a);
@@ -220,33 +212,94 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 	return result;
 }
 
-
+// neon simd_and(simd_not(a), b)
 BX_SIMD_FORCE_INLINE simd128_t simd_iandc(simd128_t _a, simd128_t _b)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
-	const __m128i add = _mm_andnot_si128(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(add);
+	const __m128i andnot = _mm_andnot_si128(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(andnot);
 
 	return result;
 }
 
+// neon: int16x4_t  vmovn_s32(int32x4_t a);	//narrow to 16 bit
+//   vcombine_s16  
+BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i packed = _mm_packs_epi32(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(packed);
+
+	return result;
+}
+
+// neon: int8x8_t  vmovn_s16(int16x8_t a);	//narrow to 16 bit
+//   int8x16_t   vcombine_s8(int8x8_t low, int8x8_t high);
+BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
+{
+	const __m128i a = _mm_castps_si128(_a);
+	const __m128i b = _mm_castps_si128(_b);
+	const __m128i packed = _mm_packs_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(packed);
+
+	return result;
+}
+
+// Unpack and interleave 16 - bit integers from the low half of a and b, and store the results in dst.
+// neon: int16x8_t   vcombine_s16(int16x4_t low, int16x4_t high);
+	// int16x4_t   vget_high_s16(int16x8_t a);
+	// int16x4_t   vget_low_s16(int16x8_t a);
 BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
-	const __m128i add = _mm_unpacklo_epi16(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(add);
+	const __m128i packed = _mm_unpacklo_epi16(a, b);
+	const simd128_sse_t result = _mm_castsi128_ps(packed);
 
 	return result;
 }
 
-
+// Create mask from the most significant bit of each 8-bit element in a, and store the result in dst.
 BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
 }
+
+#if 0
+// NEON does not provide a version of this function, here is an article about some ways to repro the results.
+// http://stackoverflow.com/questions/11870910/sse-mm-movemask-epi8-equivalent-method-for-arm-neon
+// Creates a 16-bit mask from the most significant bits of the 16 signed or unsigned 8-bit integers in a and zero extends the upper bits. https://msdn.microsoft.com/en-us/library/vstudio/s090c8fk(v=vs.100).aspx
+FORCE_INLINE int _mm_movemask_epi8(__m128i _a)
+{
+	uint8x16_t input = vreinterpretq_u8_m128i(_a);
+	static const int8_t __attribute__((aligned(16))) xr[8] = { -7, -6, -5, -4, -3, -2, -1, 0 };
+	uint8x8_t mask_and = vdup_n_u8(0x80);
+	int8x8_t mask_shift = vld1_s8(xr);
+
+	uint8x8_t lo = vget_low_u8(input);
+	uint8x8_t hi = vget_high_u8(input);
+
+	lo = vand_u8(lo, mask_and);
+	lo = vshl_u8(lo, mask_shift);
+
+	hi = vand_u8(hi, mask_and);
+	hi = vshl_u8(hi, mask_shift);
+
+	lo = vpadd_u8(lo, lo);
+	lo = vpadd_u8(lo, lo);
+	lo = vpadd_u8(lo, lo);
+
+	hi = vpadd_u8(hi, hi);
+	hi = vpadd_u8(hi, hi);
+	hi = vpadd_u8(hi, hi);
+
+	return ((hi[0] << 8) | (lo[0] & 0xFF));
+}
+#endif
+
 
 namespace simd_aos {
 	NUDGE_FORCEINLINE simd4_float dot(simd4_float a, simd4_float b) {
