@@ -25,7 +25,7 @@
 //	simd_nmsub(x, y, z);	why 'n'msub (fma)
 //  slower... simd128::concat2x32<2,2,0,0>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_zzzz(sxycxy), simd_swiz_xxxx(dxy));
 //            simd128::concat2x32<3,3,1,1>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_wwww(sxycxy), simd_swiz_yyyy(dxy));
-
+// ios no neon/langext (langext seems so slow, we should use neon)
 
 #include "nudge.h"
 #include <assert.h>
@@ -48,6 +48,8 @@ using namespace bx;
 #define NUDGE_ARENA_SCOPE(A) Arena& scope_arena_##A = A; Arena A = scope_arena_##A
 
 namespace nudge {
+
+constexpr float float_max = 3.402823e+38f;
 
 static const float allowed_penetration = 1e-3f;
 static const float bias_factor = 2.0f;
@@ -97,18 +99,16 @@ NUDGE_FORCEINLINE simd128_t& operator /= (simd128_t& a, simd128_t b) {
 typedef simd128_t simd4_float;
 typedef simd128_t simd4_int32;
 
-namespace simd128 {
 	
-	NUDGE_FORCEINLINE void transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
-		const simd128_t tmp0 = simd_shuf_xAyB(x, y);
-		const simd128_t tmp2 = simd_shuf_xAyB(z, w);
-		const simd128_t tmp1 = simd_shuf_zCwD(x, y);
-		const simd128_t tmp3 = simd_shuf_zCwD(z, w);
-		x = simd_shuf_ABxy(tmp2, tmp0);
-		y = simd_shuf_CDzw(tmp2, tmp0);
-		z = simd_shuf_ABxy(tmp3, tmp1);
-		w = simd_shuf_CDzw(tmp3, tmp1);
-	}
+NUDGE_FORCEINLINE void simd_transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
+	const simd128_t tmp0 = simd_shuf_xAyB(x, y);
+	const simd128_t tmp2 = simd_shuf_xAyB(z, w);
+	const simd128_t tmp1 = simd_shuf_zCwD(x, y);
+	const simd128_t tmp3 = simd_shuf_zCwD(z, w);
+	x = simd_shuf_ABxy(tmp2, tmp0);
+	y = simd_shuf_CDzw(tmp2, tmp0);
+	z = simd_shuf_ABxy(tmp3, tmp1);
+	w = simd_shuf_CDzw(tmp3, tmp1);
 }
 
 namespace simd {
@@ -128,21 +128,24 @@ namespace simd {
 }
 
 namespace simd_float {
-	
+
+	inline BX_CONST_FUNC bool isNan(float _f)
+	{
+		union { float f; uint32_t ui; } u = { _f };
+		const uint32_t tmp = u.ui & INT32_MAX;
+		return tmp > UINT32_C(0x7f800000);
+	}
+
 	// Note: First operand is returned on NaN.
-	NUDGE_FORCEINLINE simd4_float min(simd4_float x, simd4_float y) {
+	NUDGE_FORCEINLINE simd4_float min_second_nan(simd4_float x, simd4_float y) {
+		assert(!isNan(simd_x(x)));
+		assert(!isNan(simd_y(x)));
+		assert(!isNan(simd_z(x)));
+		assert(!isNan(simd_w(x)));
 		// Note: For SSE, second operand is returned on NaN.
 		// todo: check Nan behaviour for neon
-		 return simd_min(y, x);	
+		return simd_min(y, x);
 	}
-	
-	// Note: First operand is returned on NaN.
-	NUDGE_FORCEINLINE simd4_float max(simd4_float x, simd4_float y) {
-		// Note: For SSE, second operand is returned on NaN.
-		// todo: check Nan behaviour for neon
-		return simd_max(y, x);	//todo: check this note
-	}
-	
 }
 
 // ext
@@ -633,8 +636,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
 			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
-			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
-			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
+			simd_transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
+			simd_transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
 			
 			// Determine quaternion for rotation from a to b.
 			simd4_float t_x, t_y, t_z;
@@ -689,8 +692,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
 			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
-			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
-			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
+			simd_transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
+			simd_transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Compute the penetration.
 			vx_x = simd_abs(vx_x);
@@ -730,7 +733,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float delta_z = a_position_z - b_position_z;
 			simd4_float delta_w = a_position_w - b_position_w;
 			
-			simd128::transpose32(delta_x, delta_y, delta_z, delta_w);
+			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, delta_x, delta_y, delta_z, t_x, t_y, t_z);
 			t_x += t_x;
@@ -764,13 +767,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			pbz -= simd_abs(b_offset_z);
 			
 			// Reduce face penetrations.
-			simd4_float payz = simd_float::min(pay, paz);
-			simd4_float pbyz = simd_float::min(pby, pbz);
+			simd4_float payz = simd_min(pay, paz);
+			simd4_float pbyz = simd_min(pby, pbz);
 			
-			simd4_float pa = simd_float::min(pax, payz);
-			simd4_float pb = simd_float::min(pbx, pbyz);
+			simd4_float pa = simd_min(pax, payz);
+			simd4_float pb = simd_min(pbx, pbyz);
 			
-			simd4_float p = simd_float::min(pa, pb);
+			simd4_float p = simd_min(pa, pb);
 			
 			// Determine the best aligned face for each collider.
 			simd4_float aymf = simd_cmpeq(payz, pa);
@@ -870,8 +873,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
 			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
-			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
-			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
+			simd_transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
+			simd_transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
 			
 			// Determine quaternion for rotation from a to b.
 			simd4_float t_x, t_y, t_z;
@@ -940,8 +943,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
 			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
-			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
-			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
+			simd_transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
+			simd_transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Load positions.
 			simd4_float a_position_x = simd_ld(transforms[a0_index].position);
@@ -960,7 +963,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float delta_z = a_position_z - b_position_z;
 			simd4_float delta_w = a_position_w - b_position_w;
 			
-			simd128::transpose32(delta_x, delta_y, delta_z, delta_w);
+			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
 			simd_soa::cross(delta_x, delta_y, delta_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
 			t_x += t_x;
@@ -1061,7 +1064,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					
 					simd4_float mask = simd_cmpgt(penetration, p);
 					
-					penetration = simd_float::min(penetration, p); // Note: First operand is returned on NaN.
+					penetration = simd_float::min_second_nan(penetration, p); // Note: First operand is returned on NaN.
 					a_edge = simd::blendv32(a_edge, simd_isplat(j), mask);
 					b_edge = simd::blendv32(b_edge, simd_isplat(i), mask);
 				}
@@ -1129,7 +1132,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				// Find most aligned face of b.
 				dirs = simd_abs(dirs);
 				
-				simd4_float max_dir = simd_float::max(simd_swiz_xzyw(dirs), simd_swiz_xxxx(dirs));
+				simd4_float max_dir = simd_max(simd_swiz_xzyw(dirs), simd_swiz_xxxx(dirs));
 				
 				unsigned dir_mask = simd::signmask32(simd_cmpge(dirs, max_dir));
 				
@@ -1237,7 +1240,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float inside_x = simd_cmple(simd_abs(corner1x), sx);
 						simd4_float inside_y = simd_cmple(simd_abs(corner1y), sy);
 						
-						simd4_float mask0 = simd_cmple(simd_float::max(simd_abs(delta_x), simd_abs(delta_y)), delta_max);
+						simd4_float mask0 = simd_cmple(simd_max(simd_abs(delta_x), simd_abs(delta_y)), delta_max);
 						simd4_float mask1 = simd_and(inside_x, inside_y);
 						
 						corner_mask = simd_pack_i32_to_i16(mask0, mask1);
@@ -1278,14 +1281,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float near_y = (pos_y + pivot_y) * ry;
 						simd4_float far_y = (pos_y - pivot_y) * ry;
 						
-						simd4_float a = simd_float::min(one, near_x); // First operand is returned on NaN.
-						simd4_float b = simd_float::min(one, far_x);
+						simd4_float a = simd_float::min_second_nan(one, near_x); // First operand is returned on NaN.
+						simd4_float b = simd_float::min_second_nan(one, far_x);
 						
 						edge_axis_near = simd::signmask32(simd_cmpgt(a, near_y));
 						edge_axis_far = simd::signmask32(simd_cmpgt(b, far_y));
 						
-						a = simd_float::min(a, near_y);
-						b = simd_float::min(b, far_y);
+						a = simd_min(a, near_y);
+						b = simd_min(b, far_y);
 						
 						simd4_float ax = pivot_x - offset_x * a;
 						simd4_float ay = pivot_y - offset_y * a;
@@ -1387,7 +1390,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float dx_transformed = simd_ld(transformed_z);
 				simd4_float dy_transformed = simd_zero();
 				
-				simd128::transpose32(a_size_transformed, c_transformed, dx_transformed, dy_transformed);
+				simd_transpose32(a_size_transformed, c_transformed, dx_transformed, dy_transformed);
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
 				simd4_float plane = simd_shuf_xyAB(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
@@ -1586,8 +1589,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_rotation_z = simd_ld(transforms[b2_index].rotation);
 			simd4_float b_rotation_s = simd_ld(transforms[b3_index].rotation);
 			
-			simd128::transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
-			simd128::transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
+			simd_transpose32(a_rotation_x, a_rotation_y, a_rotation_z, a_rotation_s);
+			simd_transpose32(b_rotation_x, b_rotation_y, b_rotation_z, b_rotation_s);
 			
 			// Compute rotation matrices.
 			simd4_float a_basis_xx, a_basis_xy, a_basis_xz;
@@ -1730,8 +1733,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_position_z = simd_ld(transforms[b2_index].position);
 			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
-			simd128::transpose32(a_position_x, a_position_y, a_position_z, a_position_w);
-			simd128::transpose32(b_position_x, b_position_y, b_position_z, b_position_w);
+			simd_transpose32(a_position_x, a_position_y, a_position_z, a_position_w);
+			simd_transpose32(b_position_x, b_position_y, b_position_z, b_position_w);
 			
 			// Compute relative position.
 			simd4_float delta_x = b_position_x - a_position_x;
@@ -1757,8 +1760,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_size_z = simd_ld(colliders[b2_index].size);
 			simd4_float b_size_w = simd_ld(colliders[b3_index].size);
 			
-			simd128::transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
-			simd128::transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
+			simd_transpose32(a_size_x, a_size_y, a_size_z, a_size_w);
+			simd_transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Compute direction to the edge.
 			simd4_float a_sign_x = a_basis_xx*n_x + a_basis_xy*n_y + a_basis_xz*n_z;
@@ -1857,8 +1860,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float p_w = simd_ld(feature_penetrations + i);
 			simd4_float n_w = simd_splat(0.5f);
 			
-			simd128::transpose32(p_x, p_y, p_z, p_w);
-			simd128::transpose32(n_x, n_y, n_z, n_w);
+			simd_transpose32(p_x, p_y, p_z, p_w);
+			simd_transpose32(n_x, n_y, n_z, n_w);
 			
 			simd_st(contacts[count + 0].position, p_x);
 			simd_st(contacts[count + 0].normal, n_x);
@@ -2252,7 +2255,7 @@ NUDGE_FORCEINLINE static void load4(const float* data, const T* indices,
 	d2 = simd_ld(data + i2*stride_in_floats);
 	d3 = simd_ld(data + i3*stride_in_floats);
 	
-	simd128::transpose32(d0, d1, d2, d3);
+	simd_transpose32(d0, d1, d2, d3);
 }
 
 template<unsigned data_stride, unsigned index_stride, class T>
@@ -2276,8 +2279,8 @@ NUDGE_FORCEINLINE static void load8(const float* data, const T* indices,
 	d6 = simd_ld(data + i2*stride_in_floats + 4);
 	d7 = simd_ld(data + i3*stride_in_floats + 4);
 	
-	simd128::transpose32(d0, d1, d2, d3);
-	simd128::transpose32(d4, d5, d6, d7);
+	simd_transpose32(d0, d1, d2, d3);
+	simd_transpose32(d4, d5, d6, d7);
 }
 
 template<unsigned data_stride, unsigned index_stride, class T>
@@ -2286,8 +2289,8 @@ NUDGE_FORCEINLINE static void store8(float* data, const T* indices,
 									 simd4_float d4, simd4_float d5, simd4_float d6, simd4_float d7) {
 	static const unsigned stride_in_floats = data_stride/sizeof(float);
 	
-	simd128::transpose32(d0, d1, d2, d3);
-	simd128::transpose32(d4, d5, d6, d7);
+	simd_transpose32(d0, d1, d2, d3);
+	simd_transpose32(d4, d5, d6, d7);
 	
 	unsigned i0 = indices[0*index_stride];
 	unsigned i1 = indices[1*index_stride];
@@ -2397,14 +2400,14 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 	
 	for (unsigned i = 1; i < count; ++i) {
 		simd4_float p = simd_ld(&aos_bounds[i].min.x);
-		scene_min128 = simd_float::min(scene_min128, p);
-		scene_max128 = simd_float::max(scene_max128, p);
+		scene_min128 = simd_min(scene_min128, p);
+		scene_max128 = simd_max(scene_max128, p);
 	}
 	
 	simd4_float scene_scale128 = simd_splat((1<<16)-1) * simd_rcp_est(scene_max128 - scene_min128);
 	
-	scene_scale128 = simd_float::min(simd_swiz_xyzz(scene_scale128), simd_swiz_zzxy(scene_scale128));
-	scene_scale128 = simd_float::min(scene_scale128, simd_swiz_yxwz(scene_scale128));
+	scene_scale128 = simd_min(simd_swiz_xyzz(scene_scale128), simd_swiz_zzxy(scene_scale128));
+	scene_scale128 = simd_min(scene_scale128, simd_swiz_yxwz(scene_scale128));
 	scene_min128 = scene_min128 * scene_scale128;
 	
 #ifdef DEBUG
@@ -2428,7 +2431,7 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		simd4_float pos_z = simd_ld(&aos_bounds[i+2].min.x);
 		simd4_float pos_w = simd_ld(&aos_bounds[i+3].min.x);
 		
-		simd128::transpose32(pos_x, pos_y, pos_z, pos_w);
+		simd_transpose32(pos_x, pos_y, pos_z, pos_w);
 		
 		pos_x = simd_nmsub(pos_x, scene_scale, scene_min_x);
 		pos_y = simd_nmsub(pos_y, scene_scale, scene_min_y);
@@ -2478,12 +2481,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
 		
-		bounds[bounds_group].min_x[bounds_lane] = NAN;
-		bounds[bounds_group].max_x[bounds_lane] = NAN;
-		bounds[bounds_group].min_y[bounds_lane] = NAN;
-		bounds[bounds_group].max_y[bounds_lane] = NAN;
-		bounds[bounds_group].min_z[bounds_lane] = NAN;
-		bounds[bounds_group].max_z[bounds_lane] = NAN;
+		bounds[bounds_group].min_x[bounds_lane] = -float_max;
+		bounds[bounds_group].max_x[bounds_lane] =  float_max;
+		bounds[bounds_group].min_y[bounds_lane] = -float_max;
+		bounds[bounds_group].max_y[bounds_lane] =  float_max;
+		bounds[bounds_group].min_z[bounds_lane] = -float_max;
+		bounds[bounds_group].max_z[bounds_lane] =  float_max;
 	}
 	
 	// Pack each set of 8 consecutive AABBs into coarse AABBs.
@@ -2503,27 +2506,27 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		simd4_float coarse_min_z = simd_ld(bounds[start].min_z);
 		simd4_float coarse_max_z = simd_ld(bounds[start].max_z);
 		
-		// Note that the first operand is returned on NaN. The last padded bounds are NaN, so the earlier bounds should be in the first operand.
-		coarse_min_x = simd_float::min(coarse_min_x, simd_ld(bounds[start+1].min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd_ld(bounds[start+1].max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd_ld(bounds[start+1].min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd_ld(bounds[start+1].max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd_ld(bounds[start+1].min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd_ld(bounds[start+1].max_z));
+		// Note the last padded bounds are +/- FLOAT_MAX, so the earlier bounds should be in the first operand.
+		coarse_min_x = simd_min(coarse_min_x, simd_ld(bounds[start+1].min_x));
+		coarse_max_x = simd_max(coarse_max_x, simd_ld(bounds[start+1].max_x));
+		coarse_min_y = simd_min(coarse_min_y, simd_ld(bounds[start+1].min_y));
+		coarse_max_y = simd_max(coarse_max_y, simd_ld(bounds[start+1].max_y));
+		coarse_min_z = simd_min(coarse_min_z, simd_ld(bounds[start+1].min_z));
+		coarse_max_z = simd_max(coarse_max_z, simd_ld(bounds[start+1].max_z));
 		
-		coarse_min_x = simd_float::min(coarse_min_x, simd_swiz_zwxy(coarse_min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd_swiz_zwxy(coarse_max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd_swiz_zwxy(coarse_min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd_swiz_zwxy(coarse_max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd_swiz_zwxy(coarse_min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd_swiz_zwxy(coarse_max_z));
+		coarse_min_x = simd_min(coarse_min_x, simd_swiz_zwxy(coarse_min_x));
+		coarse_max_x = simd_max(coarse_max_x, simd_swiz_zwxy(coarse_max_x));
+		coarse_min_y = simd_min(coarse_min_y, simd_swiz_zwxy(coarse_min_y));
+		coarse_max_y = simd_max(coarse_max_y, simd_swiz_zwxy(coarse_max_y));
+		coarse_min_z = simd_min(coarse_min_z, simd_swiz_zwxy(coarse_min_z));
+		coarse_max_z = simd_max(coarse_max_z, simd_swiz_zwxy(coarse_max_z));
 		
-		coarse_min_x = simd_float::min(coarse_min_x, simd_swiz_yxwz(coarse_min_x));
-		coarse_max_x = simd_float::max(coarse_max_x, simd_swiz_yxwz(coarse_max_x));
-		coarse_min_y = simd_float::min(coarse_min_y, simd_swiz_yxwz(coarse_min_y));
-		coarse_max_y = simd_float::max(coarse_max_y, simd_swiz_yxwz(coarse_max_y));
-		coarse_min_z = simd_float::min(coarse_min_z, simd_swiz_yxwz(coarse_min_z));
-		coarse_max_z = simd_float::max(coarse_max_z, simd_swiz_yxwz(coarse_max_z));
+		coarse_min_x = simd_min(coarse_min_x, simd_swiz_yxwz(coarse_min_x));
+		coarse_max_x = simd_max(coarse_max_x, simd_swiz_yxwz(coarse_max_x));
+		coarse_min_y = simd_min(coarse_min_y, simd_swiz_yxwz(coarse_min_y));
+		coarse_max_y = simd_max(coarse_max_y, simd_swiz_yxwz(coarse_max_y));
+		coarse_min_z = simd_min(coarse_min_z, simd_swiz_yxwz(coarse_min_z));
+		coarse_max_z = simd_max(coarse_max_z, simd_swiz_yxwz(coarse_max_z));
 		
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
@@ -2540,12 +2543,12 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		unsigned bounds_group = i >> simdv_width32_log2;
 		unsigned bounds_lane = i & (simdv_width32-1);
 		
-		coarse_bounds[bounds_group].min_x[bounds_lane] = NAN;
-		coarse_bounds[bounds_group].max_x[bounds_lane] = NAN;
-		coarse_bounds[bounds_group].min_y[bounds_lane] = NAN;
-		coarse_bounds[bounds_group].max_y[bounds_lane] = NAN;
-		coarse_bounds[bounds_group].min_z[bounds_lane] = NAN;
-		coarse_bounds[bounds_group].max_z[bounds_lane] = NAN;
+		coarse_bounds[bounds_group].min_x[bounds_lane] = -float_max;
+		coarse_bounds[bounds_group].max_x[bounds_lane] =  float_max;
+		coarse_bounds[bounds_group].min_y[bounds_lane] = -float_max;
+		coarse_bounds[bounds_group].max_y[bounds_lane] =  float_max;
+		coarse_bounds[bounds_group].min_z[bounds_lane] = -float_max;
+		coarse_bounds[bounds_group].max_z[bounds_lane] =  float_max;
 	}
 	
 	// Test all coarse groups against each other and generate pairs with potential overlap.
@@ -3622,7 +3625,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float nonzero = simd_cmpneq(normal_velocity_to_normal_impulse, simd_zero());
 		normal_velocity_to_normal_impulse = simd_and(simd_splat(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
 		
-		simd4_float bias = simd_splat(-bias_factor) * simd_float::max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
+		simd4_float bias = simd_splat(-bias_factor) * simd_max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
 		
 		// Compute a tangent from the normal. Care is taken to compute a smoothly varying basis to improve stability.
 		simd4_float s = simd_abs(normal_x);
@@ -3754,7 +3757,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simd4_float normal_impulse = simd_float::max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
+		simd4_float normal_impulse = simd_max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
 		simd4_float max_friction_impulse = normal_impulse * friction;
 		
 		simd4_float friction_impulse_x = u_x*cached_impulse_x + u_y*cached_impulse_y + u_z*cached_impulse_z;
@@ -3764,7 +3767,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		
 		friction_clamp_scale = simd_rsqrt_est(friction_clamp_scale);
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
-		friction_clamp_scale = simd_float::min(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
+		friction_clamp_scale = simd_float::min_second_nan(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
@@ -3901,7 +3904,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simd4_float t_xy = t_x*t_y;
 		simd4_float tl2 = t_xx + t_yy;
 		
-		normal_impulse = simd_float::max(normal_impulse, simd_zero());
+		normal_impulse = simd_max(normal_impulse, simd_zero());
 		
 		t_x *= tl2;
 		t_y *= tl2;
@@ -3936,7 +3939,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simd4_float old_friction_impulse_x = simd_ld(constraint_states[i].applied_friction_impulse_x);
 		simd4_float old_friction_impulse_y = simd_ld(constraint_states[i].applied_friction_impulse_y);
 		
-		friction_factor = simd_float::min(simd_splat(1e+6f), friction_factor); // Note: First operand is returned on NaN.
+		friction_factor = simd_float::min_second_nan(simd_splat(1e+6f), friction_factor); // Note: First operand is returned on NaN.
 		
 		simd4_float friction_impulse_x = t_x*friction_factor;
 		simd4_float friction_impulse_y = t_y*friction_factor;
@@ -3957,7 +3960,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		b_angular_velocity_z = simd_madd(nb_z, normal_impulse, b_angular_velocity_z);
 		
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
-		friction_clamp_scale = simd_float::min(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
+		friction_clamp_scale = simd_float::min_second_nan(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
