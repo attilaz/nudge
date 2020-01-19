@@ -6,6 +6,8 @@
 //  Copyright © 2020 Attila Kocsis. All rights reserved.
 //
 
+#include <bx/file.h>
+
 #include <iostream>
 
 int main(int argc, const char * argv[]) {
