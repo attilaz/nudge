@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
 #ifndef BX_MACROS_H_HEADER_GUARD
 #define BX_MACROS_H_HEADER_GUARD
+
+#include "bx.h"
 
 ///
 #if BX_COMPILER_MSVC

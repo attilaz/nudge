@@ -1,13 +1,12 @@
 /*
- * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #define BX_SIMD_T_H_HEADER_GUARD
 
-#include "platform.h"
-#include "macros.h"
+#include "bx.h"
 
 #define BX_SIMD_FORCE_INLINE BX_FORCE_INLINE
 #define BX_SIMD_INLINE inline
@@ -33,7 +32,7 @@
 #	include <xmmintrin.h> // __m128
 #	undef  BX_SIMD_SSE
 #	define BX_SIMD_SSE 1
-#elif defined(__ARM_NEON__) && !BX_COMPILER_CLANG
+#elif defined(__ARM_NEON__) && (!BX_COMPILER_CLANG || BX_CLANG_HAS_EXTENSION(attribute_ext_vector_type) )
 #	include <arm_neon.h>
 #	undef  BX_SIMD_NEON
 #	define BX_SIMD_NEON 1
