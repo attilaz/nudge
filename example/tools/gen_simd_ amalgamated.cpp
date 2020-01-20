@@ -31,7 +31,7 @@ char* load(bx::StringView _filename)
 	return buffer;
 }
 
-void process(bx::WriterI* _writer, bx::StringView _filename)
+void process(bx::WriterI* _writer, bx::StringView _filename, bool _removeHeader)
 {
 	printf("processing '%.*s'\n", _filename.getLength(), _filename.getPtr());
 
@@ -40,6 +40,17 @@ void process(bx::WriterI* _writer, bx::StringView _filename)
 	int32_t len = bx::strLen(buffer);
 	char* temp = new char[len];
 	bx::StringView normalized = bx::normalizeEolLf(temp, len, buffer);
+	
+	if (_removeHeader )
+	{
+		normalized = bx::strLTrimSpace(normalized);
+		if (normalized.getPtr()[0] == '/' && normalized.getPtr()[1] == '*' )
+		{
+			bx::StringView endComment = bx::strFind(normalized, "*/");
+			
+			normalized = bx::StringView(endComment.getTerm(), normalized.getTerm());
+		}
+	}
 	
 	for(bx::LineReader lr(normalized); !lr.isDone();)
 	{
@@ -69,8 +80,8 @@ void process(bx::WriterI* _writer, bx::StringView _filename)
 					{
 						if ( 0 != bx::strCmp(_filename, "macros.h"))
 						{
-							process(_writer, "platform.h");
-							process(_writer, "macros.h");
+							process(_writer, "platform.h", true);
+							process(_writer, "macros.h", true);
 						}
 					}
 					else
@@ -86,7 +97,7 @@ void process(bx::WriterI* _writer, bx::StringView _filename)
 						bx::stringPrintf(includedFullPath, "%.*s%.*s", path.getLength(), path.getPtr(),
 										 included.getLength(), included.getPtr());
 						
-						process(_writer, includedFullPath.c_str());
+						process(_writer, includedFullPath.c_str(), true);
 					}
 
 					writeLine = false;
@@ -110,7 +121,7 @@ int main(int argc, const char * argv[]) {
 	
 	bx::FileWriter out;
 	bx::Error err;
-	out.open("bx_simd_t.h", false, &err);
+	out.open("../../../../../bx_simd_t.h", false, &err);
 	
 	if (!err.isOk())
 	{
@@ -118,7 +129,7 @@ int main(int argc, const char * argv[]) {
 		return -1;
 	}
 
-	process(&out, "simd_t.h");
+	process(&out, "simd_t.h", false);
 	
 	out.close();
 	

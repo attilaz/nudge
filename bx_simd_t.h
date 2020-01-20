@@ -6,10 +6,7 @@
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #define BX_SIMD_T_H_HEADER_GUARD
 
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_PLATFORM_H_HEADER_GUARD
 #define BX_PLATFORM_H_HEADER_GUARD
@@ -472,10 +469,7 @@
 #endif // defined(__cplusplus)
 
 #endif // BX_PLATFORM_H_HEADER_GUARD
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_MACROS_H_HEADER_GUARD
 #define BX_MACROS_H_HEADER_GUARD
@@ -769,10 +763,7 @@ namespace bx
 #define BX_SIMD128_IMPLEMENT_SWIZZLE(_x, _y, _z, _w) \
 			template<typename Ty> \
 			Ty simd_swiz_##_x##_y##_z##_w(Ty _a);
-/*
- * Copyright 2010-2015 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "xmacro file, must be included from simd_*.h"
@@ -1451,10 +1442,7 @@ BX_SIMD128_IMPLEMENT_TEST(xyzw);
 } // namespace bx
 
 #if BX_SIMD_AVX
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -1528,10 +1516,7 @@ namespace bx
 #endif // BX_SIMD_AVX
 
 #if BX_SIMD_LANGEXT
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -1554,10 +1539,7 @@ namespace bx
 				return result;                                                                             \
 			}
 
-/*
- * Copyright 2010-2015 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "xmacro file, must be included from simd_*.h"
@@ -2464,10 +2446,7 @@ BX_SIMD128_IMPLEMENT_TEST(xyzw , 0xf);
 #endif // BX_SIMD_LANGEXT
 
 #if BX_SIMD_NEON
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -2503,10 +2482,7 @@ __builtin_shuffle(_a, _b, (uint32x4_t){ _i0, _i1, _i2, _i3 })
 				return SHUFFLE_A(_a, ELEM##_x, ELEM##_y, ELEM##_z, ELEM##_w ); \
 			}
 
-/*
- * Copyright 2010-2015 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "xmacro file, must be included from simd_*.h"
@@ -3440,10 +3416,7 @@ BX_SIMD128_IMPLEMENT_TEST(yzw, yzww);
 #endif // BX_SIMD_NEON
 
 #if BX_SIMD_SSE
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -3462,10 +3435,7 @@ namespace bx
 				return _mm_shuffle_ps( _a, _a, _MM_SHUFFLE(ELEM##_w, ELEM##_z, ELEM##_y, ELEM##_x ) ); \
 			}
 
-/*
- * Copyright 2010-2015 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "xmacro file, must be included from simd_*.h"
@@ -4417,10 +4387,7 @@ namespace bx
 
 } // namespace bx
 
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -4447,10 +4414,7 @@ namespace bx
 				return result;                                                              \
 			}
 
-/*
- * Copyright 2010-2015 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "xmacro file, must be included from simd_*.h"
@@ -5504,10 +5468,7 @@ BX_SIMD128_IMPLEMENT_TEST(xyzw , 0xf);
 	}
 
 } // namespace bx
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 #ifndef BX_SIMD_T_H_HEADER_GUARD
 #	error "Must be included from bx/simd_t.h!"
@@ -5589,10 +5550,7 @@ namespace bx
 
 } // namespace bx
 
-/*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
- */
+
 
 namespace bx
 {
