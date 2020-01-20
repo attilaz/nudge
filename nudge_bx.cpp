@@ -109,7 +109,37 @@ NUDGE_FORCEINLINE void simd_transpose32(simd4_float& x, simd4_float& y, simd4_fl
 	w = simd_shuf_CDzw(tmp3, tmp1);
 }
 
+#if 0
+	//arm64 test any/all
+	uint32_t vminvq_u32 (uint32x4_t a)
+	uint32_t vmaxvq_u32 (uint32x4_t a)
+#endif
+	
 namespace simd {
+#if 0	//this is only correct for comparison result (same bit value for the whole component)
+	uint32_t _mm_movemask_ps(float32x4_t x) {
+		uint32x4_t mmA = vandq_u32(
+								   vreinterpretq_u32_f32(x), (uint32x4_t) {0x1, 0x2, 0x4, 0x8}); // [0 1 2 3]
+		uint32x4_t mmB = vextq_u32(mmA, mmA, 2);                        // [2 3 0 1]
+		uint32x4_t mmC = vorrq_u32(mmA, mmB);                           // [0+2 1+3 0+2 1+3]
+		uint32x4_t mmD = vextq_u32(mmC, mmC, 3);                        // [1+3 0+2 1+3 0+2]
+		uint32x4_t mmE = vorrq_u32(mmC, mmD);                           // [0+1+2+3 ...]
+		return vgetq_lane_u32(mmE, 0);
+	}
+#endif
+	
+#if 0
+	static const uint32x4_t movemask = {1, 2, 4, 8};
+	static const uint32x4_t highbit = {0x80000000, 0x80000000, 0x80000000,
+		0x80000000};
+	uint32x4_t t0 = vreinterpretq_u32_m128(a);
+	uint32x4_t t1 = vtstq_u32(t0, highbit);	//this makes all bits equal
+	uint32x4_t t2 = vandq_u32(t1, movemask);
+	//A64 :  vaddv_u32
+	uint32x2_t t3 = vorr_u32(vget_low_u32(t2), vget_high_u32(t2));
+	return vget_lane_u32(t3, 0) | vget_lane_u32(t3, 1);
+#endif
+	
 	NUDGE_FORCEINLINE unsigned signmask32(simd128_t x) {
 		return _mm_movemask_ps(x);
 	}
