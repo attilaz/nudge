@@ -22,10 +22,8 @@
 
 // questions:
 //	simd_madd	fma / _mm_fmadd_ps
-//	simd_nmsub(x, y, z);	why 'n'msub (fma)
 //  slower... simd128::concat2x32<2,2,0,0>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_zzzz(sxycxy), simd_swiz_xxxx(dxy));
 //            simd128::concat2x32<3,3,1,1>(sxycxy, dxy); -> simd_shuf_xyAB(simd_swiz_wwww(sxycxy), simd_swiz_yyyy(dxy));
-// ios no neon/langext (langext seems so slow, we should use neon)
 
 #include "nudge.h"
 #include <assert.h>
@@ -211,18 +209,7 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 
 	return result;
 }
-
-// neon simd_and(simd_not(a), b)
-BX_SIMD_FORCE_INLINE simd128_t simd_iandc(simd128_t _a, simd128_t _b)
-{
-	const __m128i a = _mm_castps_si128(_a);
-	const __m128i b = _mm_castps_si128(_b);
-	const __m128i andnot = _mm_andnot_si128(a, b);
-	const simd128_sse_t result = _mm_castsi128_ps(andnot);
-
-	return result;
-}
-
+	
 // neon: int16x4_t  vmovn_s32(int32x4_t a);	//narrow to 16 bit
 //   vcombine_s16  
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
@@ -1356,7 +1343,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						mask_a = simd_and(mask_a, mask);
 						mask_b = simd_and(mask_b, mask);
 						
-						edge_mask = simd_iandc(edge_mask, simd_pack_i32_to_i16(mask_a, mask_b));
+						edge_mask = simd_and(simd_not(edge_mask), simd_pack_i32_to_i16(mask_a, mask_b));
 						
 						simd_st(support_x + 8, ax);
 						simd_st(support_y + 8, ay);
@@ -1842,7 +1829,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_int32 edge_zw = simd_or(edge_z, edge_w);
 			
 			simd4_int32 tag_hi = simd_or(edge_xy, edge_zw);
-			simd4_int32 tag_lo = simd_iandc(edge_w, tag_hi);
+			simd4_int32 tag_lo = simd_and(simd_not(edge_w), tag_hi);
 			tag_hi = simd_sll(tag_hi, 8);
 			
 			simd4_int32 tag = simd_or(tag_lo, tag_hi);
