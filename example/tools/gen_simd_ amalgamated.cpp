@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-char* load(const char* _filename)
+char* load(bx::StringView _filename)
 {
 	bx::FileReader in;
 	bx::Error err;
@@ -18,7 +18,7 @@ char* load(const char* _filename)
 	
 	if (!err.isOk())
 	{
-		printf("cannot open input file: %s\n", _filename);
+		printf("cannot open input file: %.*s\n", _filename.getLength(), _filename.getPtr());
 		exit(-1);
 	}
 	
@@ -31,8 +31,10 @@ char* load(const char* _filename)
 	return buffer;
 }
 
-void process(bx::WriterI* _writer, char* _filename)
+void process(bx::WriterI* _writer, bx::StringView _filename)
 {
+	printf("processing '%.*s'\n", _filename.getLength(), _filename.getPtr());
+
 	char* buffer = load(_filename);
 	
 	int32_t len = bx::strLen(buffer);
@@ -61,7 +63,32 @@ void process(bx::WriterI* _writer, char* _filename)
 				if (!term.isEmpty())
 				{
 					included = bx::StringView(included.getPtr(), term.getPtr());
-					printf("%.*s\n", included.getLength(), included.getPtr());
+					printf("including '%.*s' in '%.*s' \n", included.getLength(), included.getPtr(), _filename.getLength(), _filename.getPtr());
+					
+					if (0 == bx::strCmp(included, "bx.h"))
+					{
+						if ( 0 != bx::strCmp(_filename, "macros.h"))
+						{
+							process(_writer, "platform.h");
+							process(_writer, "macros.h");
+						}
+					}
+					else
+					{
+						// add path
+						bx::StringView path = bx::strRFind(_filename, '/');
+						if (!path.isEmpty())
+						{
+							path = bx::StringView(_filename.getPtr(), path.getTerm());
+						}
+						
+						std::string includedFullPath;
+						bx::stringPrintf(includedFullPath, "%.*s%.*s", path.getLength(), path.getPtr(),
+										 included.getLength(), included.getPtr());
+						
+						process(_writer, includedFullPath.c_str());
+					}
+
 					writeLine = false;
 				}
 			}

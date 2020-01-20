@@ -31,18 +31,8 @@
 		3ADE447C1ED1776500D3DEA5 /* example */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example; sourceTree = BUILT_PRODUCTS_DIR; };
 		3ADE448C1ED177C100D3DEA5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../main.cpp; sourceTree = "<group>"; };
 		3ADE448F1ED177CD00D3DEA5 /* nudge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nudge.h; path = ../../nudge.h; sourceTree = "<group>"; };
+		DC653E5F23D61DA600346529 /* bx_simd_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bx_simd_t.h; path = ../../bx_simd_t.h; sourceTree = "<group>"; };
 		DC95230A23C9080200F761CB /* nudge_bx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nudge_bx.cpp; path = ../../nudge_bx.cpp; sourceTree = "<group>"; };
-		DC95231B23C9083A00F761CB /* simd_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simd_t.h; sourceTree = "<group>"; };
-		DC95231C23C9083A00F761CB /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		DC95231E23C9083A00F761CB /* simd_ni.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd_ni.inl; sourceTree = "<group>"; };
-		DC95231F23C9083A00F761CB /* simd128_neon.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd128_neon.inl; sourceTree = "<group>"; };
-		DC95232023C9083A00F761CB /* simd128_swizzle.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd128_swizzle.inl; sourceTree = "<group>"; };
-		DC95232123C9083A00F761CB /* simd128_sse.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd128_sse.inl; sourceTree = "<group>"; };
-		DC95232223C9083A00F761CB /* simd256_avx.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd256_avx.inl; sourceTree = "<group>"; };
-		DC95232323C9083A00F761CB /* simd128_ref.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd128_ref.inl; sourceTree = "<group>"; };
-		DC95232423C9083A00F761CB /* simd256_ref.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd256_ref.inl; sourceTree = "<group>"; };
-		DC95232523C9083A00F761CB /* simd128_langext.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simd128_langext.inl; sourceTree = "<group>"; };
-		DC95232623C9083A00F761CB /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +60,6 @@
 		3ADE44731ED1776500D3DEA5 = {
 			isa = PBXGroup;
 			children = (
-				DC95231A23C9083A00F761CB /* bx */,
 				3ADE448B1ED177B800D3DEA5 /* example */,
 				3ADE447D1ED1776500D3DEA5 /* Products */,
 				3A5840881EEDCF200091C228 /* Frameworks */,
@@ -88,38 +77,12 @@
 		3ADE448B1ED177B800D3DEA5 /* example */ = {
 			isa = PBXGroup;
 			children = (
+				DC653E5F23D61DA600346529 /* bx_simd_t.h */,
 				DC95230A23C9080200F761CB /* nudge_bx.cpp */,
 				3ADE448F1ED177CD00D3DEA5 /* nudge.h */,
 				3ADE448C1ED177C100D3DEA5 /* main.cpp */,
 			);
 			name = example;
-			sourceTree = "<group>";
-		};
-		DC95231A23C9083A00F761CB /* bx */ = {
-			isa = PBXGroup;
-			children = (
-				DC95231B23C9083A00F761CB /* simd_t.h */,
-				DC95231C23C9083A00F761CB /* config.h */,
-				DC95231D23C9083A00F761CB /* inline */,
-				DC95232623C9083A00F761CB /* macros.h */,
-			);
-			name = bx;
-			path = ../../bx;
-			sourceTree = "<group>";
-		};
-		DC95231D23C9083A00F761CB /* inline */ = {
-			isa = PBXGroup;
-			children = (
-				DC95231E23C9083A00F761CB /* simd_ni.inl */,
-				DC95231F23C9083A00F761CB /* simd128_neon.inl */,
-				DC95232023C9083A00F761CB /* simd128_swizzle.inl */,
-				DC95232123C9083A00F761CB /* simd128_sse.inl */,
-				DC95232223C9083A00F761CB /* simd256_avx.inl */,
-				DC95232323C9083A00F761CB /* simd128_ref.inl */,
-				DC95232423C9083A00F761CB /* simd256_ref.inl */,
-				DC95232523C9083A00F761CB /* simd128_langext.inl */,
-			);
-			path = inline;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

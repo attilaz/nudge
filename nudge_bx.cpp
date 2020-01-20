@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <bx/simd_t.h>
+#include "bx_simd_t.h"
 using namespace bx;
 
 #ifdef _WIN32
