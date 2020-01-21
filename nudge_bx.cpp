@@ -115,6 +115,18 @@ NUDGE_FORCEINLINE void simd_transpose32(simd4_float& x, simd4_float& y, simd4_fl
 	uint32_t vmaxvq_u32 (uint32x4_t a)
 #endif
 	
+	
+	uint32_t as_int(float v)
+	{
+		union
+		{
+			float f;
+			uint32_t i;
+		};
+		f = v;
+		return i;
+	}
+
 namespace simd {
 #if 0	//this is only correct for comparison result (same bit value for the whole component)
 	uint32_t _mm_movemask_ps(float32x4_t x) {
@@ -140,9 +152,53 @@ namespace simd {
 	return vget_lane_u32(t3, 0) | vget_lane_u32(t3, 1);
 #endif
 	
+	NUDGE_FORCEINLINE unsigned cmpmask32(simd128_t x) {
+		uint32_t i[4];
+		i[0] = as_int(simd_x(x));
+		i[1] = as_int(simd_y(x));
+		i[2] = as_int(simd_z(x));
+		i[3] = as_int(simd_w(x));
+		assert(i[0] == 0x0 || i[0] == 0xffffffff);
+		assert(i[1] == 0x0 || i[1] == 0xffffffff);
+		assert(i[2] == 0x0 || i[2] == 0xffffffff);
+		assert(i[3] == 0x0 || i[3] == 0xffffffff);
+		return _mm_movemask_ps(x);
+	}
+
+	void test_cmpmask32()
+	{	//precondition is that each component is 0 or 0xffffffff
+		simd128_t a = simd_ild(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
+		assert( 0xf == cmpmask32(a));
+		a = simd_ild(0x0, 0x0, 0x0, 0x0);
+		assert( 0x0 == cmpmask32(a));
+		
+		a = simd_ild(0xffffffff, 0x0, 0xffffffff, 0x0);
+		assert( 0x5 == cmpmask32(a));
+		
+		a = simd_ild(0x0, 0xffffffff, 0x0, 0xffffffff);
+		assert( 0xa == cmpmask32(a));
+	}
+
 	NUDGE_FORCEINLINE unsigned signmask32(simd128_t x) {
 		return _mm_movemask_ps(x);
 	}
+
+	void test_signmask32()
+	{
+		simd128_t a = simd_ild(0xffffffff, 0x80000000, 0xffffffff, 0x80000000);
+		assert( 0xf == signmask32(a));
+
+		a = simd_ild(0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff);
+		assert( 0x0 == signmask32(a));
+		
+		a = simd_ild(0xffffffff, 0x0, 0x80000000, 0x0);
+		assert( 0x5 == signmask32(a));
+		
+		a = simd_ild(0x0, 0x80000000, 0x0, 0xffffffff);
+		assert( 0xa == signmask32(a));
+
+	}
+
 	
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
 #if defined(__SSE4_1__) || defined(__AVX__)
@@ -152,6 +208,19 @@ namespace simd {
 		s = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(s), 31));
 		return _mm_or_ps(_mm_andnot_ps(s, x), _mm_and_ps(s, y));
 #endif
+	}
+	
+	void test_blendv32()
+	{
+		simd128_t a = simd_ld(1.0f, 2.0f, 3.0f, 4.0f);
+		simd128_t b = simd_ld(5.0f, 6.0f, 7.0f, 8.0f);
+		simd128_t s = simd_ild(0x80000000, 0xffffffff, 0x7fffffff, 0x0);
+
+		simd128_t v = blendv32(a, b, s);
+		assert(simd_x(v) == 5.0f);
+		assert(simd_y(v) == 6.0f);
+		assert(simd_z(v) == 3.0f);
+		assert(simd_w(v) == 4.0f);
 	}
 }
 
@@ -173,6 +242,18 @@ namespace simd_float {
 		// Note: For SSE, second operand is returned on NaN.
 		// todo: check Nan behaviour for neon
 		return simd_min(y, x);
+	}
+	
+	void test_min_second_nan()
+	{
+		simd128_t a = simd_ld(1.0f, 2.0f, 3.0f, 4.0f);
+		simd128_t b = simd_ld(5.0f, NAN, 7.0f, 8.0f);
+
+		simd128_t v = min_second_nan(a,b);
+		assert(simd_x(v) == 1.0f);
+		assert(simd_y(v) == 2.0f);
+		assert(simd_z(v) == 3.0f);
+		assert(simd_w(v) == 4.0f);
 	}
 }
 
@@ -217,6 +298,19 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 
 	return result;
 }
+	
+void test_simd_i16_add()
+{
+	simd128_t a = simd_ild(0x0000ffff, 0x00010002, 0x00008000, 0x7fff0000);
+	simd128_t b = simd_ild(0x00000001, 0x00010002, 0x00008000, 0x7fff0000);
+	
+	simd128_t v = simd_i16_add(a,b);
+	
+	assert(as_int(simd_x(v)) == 0x0 );
+	assert(as_int(simd_y(v)) == 0x00020004 );
+	assert(as_int(simd_z(v)) == 0x0 );
+	assert(as_int(simd_w(v)) == 0xfffe0000 );
+}
 
 // neon: uint16x4_t vceq_s16(int16x4_t a, int16x4_t b);
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
@@ -228,6 +322,21 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
 
 	return result;
 }
+	
+void test_simd_i16_cmpeq()
+{
+	simd128_t a = simd_ild(0x0000ffff, 0x00010002, 0x00008000, 0x7fff0000);
+	simd128_t b = simd_ild(0x00000001, 0x00010002, 0x00038000, 0x7ffe0001);
+
+	simd128_t v = simd_i16_cmpeq(a,b);
+	
+	assert(as_int(simd_x(v)) == 0xffff0000 );
+	assert(as_int(simd_y(v)) == 0xffffffff );
+	assert(as_int(simd_z(v)) == 0x0000ffff );
+	assert(as_int(simd_w(v)) == 0x0 );
+
+}
+
 
 // neon: int16x4_t  vshr_n_s16(int16x4_t a, __constrange(1,16) int b);   // VSHR.S16 d0,d0,#16
 // templated version for constant
@@ -239,19 +348,65 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 
 	return result;
 }
+
+void test_simd_i16_srl()
+{
+	simd128_t a = simd_ild(0x0000ffff, 0x00010002, 0x00008000, 0x7fff0000);
+	
+	simd128_t v = simd_i16_srl(a,1);
+	
+	assert(as_int(simd_x(v)) == 0x00007fff );
+	assert(as_int(simd_y(v)) == 0x00000001 );
+	assert(as_int(simd_z(v)) == 0x00004000 );
+	assert(as_int(simd_w(v)) == 0x3fff0000 );
+}
+
 	
 // neon: int16x4_t  vmovn_s32(int32x4_t a);	//narrow to 16 bit
-//   vcombine_s16  
+//   vcombine_s16
+		//convert with signed saturation, but this only gets 0x0 and 0xffffffff here so neon one should support only that
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 {
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i packed = _mm_packs_epi32(a, b);
 	const simd128_sse_t result = _mm_castsi128_ps(packed);
-
+#if 0
+	uint32_t i[8];
+	i[0] = as_int(simd_x(_a));
+	i[1] = as_int(simd_y(_a));
+	i[2] = as_int(simd_z(_a));
+	i[3] = as_int(simd_w(_a));
+	i[4] = as_int(simd_x(_b));
+	i[5] = as_int(simd_y(_b));
+	i[6] = as_int(simd_z(_b));
+	i[7] = as_int(simd_w(_b));
+	assert(i[0] == 0x0 || i[0] == 0xffffffff);
+	assert(i[1] == 0x0 || i[1] == 0xffffffff);
+	assert(i[2] == 0x0 || i[2] == 0xffffffff);
+	assert(i[3] == 0x0 || i[3] == 0xffffffff);
+	assert(i[4] == 0x0 || i[4] == 0xffffffff);
+	assert(i[5] == 0x0 || i[5] == 0xffffffff);
+	assert(i[6] == 0x0 || i[6] == 0xffffffff);
+	assert(i[7] == 0x0 || i[7] == 0xffffffff);
+#endif
 	return result;
 }
+	
+void test_simd_pack_i32_to_i16()
+{
+	simd128_t a = simd_ild(0x0001ffff, 0xffffffff, 0x80000004, 0xffffffff);
+	simd128_t b = simd_ild(0x00000002, 0x00000003, 0xffffffff, 0xffffffff);
 
+	simd128_t v = simd_pack_i32_to_i16(a,b);
+		
+	assert(as_int(simd_x(v)) == 0xffff7fff );
+	assert(as_int(simd_y(v)) == 0xffff8000 );
+	assert(as_int(simd_z(v)) == 0x00030002 );
+	assert(as_int(simd_w(v)) == 0xffffffff );
+}
+	
+	
 // neon: int8x8_t  vmovn_s16(int16x8_t a);	//narrow to 16 bit
 //   int8x16_t   vcombine_s8(int8x8_t low, int8x8_t high);
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
@@ -264,6 +419,20 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
 	return result;
 }
 
+	void test_simd_pack_i16_to_i8()
+	{
+		simd128_t a = simd_ild(0x0001ffff, 0xffffff00, 0x80000004, 0xffffffff);
+		simd128_t b = simd_ild(0x00000002, 0x00000103, 0xffffffff, 0xffffffff);
+
+		simd128_t v = simd_pack_i16_to_i8(a,b);
+		
+		assert(as_int(simd_x(v)) == 0xff8001ff );
+		assert(as_int(simd_y(v)) == 0xffff8004 );
+		assert(as_int(simd_z(v)) == 0x007f0002 );
+		assert(as_int(simd_w(v)) == 0xffffffff );
+	}
+
+	
 // Unpack and interleave 16 - bit integers from the low half of a and b, and store the results in dst.
 // neon: int16x8_t   vcombine_s16(int16x4_t low, int16x4_t high);
 	// int16x4_t   vget_high_s16(int16x8_t a);
@@ -277,6 +446,20 @@ BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 
 	return result;
 }
+	
+	void test_simd_shuf_xAyBzCwD()
+	{
+		simd128_t a = simd_ild(0x0001ffff, 0xffffff00, 0x80000004, 0xffffffff);
+		simd128_t b = simd_ild(0x00000002, 0x00000103, 0xffffffff, 0xffffffff);
+		
+		simd128_t v = simd_shuf_xAyBzCwD(a,b);
+		
+		assert(as_int(simd_x(v)) == 0x0002ffff );
+		assert(as_int(simd_y(v)) == 0x00000001 );
+		assert(as_int(simd_z(v)) == 0x0103ff00 );
+		assert(as_int(simd_w(v)) == 0x0000ffff );
+	}
+
 
 // Create mask from the most significant bit of each 8-bit element in a, and store the result in dst.
 BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
@@ -284,6 +467,15 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
 }
+	
+	void test_simd_i8_mask()
+	{
+		simd128_t a = simd_ild(0x0001ff80, 0xffff7f0f, 0x80002080, 0xffffffff);
+		//						  0 0 1 1     1 1 0 0    1 0 0 1     1 1 1 1
+		int v = simd_i8_mask(a);
+		assert(v == 0xf9c3);
+	}
+
 
 #if 0
 // NEON does not provide a version of this function, here is an article about some ways to repro the results.
@@ -317,6 +509,22 @@ FORCE_INLINE int _mm_movemask_epi8(__m128i _a)
 }
 #endif
 
+	
+	void test()
+	{
+		simd::test_cmpmask32();
+		simd::test_signmask32();
+		simd::test_blendv32();
+		simd_float::test_min_second_nan();
+		
+		test_simd_i16_add();
+		test_simd_i16_cmpeq();
+		test_simd_i16_srl();
+		test_simd_pack_i32_to_i16();
+		test_simd_pack_i16_to_i8();
+		test_simd_shuf_xAyBzCwD();
+		test_simd_i8_mask();
+	}
 
 namespace simd_aos {
 	NUDGE_FORCEINLINE simd4_float dot(simd4_float a, simd4_float b) {
@@ -487,6 +695,8 @@ static inline void* align(Arena* arena, uintptr_t alignment) {
 }
 
 static inline void* allocate(Arena* arena, uintptr_t size) {
+	test();
+	
 	void* data = arena->data;
 	arena->data = (void*)((uintptr_t)data + size);
 	arena->size -= size;
@@ -871,7 +1081,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float pair = simd::blendv32(pair_a_b, pair_b_a, swap);
 			
 			// Store data for pairs with positive penetration.
-			unsigned mask = simd::signmask32(simd_cmpgt(p, simd_zero()));
+			unsigned mask = simd::cmpmask32(simd_cmpgt(p, simd_zero()));
 			
 			NUDGE_ALIGNED(16) float face_penetration_array[4];
 			NUDGE_ALIGNED(16) uint32_t face_array[4];
@@ -1142,8 +1352,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd4_float face_bias = simd_splat(1e-3f);
 			
-			unsigned edge = simd::signmask32(simd_cmpgt(face_penetration, penetration + face_bias));
-			unsigned overlapping = simd::signmask32(simd_cmpgt(penetration, simd_zero()));
+			unsigned edge = simd::cmpmask32(simd_cmpgt(face_penetration, penetration + face_bias));
+			unsigned overlapping = simd::cmpmask32(simd_cmpgt(penetration, simd_zero()));
 			
 			unsigned face = ~edge;
 			
@@ -1204,7 +1414,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				simd4_float max_dir = simd_max(simd_swiz_xzyw(dirs), simd_swiz_xxxx(dirs));
 				
-				unsigned dir_mask = simd::signmask32(simd_cmpge(dirs, max_dir));
+				unsigned dir_mask = simd::cmpmask32(simd_cmpge(dirs, max_dir));
 				
 				// Compute the coordinates of the two quad faces.
 				c0 *= simd_swiz_xxxx(b_size);
@@ -1354,8 +1564,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float a = simd_float::min_second_nan(one, near_x); // First operand is returned on NaN.
 						simd4_float b = simd_float::min_second_nan(one, far_x);
 						
-						edge_axis_near = simd::signmask32(simd_cmpgt(a, near_y));
-						edge_axis_far = simd::signmask32(simd_cmpgt(b, far_y));
+						edge_axis_near = simd::cmpmask32(simd_cmpgt(a, near_y));
+						edge_axis_far = simd::cmpmask32(simd_cmpgt(b, far_y));
 						
 						a = simd_min(a, near_y);
 						b = simd_min(b, far_y);
@@ -1485,7 +1695,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					
 					z += penetration * simd_xor(simd_splat(0.5f), z_sign);
 					
-					penetration_mask |= simd::signmask32(simd_cmpgt(penetration, simd_zero())) << i;
+					penetration_mask |= simd::cmpmask32(simd_cmpgt(penetration, simd_zero())) << i;
 					
 					simd_st(penetrations + i, penetration);
 					simd_st(support + 32 + i, z);
@@ -2656,7 +2866,7 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 			simd4_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
 			simd4_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
 			
-			unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
+			unsigned mask = simd::cmpmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 			
 			coarse_groups[coarse_group_count] = mask | ij_bits;
 			coarse_group_count += mask != 0;
@@ -2749,7 +2959,7 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 				simd4_float inside_y = simd_and(simd_cmpgt(max_b_y, min_a_y), simd_cmpgt(max_a_y, min_b_y));
 				simd4_float inside_z = simd_and(simd_cmpgt(max_b_z, min_a_z), simd_cmpgt(max_a_z, min_b_z));
 				
-				unsigned mask = simd::signmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
+				unsigned mask = simd::cmpmask32(simd_and(simd_and(inside_x, inside_y), inside_z));
 				
 				groups[group_count] = mask | ij_bits;
 				group_count += mask != 0;
@@ -3550,7 +3760,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 					break;
 			}
 			
-			unsigned lane = first_set_bit((unsigned)simd::signmask32(simd_icmpeq(scheduled_a_b, invalid_index)));
+			unsigned lane = first_set_bit((unsigned)simd::cmpmask32(simd_icmpeq(scheduled_a_b, invalid_index)));
 			ContactSlotV* slot = vacant_slots + j;
 			ContactPairV* pair = vacant_pairs + j;
 			
