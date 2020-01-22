@@ -7,9 +7,13 @@
 #include <bx/simd_t.h>
 #include <math.h>
 #include "common.h"
-#include "bgfx_utils.h"
+//#include "bgfx_utils.h"
 #include "logo.h"
-#include "imgui/imgui.h"
+#include <bgfx/bgfx.h>
+#include <dear-imgui/imgui.h>
+#include <common-bgfx/args.h>
+#include <common-bgfx/imgui/imgui.h>
+
 
 #include <unistd.h>
 
@@ -153,3 +157,8 @@ ENTRY_IMPLEMENT_MAIN(
 	, "Initialization and debug text."
 	, "https://bkaradzic.github.io/bgfx/examples.html#helloworld"
 	);
+
+int32_t _main_(int32_t _argc, char** _argv)
+{
+	return 0;
+}
