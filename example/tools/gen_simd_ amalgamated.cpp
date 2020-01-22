@@ -121,7 +121,7 @@ int main(int argc, const char * argv[]) {
 	
 	bx::FileWriter out;
 	bx::Error err;
-	out.open("../../../../../bx_simd_t.h", false, &err);
+	out.open("../../../bx_simd_t.h", false, &err);
 	
 	if (!err.isOk())
 	{

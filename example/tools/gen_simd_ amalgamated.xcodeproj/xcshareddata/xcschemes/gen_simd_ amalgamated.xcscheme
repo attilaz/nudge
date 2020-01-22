@@ -47,7 +47,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/attilaz/Documents/githubnew/nudge/example/tools/3rdparty/include/bx"
+      customWorkingDirectory = "/Users/attilaz/Documents/githubnew/nudge/example/3rdparty/bx"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
