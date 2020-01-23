@@ -165,6 +165,12 @@ public:
 				};
 				dde.setColor(0xff00ff00);
 				dde.draw(aabb);
+			
+			Sphere sphere = {
+				{ 5.0f, 5.0f, 1.0f},
+				1.0f,
+			};
+			dde.draw(sphere);
 			dde.pop();
 
 			static float time = 0.0f;
