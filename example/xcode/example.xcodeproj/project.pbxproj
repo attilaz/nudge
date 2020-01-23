@@ -29,7 +29,7 @@
 		DCDFBC5723D7AD0700C2C90A /* glcontext_egl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBAFF23D7AD0600C2C90A /* glcontext_egl.cpp */; };
 		DCDFBC5823D7AD0700C2C90A /* glcontext_egl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBAFF23D7AD0600C2C90A /* glcontext_egl.cpp */; };
 		DCDFBC5923D7AD0700C2C90A /* renderer_vk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0023D7AD0600C2C90A /* renderer_vk.cpp */; };
-		DCDFBC5A23D7AD0700C2C90A /* renderer_vk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0023D7AD0600C2C90A /* renderer_vk.cpp */; };
+		DCDFBC5A23D7AD0700C2C90A /* renderer_vk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0023D7AD0600C2C90A /* renderer_vk.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
 		DCDFBC5B23D7AD0700C2C90A /* renderer_d3d9.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0223D7AD0600C2C90A /* renderer_d3d9.cpp */; };
 		DCDFBC5C23D7AD0700C2C90A /* renderer_d3d9.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0223D7AD0600C2C90A /* renderer_d3d9.cpp */; };
 		DCDFBC5D23D7AD0700C2C90A /* shader_dx9bc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBB0323D7AD0600C2C90A /* shader_dx9bc.cpp */; };
@@ -254,6 +254,9 @@
 		DCDFBD9C23D7B2C100C2C90A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBD9B23D7B2C100C2C90A /* QuartzCore.framework */; };
 		DCDFBD9E23D7B2EF00C2C90A /* helloworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */; };
 		DCDFBD9F23D7B2EF00C2C90A /* helloworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */; };
+		DCDFBDE923DA2B0900C2C90A /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDE823DA2B0900C2C90A /* Metal.framework */; };
+		DCDFBDED23DA2B4400C2C90A /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */; };
+		DCDFBDF123DA2B7000C2C90A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -603,6 +606,11 @@
 		DCDFBD7523D7B18A00C2C90A /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.4.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		DCDFBD9B23D7B2C100C2C90A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helloworld.cpp; path = ../helloworld.cpp; sourceTree = "<group>"; };
+		DCDFBDE823DA2B0900C2C90A /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		DCDFBDEA23DA2B0E00C2C90A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		DCDFBDEE23DA2B6700C2C90A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -621,6 +629,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DCDFBDF123DA2B7000C2C90A /* QuartzCore.framework in Frameworks */,
+				DCDFBDED23DA2B4400C2C90A /* AppKit.framework in Frameworks */,
+				DCDFBDE923DA2B0900C2C90A /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1240,6 +1251,11 @@
 		DCDFBD6723D7B0C100C2C90A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */,
+				DCDFBDEE23DA2B6700C2C90A /* AVFoundation.framework */,
+				DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */,
+				DCDFBDEA23DA2B0E00C2C90A /* Foundation.framework */,
+				DCDFBDE823DA2B0900C2C90A /* Metal.framework */,
 				DCDFBD9B23D7B2C100C2C90A /* QuartzCore.framework */,
 				DCDFBD7523D7B18A00C2C90A /* ImageIO.framework */,
 				DCDFBD7223D7B16800C2C90A /* CoreFoundation.framework */,
@@ -1790,6 +1806,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1803,6 +1820,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.attilaz.example;
 				PRODUCT_NAME = example;
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					../3rdparty,
+					../3rdparty/compat/osx,
+					../3rdparty/khronos,
+				);
 			};
 			name = Debug;
 		};
@@ -1810,6 +1832,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1823,6 +1846,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.attilaz.example;
 				PRODUCT_NAME = example;
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					../3rdparty,
+					../3rdparty/compat/osx,
+					../3rdparty/khronos,
+				);
 			};
 			name = Release;
 		};
