@@ -214,38 +214,10 @@
 		DCDFBD4223D7AD0700C2C90A /* entry_winrt.cx in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1623D7AD0700C2C90A /* entry_winrt.cx */; };
 		DCDFBD4323D7AD0700C2C90A /* entry_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC1723D7AD0700C2C90A /* entry_glfw.cpp */; };
 		DCDFBD4423D7AD0700C2C90A /* entry_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC1723D7AD0700C2C90A /* entry_glfw.cpp */; };
-		DCDFBD4523D7AD0700C2C90A /* vs_imgui_color.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1923D7AD0700C2C90A /* vs_imgui_color.sc */; };
-		DCDFBD4623D7AD0700C2C90A /* vs_imgui_color.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1923D7AD0700C2C90A /* vs_imgui_color.sc */; };
-		DCDFBD4723D7AD0700C2C90A /* varying.def.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1D23D7AD0700C2C90A /* varying.def.sc */; };
-		DCDFBD4823D7AD0700C2C90A /* varying.def.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1D23D7AD0700C2C90A /* varying.def.sc */; };
-		DCDFBD4923D7AD0700C2C90A /* fs_imgui_image.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1F23D7AD0700C2C90A /* fs_imgui_image.sc */; };
-		DCDFBD4A23D7AD0700C2C90A /* fs_imgui_image.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC1F23D7AD0700C2C90A /* fs_imgui_image.sc */; };
-		DCDFBD4B23D7AD0700C2C90A /* vs_ocornut_imgui.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2323D7AD0700C2C90A /* vs_ocornut_imgui.sc */; };
-		DCDFBD4C23D7AD0700C2C90A /* vs_ocornut_imgui.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2323D7AD0700C2C90A /* vs_ocornut_imgui.sc */; };
 		DCDFBD4D23D7AD0700C2C90A /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC2523D7AD0700C2C90A /* makefile */; };
 		DCDFBD4E23D7AD0700C2C90A /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC2523D7AD0700C2C90A /* makefile */; };
-		DCDFBD4F23D7AD0700C2C90A /* fs_imgui_cubemap.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2623D7AD0700C2C90A /* fs_imgui_cubemap.sc */; };
-		DCDFBD5023D7AD0700C2C90A /* fs_imgui_cubemap.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2623D7AD0700C2C90A /* fs_imgui_cubemap.sc */; };
-		DCDFBD5123D7AD0700C2C90A /* fs_imgui_latlong.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2823D7AD0700C2C90A /* fs_imgui_latlong.sc */; };
-		DCDFBD5223D7AD0700C2C90A /* fs_imgui_latlong.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2823D7AD0700C2C90A /* fs_imgui_latlong.sc */; };
 		DCDFBD5323D7AD0700C2C90A /* imgui-bgfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC2923D7AD0700C2C90A /* imgui-bgfx.cpp */; };
 		DCDFBD5423D7AD0700C2C90A /* imgui-bgfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC2923D7AD0700C2C90A /* imgui-bgfx.cpp */; };
-		DCDFBD5523D7AD0700C2C90A /* fs_imgui_texture.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2B23D7AD0700C2C90A /* fs_imgui_texture.sc */; };
-		DCDFBD5623D7AD0700C2C90A /* fs_imgui_texture.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2B23D7AD0700C2C90A /* fs_imgui_texture.sc */; };
-		DCDFBD5723D7AD0700C2C90A /* fs_imgui_image_swizz.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2C23D7AD0700C2C90A /* fs_imgui_image_swizz.sc */; };
-		DCDFBD5823D7AD0700C2C90A /* fs_imgui_image_swizz.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC2C23D7AD0700C2C90A /* fs_imgui_image_swizz.sc */; };
-		DCDFBD5923D7AD0700C2C90A /* vs_imgui_texture.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3323D7AD0700C2C90A /* vs_imgui_texture.sc */; };
-		DCDFBD5A23D7AD0700C2C90A /* vs_imgui_texture.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3323D7AD0700C2C90A /* vs_imgui_texture.sc */; };
-		DCDFBD5B23D7AD0700C2C90A /* vs_imgui_image.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3423D7AD0700C2C90A /* vs_imgui_image.sc */; };
-		DCDFBD5C23D7AD0700C2C90A /* vs_imgui_image.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3423D7AD0700C2C90A /* vs_imgui_image.sc */; };
-		DCDFBD5D23D7AD0700C2C90A /* vs_imgui_cubemap.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3623D7AD0700C2C90A /* vs_imgui_cubemap.sc */; };
-		DCDFBD5E23D7AD0700C2C90A /* vs_imgui_cubemap.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3623D7AD0700C2C90A /* vs_imgui_cubemap.sc */; };
-		DCDFBD5F23D7AD0700C2C90A /* fs_ocornut_imgui.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3723D7AD0700C2C90A /* fs_ocornut_imgui.sc */; };
-		DCDFBD6023D7AD0700C2C90A /* fs_ocornut_imgui.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3723D7AD0700C2C90A /* fs_ocornut_imgui.sc */; };
-		DCDFBD6123D7AD0700C2C90A /* fs_imgui_color.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3923D7AD0700C2C90A /* fs_imgui_color.sc */; };
-		DCDFBD6223D7AD0700C2C90A /* fs_imgui_color.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3923D7AD0700C2C90A /* fs_imgui_color.sc */; };
-		DCDFBD6323D7AD0700C2C90A /* vs_imgui_latlong.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3A23D7AD0700C2C90A /* vs_imgui_latlong.sc */; };
-		DCDFBD6423D7AD0700C2C90A /* vs_imgui_latlong.sc in Resources */ = {isa = PBXBuildFile; fileRef = DCDFBC3A23D7AD0700C2C90A /* vs_imgui_latlong.sc */; };
 		DCDFBD6523D7AD0700C2C90A /* example-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC3C23D7AD0700C2C90A /* example-glue.cpp */; };
 		DCDFBD6623D7AD0700C2C90A /* example-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBC3C23D7AD0700C2C90A /* example-glue.cpp */; };
 		DCDFBD6923D7B0C100C2C90A /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBD6823D7B0C100C2C90A /* Metal.framework */; };
@@ -257,6 +229,10 @@
 		DCDFBDE923DA2B0900C2C90A /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDE823DA2B0900C2C90A /* Metal.framework */; };
 		DCDFBDED23DA2B4400C2C90A /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */; };
 		DCDFBDF123DA2B7000C2C90A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */; };
+		DCDFBDF423DA44B400C2C90A /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF223DA44B300C2C90A /* camera.cpp */; };
+		DCDFBDF523DA44B400C2C90A /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF223DA44B300C2C90A /* camera.cpp */; };
+		DCDFBDF723DA44F800C2C90A /* debugdraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */; };
+		DCDFBDF823DA44F800C2C90A /* debugdraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -559,40 +535,26 @@
 		DCDFBC1523D7AD0700C2C90A /* cmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmd.h; sourceTree = "<group>"; };
 		DCDFBC1623D7AD0700C2C90A /* entry_winrt.cx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = entry_winrt.cx; sourceTree = "<group>"; };
 		DCDFBC1723D7AD0700C2C90A /* entry_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_glfw.cpp; sourceTree = "<group>"; };
-		DCDFBC1923D7AD0700C2C90A /* vs_imgui_color.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_imgui_color.sc; sourceTree = "<group>"; };
 		DCDFBC1A23D7AD0700C2C90A /* imgui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgui.h; sourceTree = "<group>"; };
 		DCDFBC1B23D7AD0700C2C90A /* vs_imgui_color.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_imgui_color.bin.h; sourceTree = "<group>"; };
 		DCDFBC1C23D7AD0700C2C90A /* fs_imgui_latlong.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_latlong.bin.h; sourceTree = "<group>"; };
-		DCDFBC1D23D7AD0700C2C90A /* varying.def.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = varying.def.sc; sourceTree = "<group>"; };
 		DCDFBC1E23D7AD0700C2C90A /* fs_imgui_image_swizz.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_image_swizz.bin.h; sourceTree = "<group>"; };
-		DCDFBC1F23D7AD0700C2C90A /* fs_imgui_image.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_image.sc; sourceTree = "<group>"; };
 		DCDFBC2023D7AD0700C2C90A /* vs_imgui_cubemap.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_imgui_cubemap.bin.h; sourceTree = "<group>"; };
 		DCDFBC2123D7AD0700C2C90A /* fs_imgui_image.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_image.bin.h; sourceTree = "<group>"; };
 		DCDFBC2223D7AD0700C2C90A /* droidsans.ttf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = droidsans.ttf.h; sourceTree = "<group>"; };
-		DCDFBC2323D7AD0700C2C90A /* vs_ocornut_imgui.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_ocornut_imgui.sc; sourceTree = "<group>"; };
 		DCDFBC2423D7AD0700C2C90A /* fs_imgui_cubemap.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_cubemap.bin.h; sourceTree = "<group>"; };
 		DCDFBC2523D7AD0700C2C90A /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
-		DCDFBC2623D7AD0700C2C90A /* fs_imgui_cubemap.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_cubemap.sc; sourceTree = "<group>"; };
 		DCDFBC2723D7AD0700C2C90A /* icons_kenney.ttf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icons_kenney.ttf.h; sourceTree = "<group>"; };
-		DCDFBC2823D7AD0700C2C90A /* fs_imgui_latlong.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_latlong.sc; sourceTree = "<group>"; };
 		DCDFBC2923D7AD0700C2C90A /* imgui-bgfx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "imgui-bgfx.cpp"; sourceTree = "<group>"; };
 		DCDFBC2A23D7AD0700C2C90A /* vs_imgui_latlong.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_imgui_latlong.bin.h; sourceTree = "<group>"; };
-		DCDFBC2B23D7AD0700C2C90A /* fs_imgui_texture.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_texture.sc; sourceTree = "<group>"; };
-		DCDFBC2C23D7AD0700C2C90A /* fs_imgui_image_swizz.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_image_swizz.sc; sourceTree = "<group>"; };
 		DCDFBC2D23D7AD0700C2C90A /* fs_imgui_texture.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_texture.bin.h; sourceTree = "<group>"; };
 		DCDFBC2E23D7AD0700C2C90A /* robotomono_regular.ttf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = robotomono_regular.ttf.h; sourceTree = "<group>"; };
 		DCDFBC2F23D7AD0700C2C90A /* vs_imgui_image.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_imgui_image.bin.h; sourceTree = "<group>"; };
 		DCDFBC3023D7AD0700C2C90A /* roboto_regular.ttf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roboto_regular.ttf.h; sourceTree = "<group>"; };
 		DCDFBC3123D7AD0700C2C90A /* vs_ocornut_imgui.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_ocornut_imgui.bin.h; sourceTree = "<group>"; };
 		DCDFBC3223D7AD0700C2C90A /* fs_imgui_color.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_imgui_color.bin.h; sourceTree = "<group>"; };
-		DCDFBC3323D7AD0700C2C90A /* vs_imgui_texture.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_imgui_texture.sc; sourceTree = "<group>"; };
-		DCDFBC3423D7AD0700C2C90A /* vs_imgui_image.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_imgui_image.sc; sourceTree = "<group>"; };
 		DCDFBC3523D7AD0700C2C90A /* fs_ocornut_imgui.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fs_ocornut_imgui.bin.h; sourceTree = "<group>"; };
-		DCDFBC3623D7AD0700C2C90A /* vs_imgui_cubemap.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_imgui_cubemap.sc; sourceTree = "<group>"; };
-		DCDFBC3723D7AD0700C2C90A /* fs_ocornut_imgui.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_ocornut_imgui.sc; sourceTree = "<group>"; };
 		DCDFBC3823D7AD0700C2C90A /* icons_font_awesome.ttf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icons_font_awesome.ttf.h; sourceTree = "<group>"; };
-		DCDFBC3923D7AD0700C2C90A /* fs_imgui_color.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_imgui_color.sc; sourceTree = "<group>"; };
-		DCDFBC3A23D7AD0700C2C90A /* vs_imgui_latlong.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vs_imgui_latlong.sc; sourceTree = "<group>"; };
 		DCDFBC3B23D7AD0700C2C90A /* vs_imgui_texture.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vs_imgui_texture.bin.h; sourceTree = "<group>"; };
 		DCDFBC3C23D7AD0700C2C90A /* example-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "example-glue.cpp"; sourceTree = "<group>"; };
 		DCDFBC3D23D7AD0700C2C90A /* args.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = args.h; sourceTree = "<group>"; };
@@ -611,6 +573,9 @@
 		DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		DCDFBDEE23DA2B6700C2C90A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		DCDFBDF223DA44B300C2C90A /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
+		DCDFBDF323DA44B400C2C90A /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
+		DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugdraw.cpp; path = ../debugdraw.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -641,6 +606,7 @@
 		DCDFB78323D7ABC200C2C90A = {
 			isa = PBXGroup;
 			children = (
+				DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */,
 				DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */,
 				DCDFBAA623D7AD0600C2C90A /* 3rdparty */,
 				DCDFB78823D7ABC200C2C90A /* example Shared */,
@@ -1168,6 +1134,8 @@
 		DCDFBC0023D7AD0700C2C90A /* common-bgfx */ = {
 			isa = PBXGroup;
 			children = (
+				DCDFBDF223DA44B300C2C90A /* camera.cpp */,
+				DCDFBDF323DA44B400C2C90A /* camera.h */,
 				DCDFBC0123D7AD0700C2C90A /* args.cpp */,
 				DCDFBC0223D7AD0700C2C90A /* entry */,
 				DCDFBC1823D7AD0700C2C90A /* imgui */,
@@ -1209,41 +1177,27 @@
 		DCDFBC1823D7AD0700C2C90A /* imgui */ = {
 			isa = PBXGroup;
 			children = (
-				DCDFBC1923D7AD0700C2C90A /* vs_imgui_color.sc */,
-				DCDFBC1A23D7AD0700C2C90A /* imgui.h */,
-				DCDFBC1B23D7AD0700C2C90A /* vs_imgui_color.bin.h */,
-				DCDFBC1C23D7AD0700C2C90A /* fs_imgui_latlong.bin.h */,
-				DCDFBC1D23D7AD0700C2C90A /* varying.def.sc */,
-				DCDFBC1E23D7AD0700C2C90A /* fs_imgui_image_swizz.bin.h */,
-				DCDFBC1F23D7AD0700C2C90A /* fs_imgui_image.sc */,
-				DCDFBC2023D7AD0700C2C90A /* vs_imgui_cubemap.bin.h */,
-				DCDFBC2123D7AD0700C2C90A /* fs_imgui_image.bin.h */,
-				DCDFBC2223D7AD0700C2C90A /* droidsans.ttf.h */,
-				DCDFBC2323D7AD0700C2C90A /* vs_ocornut_imgui.sc */,
-				DCDFBC2423D7AD0700C2C90A /* fs_imgui_cubemap.bin.h */,
 				DCDFBC2523D7AD0700C2C90A /* makefile */,
-				DCDFBC2623D7AD0700C2C90A /* fs_imgui_cubemap.sc */,
-				DCDFBC2723D7AD0700C2C90A /* icons_kenney.ttf.h */,
-				DCDFBC2823D7AD0700C2C90A /* fs_imgui_latlong.sc */,
 				DCDFBC2923D7AD0700C2C90A /* imgui-bgfx.cpp */,
-				DCDFBC2A23D7AD0700C2C90A /* vs_imgui_latlong.bin.h */,
-				DCDFBC2B23D7AD0700C2C90A /* fs_imgui_texture.sc */,
-				DCDFBC2C23D7AD0700C2C90A /* fs_imgui_image_swizz.sc */,
-				DCDFBC2D23D7AD0700C2C90A /* fs_imgui_texture.bin.h */,
-				DCDFBC2E23D7AD0700C2C90A /* robotomono_regular.ttf.h */,
-				DCDFBC2F23D7AD0700C2C90A /* vs_imgui_image.bin.h */,
-				DCDFBC3023D7AD0700C2C90A /* roboto_regular.ttf.h */,
-				DCDFBC3123D7AD0700C2C90A /* vs_ocornut_imgui.bin.h */,
+				DCDFBC2223D7AD0700C2C90A /* droidsans.ttf.h */,
 				DCDFBC3223D7AD0700C2C90A /* fs_imgui_color.bin.h */,
-				DCDFBC3323D7AD0700C2C90A /* vs_imgui_texture.sc */,
-				DCDFBC3423D7AD0700C2C90A /* vs_imgui_image.sc */,
+				DCDFBC2423D7AD0700C2C90A /* fs_imgui_cubemap.bin.h */,
+				DCDFBC1E23D7AD0700C2C90A /* fs_imgui_image_swizz.bin.h */,
+				DCDFBC2123D7AD0700C2C90A /* fs_imgui_image.bin.h */,
+				DCDFBC1C23D7AD0700C2C90A /* fs_imgui_latlong.bin.h */,
+				DCDFBC2D23D7AD0700C2C90A /* fs_imgui_texture.bin.h */,
 				DCDFBC3523D7AD0700C2C90A /* fs_ocornut_imgui.bin.h */,
-				DCDFBC3623D7AD0700C2C90A /* vs_imgui_cubemap.sc */,
-				DCDFBC3723D7AD0700C2C90A /* fs_ocornut_imgui.sc */,
 				DCDFBC3823D7AD0700C2C90A /* icons_font_awesome.ttf.h */,
-				DCDFBC3923D7AD0700C2C90A /* fs_imgui_color.sc */,
-				DCDFBC3A23D7AD0700C2C90A /* vs_imgui_latlong.sc */,
+				DCDFBC2723D7AD0700C2C90A /* icons_kenney.ttf.h */,
+				DCDFBC1A23D7AD0700C2C90A /* imgui.h */,
+				DCDFBC3023D7AD0700C2C90A /* roboto_regular.ttf.h */,
+				DCDFBC2E23D7AD0700C2C90A /* robotomono_regular.ttf.h */,
+				DCDFBC1B23D7AD0700C2C90A /* vs_imgui_color.bin.h */,
+				DCDFBC2023D7AD0700C2C90A /* vs_imgui_cubemap.bin.h */,
+				DCDFBC2F23D7AD0700C2C90A /* vs_imgui_image.bin.h */,
+				DCDFBC2A23D7AD0700C2C90A /* vs_imgui_latlong.bin.h */,
 				DCDFBC3B23D7AD0700C2C90A /* vs_imgui_texture.bin.h */,
+				DCDFBC3123D7AD0700C2C90A /* vs_ocornut_imgui.bin.h */,
 			);
 			path = imgui;
 			sourceTree = "<group>";
@@ -1351,13 +1305,8 @@
 				DCDFBC9723D7AD0700C2C90A /* allocator.inl in Resources */,
 				DCDFBCBF23D7AD0700C2C90A /* error.inl in Resources */,
 				DCDFBCAB23D7AD0700C2C90A /* pixelformat.inl in Resources */,
-				DCDFBD6323D7AD0700C2C90A /* vs_imgui_latlong.sc in Resources */,
-				DCDFBD5D23D7AD0700C2C90A /* vs_imgui_cubemap.sc in Resources */,
-				DCDFBD5723D7AD0700C2C90A /* fs_imgui_image_swizz.sc in Resources */,
-				DCDFBD5123D7AD0700C2C90A /* fs_imgui_latlong.sc in Resources */,
 				DCDFBCB123D7AD0700C2C90A /* easing.inl in Resources */,
 				DCDFBD4123D7AD0700C2C90A /* entry_winrt.cx in Resources */,
-				DCDFBD4F23D7AD0700C2C90A /* fs_imgui_cubemap.sc in Resources */,
 				DCDFBCA523D7AD0700C2C90A /* simd128_sse.inl in Resources */,
 				DCDFBCC123D7AD0700C2C90A /* simd256_ref.inl in Resources */,
 				DCDFBCAD23D7AD0700C2C90A /* simd256_avx.inl in Resources */,
@@ -1367,28 +1316,19 @@
 				DCDFB7BA23D7ABC500C2C90A /* Assets.xcassets in Resources */,
 				DCDFBCA723D7AD0700C2C90A /* cpu.inl in Resources */,
 				DCDFBC9523D7AD0700C2C90A /* readerwriter.inl in Resources */,
-				DCDFBD4523D7AD0700C2C90A /* vs_imgui_color.sc in Resources */,
 				DCDFBC9323D7AD0700C2C90A /* handlealloc.inl in Resources */,
 				DCDFBCBD23D7AD0700C2C90A /* math.inl in Resources */,
 				DCDFBCFD23D7AD0700C2C90A /* imgui_user.inl in Resources */,
 				DCDFBC9D23D7AD0700C2C90A /* bx.inl in Resources */,
 				DCDFBCAF23D7AD0700C2C90A /* mutex.inl in Resources */,
 				DCDFBCC323D7AD0700C2C90A /* mpscqueue.inl in Resources */,
-				DCDFBD4923D7AD0700C2C90A /* fs_imgui_image.sc in Resources */,
 				DCDFBC9B23D7AD0700C2C90A /* simd128_neon.inl in Resources */,
-				DCDFBD5523D7AD0700C2C90A /* fs_imgui_texture.sc in Resources */,
 				DCDFBC9923D7AD0700C2C90A /* simd_ni.inl in Resources */,
 				DCDFBCB723D7AD0700C2C90A /* sort.inl in Resources */,
 				DCDFBC7D23D7AD0700C2C90A /* bgfx.idl.inl in Resources */,
 				DCDFBCB523D7AD0700C2C90A /* simd128_ref.inl in Resources */,
 				DCDFBCA123D7AD0700C2C90A /* simd128_swizzle.inl in Resources */,
-				DCDFBD5F23D7AD0700C2C90A /* fs_ocornut_imgui.sc in Resources */,
-				DCDFBD4723D7AD0700C2C90A /* varying.def.sc in Resources */,
-				DCDFBD4B23D7AD0700C2C90A /* vs_ocornut_imgui.sc in Resources */,
 				DCDFB7A023D7ABC500C2C90A /* LaunchScreen.storyboard in Resources */,
-				DCDFBD6123D7AD0700C2C90A /* fs_imgui_color.sc in Resources */,
-				DCDFBD5923D7AD0700C2C90A /* vs_imgui_texture.sc in Resources */,
-				DCDFBD5B23D7AD0700C2C90A /* vs_imgui_image.sc in Resources */,
 				DCDFBC9123D7AD0700C2C90A /* float4x4_t.inl in Resources */,
 				DCDFBCB323D7AD0700C2C90A /* string.inl in Resources */,
 				DCDFBCBB23D7AD0700C2C90A /* rng.inl in Resources */,
@@ -1408,48 +1348,34 @@
 				DCDFBCA623D7AD0700C2C90A /* simd128_sse.inl in Resources */,
 				DCDFBC9823D7AD0700C2C90A /* allocator.inl in Resources */,
 				DCDFBCAE23D7AD0700C2C90A /* simd256_avx.inl in Resources */,
-				DCDFBD4A23D7AD0700C2C90A /* fs_imgui_image.sc in Resources */,
-				DCDFBD5823D7AD0700C2C90A /* fs_imgui_image_swizz.sc in Resources */,
 				DCDFBC9E23D7AD0700C2C90A /* bx.inl in Resources */,
 				DCDFBCC423D7AD0700C2C90A /* mpscqueue.inl in Resources */,
-				DCDFBD5C23D7AD0700C2C90A /* vs_imgui_image.sc in Resources */,
-				DCDFBD5A23D7AD0700C2C90A /* vs_imgui_texture.sc in Resources */,
 				DCDFBC4023D7AD0700C2C90A /* directx-sdk-eula.txt in Resources */,
-				DCDFBD4C23D7AD0700C2C90A /* vs_ocornut_imgui.sc in Resources */,
 				DCDFBCAC23D7AD0700C2C90A /* pixelformat.inl in Resources */,
 				DCDFBCC223D7AD0700C2C90A /* simd256_ref.inl in Resources */,
 				DCDFBCBC23D7AD0700C2C90A /* rng.inl in Resources */,
-				DCDFBD5023D7AD0700C2C90A /* fs_imgui_cubemap.sc in Resources */,
 				DCDFBCA823D7AD0700C2C90A /* cpu.inl in Resources */,
 				DCDFB7BB23D7ABC500C2C90A /* Assets.xcassets in Resources */,
-				DCDFBD5E23D7AD0700C2C90A /* vs_imgui_cubemap.sc in Resources */,
 				DCDFBCA423D7AD0700C2C90A /* ringbuffer.inl in Resources */,
 				DCDFBCC823D7AD0700C2C90A /* simd128_langext.inl in Resources */,
-				DCDFBD6423D7AD0700C2C90A /* vs_imgui_latlong.sc in Resources */,
 				DCDFBCB623D7AD0700C2C90A /* simd128_ref.inl in Resources */,
 				DCDFBCAA23D7AD0700C2C90A /* hash.inl in Resources */,
 				DCDFB7B223D7ABC500C2C90A /* Main.storyboard in Resources */,
 				DCDFBC9A23D7AD0700C2C90A /* simd_ni.inl in Resources */,
 				DCDFBC9C23D7AD0700C2C90A /* simd128_neon.inl in Resources */,
-				DCDFBD4623D7AD0700C2C90A /* vs_imgui_color.sc in Resources */,
-				DCDFBD5223D7AD0700C2C90A /* fs_imgui_latlong.sc in Resources */,
 				DCDFBCB423D7AD0700C2C90A /* string.inl in Resources */,
 				DCDFBCA023D7AD0700C2C90A /* spscqueue.inl in Resources */,
-				DCDFBD6023D7AD0700C2C90A /* fs_ocornut_imgui.sc in Resources */,
 				DCDFBCB023D7AD0700C2C90A /* mutex.inl in Resources */,
-				DCDFBD6223D7AD0700C2C90A /* fs_imgui_color.sc in Resources */,
 				DCDFBCC023D7AD0700C2C90A /* error.inl in Resources */,
 				DCDFBC9623D7AD0700C2C90A /* readerwriter.inl in Resources */,
 				DCDFBC7E23D7AD0700C2C90A /* bgfx.idl.inl in Resources */,
 				DCDFBCBA23D7AD0700C2C90A /* uint32_t.inl in Resources */,
-				DCDFBD4823D7AD0700C2C90A /* varying.def.sc in Resources */,
 				DCDFBCB823D7AD0700C2C90A /* sort.inl in Resources */,
 				DCDFBD4223D7AD0700C2C90A /* entry_winrt.cx in Resources */,
 				DCDFBCC623D7AD0700C2C90A /* endian.inl in Resources */,
 				DCDFBCFE23D7AD0700C2C90A /* imgui_user.inl in Resources */,
 				DCDFBC9423D7AD0700C2C90A /* handlealloc.inl in Resources */,
 				DCDFBCBE23D7AD0700C2C90A /* math.inl in Resources */,
-				DCDFBD5623D7AD0700C2C90A /* fs_imgui_texture.sc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1469,6 +1395,7 @@
 				DCDFBC8523D7AD0700C2C90A /* renderer_noop.cpp in Sources */,
 				DCDFBD6523D7AD0700C2C90A /* example-glue.cpp in Sources */,
 				DCDFBCCF23D7AD0700C2C90A /* process.cpp in Sources */,
+				DCDFBDF723DA44F800C2C90A /* debugdraw.cpp in Sources */,
 				DCDFBCED23D7AD0700C2C90A /* commandline.cpp in Sources */,
 				DCDFBCD723D7AD0700C2C90A /* timer.cpp in Sources */,
 				DCDFBC6923D7AD0700C2C90A /* shader.cpp in Sources */,
@@ -1530,6 +1457,7 @@
 				DCDFBCCD23D7AD0700C2C90A /* os.cpp in Sources */,
 				DCDFBD2F23D7AD0700C2C90A /* entry_osx.mm in Sources */,
 				DCDFBCF323D7AD0700C2C90A /* image.cpp in Sources */,
+				DCDFBDF423DA44B400C2C90A /* camera.cpp in Sources */,
 				DCDFBD9E23D7B2EF00C2C90A /* helloworld.cpp in Sources */,
 				DCDFBC4F23D7AD0700C2C90A /* nvapi.cpp in Sources */,
 				DCDFBC4123D7AD0700C2C90A /* renderer_d3d12.cpp in Sources */,
@@ -1549,6 +1477,7 @@
 				DCDFBC8623D7AD0700C2C90A /* renderer_noop.cpp in Sources */,
 				DCDFBD6623D7AD0700C2C90A /* example-glue.cpp in Sources */,
 				DCDFBCD023D7AD0700C2C90A /* process.cpp in Sources */,
+				DCDFBDF823DA44F800C2C90A /* debugdraw.cpp in Sources */,
 				DCDFBCEE23D7AD0700C2C90A /* commandline.cpp in Sources */,
 				DCDFBCD823D7AD0700C2C90A /* timer.cpp in Sources */,
 				DCDFBC6A23D7AD0700C2C90A /* shader.cpp in Sources */,
@@ -1610,6 +1539,7 @@
 				DCDFBCCE23D7AD0700C2C90A /* os.cpp in Sources */,
 				DCDFBD3023D7AD0700C2C90A /* entry_osx.mm in Sources */,
 				DCDFBCF423D7AD0700C2C90A /* image.cpp in Sources */,
+				DCDFBDF523DA44B400C2C90A /* camera.cpp in Sources */,
 				DCDFBD9F23D7B2EF00C2C90A /* helloworld.cpp in Sources */,
 				DCDFBC5023D7AD0700C2C90A /* nvapi.cpp in Sources */,
 				DCDFBC4223D7AD0700C2C90A /* renderer_d3d12.cpp in Sources */,
