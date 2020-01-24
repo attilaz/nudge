@@ -153,7 +153,8 @@ namespace simd {
 #if BX_SIMD_SSE
 		return _mm_movemask_ps(x);
 #else
-#error not implemented
+		return 0;
+//#error not implemented
 #endif
 	}
 
@@ -175,7 +176,8 @@ namespace simd {
 #if BX_SIMD_SSE
 		return _mm_movemask_ps(x);
 #else
-#error not implemented
+		return 0;
+//#error not implemented
 #endif
 	}
 
@@ -206,7 +208,8 @@ namespace simd {
 		return _mm_or_ps(_mm_andnot_ps(s, x), _mm_and_ps(s, y));
 #endif
 #else
-#error not implemented
+		return simd_zero();
+//#error not implemented
 #endif
 	}
 	
@@ -281,7 +284,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t x, simd128_t y) {
 #if BX_SIMD_SSE
 	return _mm_cmpneq_ps(x, y);
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 
@@ -292,7 +296,7 @@ BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 #if BX_SIMD_SSE
 	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
 #else
-#error not implemented
+//#error not implemented
 #endif
 }
 
@@ -307,7 +311,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 	
@@ -335,7 +340,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 	
@@ -365,7 +371,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 
@@ -413,7 +420,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 #endif
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 	
@@ -443,7 +451,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 
@@ -475,7 +484,8 @@ BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-#error not implemented
+//#error not implemented
+	return simd_zero();
 #endif
 }
 	
@@ -500,7 +510,8 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
 #else
-#error not implemented
+//#error not implemented
+	return 0;
 #endif
 }
 	
