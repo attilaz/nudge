@@ -57,11 +57,11 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
-/*
+
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
-*/
+
 
 
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
@@ -1005,9 +1005,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float u_x, u_y, u_z;
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
-			simd4_float a_offset_x = simd_sub(u_x + delta_x, b_rotation_s * t_x);
-			simd4_float a_offset_y = simd_sub(u_y + delta_y, b_rotation_s * t_y);
-			simd4_float a_offset_z = simd_sub(u_z + delta_z, b_rotation_s * t_z);
+			simd4_float a_offset_x = simd_sub(simd_add(u_x, delta_x), b_rotation_s * t_x);
+			simd4_float a_offset_y = simd_sub(simd_add(u_y, delta_y), b_rotation_s * t_y);
+			simd4_float a_offset_z = simd_sub(simd_add(u_z, delta_z), b_rotation_s * t_z);
 			
 			pax = simd_sub(pax, simd_abs(a_offset_x));
 			pay = simd_sub(pay, simd_abs(a_offset_y));
@@ -1145,16 +1145,16 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float relative_rotation_x = simd_sub(a_rotation_x * b_rotation_s, simd_madd(b_rotation_x, a_rotation_s, t_x));
 			simd4_float relative_rotation_y = simd_sub(a_rotation_y * b_rotation_s, simd_madd(b_rotation_y, a_rotation_s, t_y));
 			simd4_float relative_rotation_z = simd_sub(a_rotation_z * b_rotation_s, simd_madd(b_rotation_z, a_rotation_s, t_z));
-			simd4_float relative_rotation_s = (a_rotation_x * b_rotation_x +
-											   a_rotation_y * b_rotation_y +
-											   a_rotation_z * b_rotation_z +
-											   a_rotation_s * b_rotation_s);
+			simd4_float relative_rotation_s = simd_madd(a_rotation_x, b_rotation_x,
+												simd_madd(a_rotation_y, b_rotation_y,
+													simd_madd(a_rotation_z, b_rotation_z,
+														simd_mul(a_rotation_s, b_rotation_s))));
 			
 			// Compute the corresponding matrix.
 			// Note that the b to a matrix is simply the transpose of a to b.
-			simd4_float kx = relative_rotation_x + relative_rotation_x;
-			simd4_float ky = relative_rotation_y + relative_rotation_y;
-			simd4_float kz = relative_rotation_z + relative_rotation_z;
+			simd4_float kx = simd_add(relative_rotation_x, relative_rotation_x);
+			simd4_float ky = simd_add(relative_rotation_y, relative_rotation_y);
+			simd4_float kz = simd_add(relative_rotation_z, relative_rotation_z);
 			
 			simd4_float xx = kx * relative_rotation_x;
 			simd4_float yy = ky * relative_rotation_y;
@@ -1169,14 +1169,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float one = simd_splat(1.0f);
 			
 			simd4_float vx_x = simd_sub(one, simd_add(yy, zz));
-			simd4_float vx_y = xy + sz;
+			simd4_float vx_y = simd_add(xy, sz);
 			simd4_float vx_z = simd_sub(xz, sy);
 			
 			simd4_float vy_x = simd_sub(xy, sz);
 			simd4_float vy_y = simd_sub(one, simd_add(xx, zz));
-			simd4_float vy_z = yz + sx;
+			simd4_float vy_z = simd_add(yz, sx);
 			
-			simd4_float vz_x = xz + sy;
+			simd4_float vz_x = simd_add(xz, sy);
 			simd4_float vz_y = simd_sub(yz, sx);
 			simd4_float vz_z = simd_sub(one, simd_add(xx, yy));
 			
@@ -1276,13 +1276,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float abcy = simd_abs(bcy);
 				simd4_float abcz = simd_abs(bcz);
 				
-				simd4_float r_a0 = ac2y + ac2z;
-				simd4_float r_a1 = ac2z + ac2x;
-				simd4_float r_a2 = ac2x + ac2y;
+				simd4_float r_a0 = simd_add(ac2y, ac2z);
+				simd4_float r_a1 = simd_add(ac2z, ac2x);
+				simd4_float r_a2 = simd_add(ac2x, ac2y);
 				
-				simd4_float r_b0 = bc2y + bc2z;
-				simd4_float r_b1 = bc2z + bc2x;
-				simd4_float r_b2 = bc2x + bc2y;
+				simd4_float r_b0 = simd_add(bc2y, bc2z);
+				simd4_float r_b1 = simd_add(bc2z, bc2x);
+				simd4_float r_b2 = simd_add(bc2x, bc2y);
 				
 				simd4_float nan_threshold = simd_splat(1e-3f);
 				
@@ -1294,13 +1294,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				r_b1 = simd_or(simd_rsqrt_est(r_b1), simd_cmple(r_b1, nan_threshold));
 				r_b2 = simd_or(simd_rsqrt_est(r_b2), simd_cmple(r_b2, nan_threshold));
 				
-				simd4_float pa0 = aacy*a_size_z + aacz*a_size_y;
-				simd4_float pa1 = aacz*a_size_x + aacx*a_size_z;
-				simd4_float pa2 = aacx*a_size_y + aacy*a_size_x;
+				simd4_float pa0 = simd_madd(aacy, a_size_z, simd_mul(aacz, a_size_y));
+				simd4_float pa1 = simd_madd(aacz, a_size_x, simd_mul(aacx, a_size_z));
+				simd4_float pa2 = simd_madd(aacx, a_size_y, simd_mul(aacy, a_size_x));
 				
-				simd4_float pb0 = abcy*b_size_z + abcz*b_size_y;
-				simd4_float pb1 = abcz*b_size_x + abcx*b_size_z;
-				simd4_float pb2 = abcx*b_size_y + abcy*b_size_x;
+				simd4_float pb0 = simd_madd(abcy, b_size_z, simd_mul(abcz, b_size_y));
+				simd4_float pb1 = simd_madd(abcz, b_size_x, simd_mul(abcx, b_size_z));
+				simd4_float pb2 = simd_madd(abcx, b_size_y, simd_mul(abcy, b_size_x));
 				
 				simd4_float o0 = simd_abs(simd_sub(acy*b_offset_z, acz*b_offset_y));
 				simd4_float o1 = simd_abs(simd_sub(acz*b_offset_x, acx*b_offset_z));
@@ -1322,7 +1322,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			for (unsigned i = 0; i < 3; ++i) {
 				for (unsigned j = 0; j < 3; ++j) {
-					simd4_float p = simd_ld(edge_penetration_a + (i*3 + j)*4) + simd_ld(edge_penetration_b + (j*3 + i)*4);
+					simd4_float p = simd_add(simd_ld(edge_penetration_a + (i*3 + j)*4),
+											 simd_ld(edge_penetration_b + (j*3 + i)*4));
 					
 					simd4_float mask = simd_cmpgt(penetration, p);
 					
@@ -1334,7 +1335,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd4_float face_bias = simd_splat(1e-3f);
 			
-			unsigned edge = simd::cmpmask32(simd_cmpgt(face_penetration, penetration + face_bias));
+			unsigned edge = simd::cmpmask32(simd_cmpgt(face_penetration, simd_add(penetration, face_bias)));
 			unsigned overlapping = simd::cmpmask32(simd_cmpgt(penetration, simd_zero()));
 			
 			unsigned face = ~edge;
@@ -1484,8 +1485,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float corner0x = simd_xor(sx, sign_pnpn);
 						simd4_float corner0y = simd_xor(sy, sign_nnpp);
 						
-						simd4_float corner1x = cx + simd_xor(simd_swiz_xxxx(dxy), sign_npnp) + simd_xor(simd_swiz_zzzz(dxy), sign_nnpp);
-						simd4_float corner1y = cy + simd_xor(simd_swiz_yyyy(dxy), sign_npnp) + simd_xor(simd_swiz_wwww(dxy), sign_nnpp);
+						simd4_float corner1x = simd_add3(cx, simd_xor(simd_swiz_xxxx(dxy), sign_npnp), simd_xor(simd_swiz_zzzz(dxy), sign_nnpp));
+						simd4_float corner1y = simd_add3(cy, simd_xor(simd_swiz_yyyy(dxy), sign_npnp), simd_xor(simd_swiz_wwww(dxy), sign_nnpp));
 						
 						simd4_float k = (simd_sub( simd_swiz_zzAA(sxycxy, dxy) * simd_swiz_wywy(dxy),
 												   simd_swiz_wwBB(sxycxy, dxy) * simd_swiz_zxzx(dxy)));
@@ -1496,8 +1497,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						
 						simd4_float sdxy = dxy * simd_swiz_yxyx(sxycxy);
 						
-						simd4_float delta_x = ox + simd_xor(simd_swiz_zzzz(sdxy), sign_nnpp) + simd_xor(simd_swiz_wwww(sdxy), sign_npnp);
-						simd4_float delta_y = oy + simd_xor(simd_swiz_xxxx(sdxy), sign_nnpp) + simd_xor(simd_swiz_yyyy(sdxy), sign_npnp);
+						simd4_float delta_x = simd_add3(ox, simd_xor(simd_swiz_zzzz(sdxy), sign_nnpp), simd_xor(simd_swiz_wwww(sdxy), sign_npnp));
+						simd4_float delta_y = simd_add3(oy, simd_xor(simd_swiz_xxxx(sdxy), sign_nnpp), simd_xor(simd_swiz_yyyy(sdxy), sign_npnp));
 						
 						simd4_float inside_x = simd_cmple(simd_abs(corner1x), sx);
 						simd4_float inside_y = simd_cmple(simd_abs(corner1y), sy);
@@ -1527,8 +1528,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float offset_x = simd_swiz_xxzz(dxy);
 						simd4_float offset_y = simd_swiz_yyww(dxy);
 						
-						simd4_float pivot_x = cx + simd_xor(simd_swiz_zzxx(dxy), sign_npnp);
-						simd4_float pivot_y = cy + simd_xor(simd_swiz_wwyy(dxy), sign_npnp);
+						simd4_float pivot_x = simd_add(cx, simd_xor(simd_swiz_zzxx(dxy), sign_npnp));
+						simd4_float pivot_y = simd_add(cy, simd_xor(simd_swiz_wwyy(dxy), sign_npnp));
 						
 						simd4_float sign_mask = simd_splat(-0.0f);
 						simd4_float pos_x = simd_or(simd_and(offset_x, sign_mask), sx); // Copy sign.
@@ -1537,10 +1538,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float rx = simd_swiz_xxzz(rdxy);
 						simd4_float ry = simd_swiz_yyww(rdxy);
 						
-						simd4_float near_x = (pos_x + pivot_x) * rx;
+						simd4_float near_x = simd_add(pos_x, pivot_x) * rx;
 						simd4_float far_x = simd_sub(pos_x, pivot_x) * rx;
 						
-						simd4_float near_y = (pos_y + pivot_y) * ry;
+						simd4_float near_y = simd_add(pos_y, pivot_y) * ry;
 						simd4_float far_y = simd_sub(pos_y, pivot_y) * ry;
 						
 						simd4_float a = simd_float::min_second_nan(one, near_x); // First operand is returned on NaN.
@@ -1557,7 +1558,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 						simd4_float bx = simd_sub(pivot_x, offset_x * b);
 						simd4_float by = simd_sub(pivot_y, offset_y * b);
 						
-						simd4_float mask = simd_cmpgt(a + b, simd_zero()); // Make sure -a < b.
+						simd4_float mask = simd_cmpgt(simd_add(a, b), simd_zero()); // Make sure -a < b.
 						
 						simd4_float mask_a = simd_cmpneq(a, one);
 						simd4_float mask_b = simd_cmpneq(b, one);
@@ -1671,7 +1672,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				for (unsigned i = 0; i < 16; i += simdv_width32) {
 					simd4_float x = simd_ld(support + 0 + i);
 					simd4_float y = simd_ld(support + 16 + i);
-					simd4_float z = x*simd_swiz_xxxx(plane) + y*simd_swiz_yyyy(plane) + simd_swiz_zzzz(plane);
+					simd4_float z = simd_madd(x, simd_swiz_xxxx(plane),
+										simd_madd(y, simd_swiz_yyyy(plane), simd_swiz_zzzz(plane)));
 					
 					simd4_float penetration = simd_sub(penetration_offset, simd_xor(z, z_sign));
 					
