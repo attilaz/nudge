@@ -65,6 +65,7 @@ NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
 
+
 NUDGE_FORCEINLINE simd128_t operator - (simd128_t a, simd128_t b) {
 	return simd_sub(a, b);
 }
@@ -985,10 +986,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
 			// Compute relative positions and offset the penetrations.
-			simd4_float delta_x = a_position_x - b_position_x;
-			simd4_float delta_y = a_position_y - b_position_y;
-			simd4_float delta_z = a_position_z - b_position_z;
-			simd4_float delta_w = a_position_w - b_position_w;
+			simd4_float delta_x = simd_sub(a_position_x, b_position_x);
+			simd4_float delta_y = simd_sub(a_position_y, b_position_y);
+			simd4_float delta_z = simd_sub(a_position_z, b_position_z);
+			simd4_float delta_w = simd_sub(a_position_w, b_position_w);
 			
 			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
@@ -1000,9 +1001,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float u_x, u_y, u_z;
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
-			simd4_float a_offset_x = u_x + delta_x - b_rotation_s * t_x;
-			simd4_float a_offset_y = u_y + delta_y - b_rotation_s * t_y;
-			simd4_float a_offset_z = u_z + delta_z - b_rotation_s * t_z;
+			simd4_float a_offset_x = simd_sub(u_x + delta_x, b_rotation_s * t_x);
+			simd4_float a_offset_y = simd_sub(u_y + delta_y, b_rotation_s * t_y);
+			simd4_float a_offset_z = simd_sub(u_z + delta_z, b_rotation_s * t_z);
 			
 			pax = simd_sub(pax, simd_abs(a_offset_x));
 			pay = simd_sub(pay, simd_abs(a_offset_y));
@@ -1015,9 +1016,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 
 			simd_soa::cross(a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
-			simd4_float b_offset_x = u_x - delta_x - a_rotation_s * t_x;
-			simd4_float b_offset_y = u_y - delta_y - a_rotation_s * t_y;
-			simd4_float b_offset_z = u_z - delta_z - a_rotation_s * t_z;
+			simd4_float b_offset_x = simd_sub(u_x, simd_madd(a_rotation_s, t_x, delta_x));
+			simd4_float b_offset_y = simd_sub(u_y, simd_madd(a_rotation_s, t_y, delta_y));
+			simd4_float b_offset_z = simd_sub(u_z, simd_madd(a_rotation_s, t_z, delta_z));
 			
 			pbx = simd_sub(pbx, simd_abs(b_offset_x));
 			pby = simd_sub(pby, simd_abs(b_offset_y));
@@ -1137,9 +1138,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float t_x, t_y, t_z;
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
 			
-			simd4_float relative_rotation_x = a_rotation_x * b_rotation_s - b_rotation_x * a_rotation_s - t_x;
-			simd4_float relative_rotation_y = a_rotation_y * b_rotation_s - b_rotation_y * a_rotation_s - t_y;
-			simd4_float relative_rotation_z = a_rotation_z * b_rotation_s - b_rotation_z * a_rotation_s - t_z;
+			simd4_float relative_rotation_x = simd_sub(a_rotation_x * b_rotation_s, simd_madd(b_rotation_x, a_rotation_s, t_x));
+			simd4_float relative_rotation_y = simd_sub(a_rotation_y * b_rotation_s, simd_madd(b_rotation_y, a_rotation_s, t_y));
+			simd4_float relative_rotation_z = simd_sub(a_rotation_z * b_rotation_s, simd_madd(b_rotation_z, a_rotation_s, t_z));
 			simd4_float relative_rotation_s = (a_rotation_x * b_rotation_x +
 											   a_rotation_y * b_rotation_y +
 											   a_rotation_z * b_rotation_z +
@@ -1163,17 +1164,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd4_float one = simd_splat(1.0f);
 			
-			simd4_float vx_x = one - yy - zz;
+			simd4_float vx_x = simd_sub(one, simd_add(yy, zz));
 			simd4_float vx_y = xy + sz;
-			simd4_float vx_z = xz - sy;
+			simd4_float vx_z = simd_sub(xz, sy);
 			
-			simd4_float vy_x = xy - sz;
-			simd4_float vy_y = one - xx - zz;
+			simd4_float vy_x = simd_sub(xy, sz);
+			simd4_float vy_y = simd_sub(one, simd_add(xx, zz));
 			simd4_float vy_z = yz + sx;
 			
 			simd4_float vz_x = xz + sy;
-			simd4_float vz_y = yz - sx;
-			simd4_float vz_z = one - xx - yy;
+			simd4_float vz_y = simd_sub(yz, sx);
+			simd4_float vz_z = simd_sub(one, simd_add(xx, yy));
 			
 			NUDGE_ALIGNED(16) float a_to_b[4*9];
 			
@@ -1215,10 +1216,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_position_w = simd_ld(transforms[b3_index].position);
 			
 			// Compute relative positions and offset the penetrations.
-			simd4_float delta_x = a_position_x - b_position_x;
-			simd4_float delta_y = a_position_y - b_position_y;
-			simd4_float delta_z = a_position_z - b_position_z;
-			simd4_float delta_w = a_position_w - b_position_w;
+			simd4_float delta_x = simd_sub(a_position_x, b_position_x);
+			simd4_float delta_y = simd_sub(a_position_y, b_position_y);
+			simd4_float delta_z = simd_sub(a_position_z, b_position_z);
+			simd4_float delta_w = simd_sub(a_position_w, b_position_w);
 			
 			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
@@ -1230,9 +1231,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float u_x, u_y, u_z;
 			simd_soa::cross(a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
-			simd4_float b_offset_x = u_x - delta_x - a_rotation_s * t_x;
-			simd4_float b_offset_y = u_y - delta_y - a_rotation_s * t_y;
-			simd4_float b_offset_z = u_z - delta_z - a_rotation_s * t_z;
+			simd4_float b_offset_x = simd_sub(u_x, simd_madd(a_rotation_s, t_x, delta_x));
+			simd4_float b_offset_y = simd_sub(u_y, simd_madd(a_rotation_s, t_y, delta_y));
+			simd4_float b_offset_z = simd_sub(u_z, simd_madd(a_rotation_s, t_z, delta_z));
 			
 			NUDGE_ALIGNED(16) float b_offset_array[3*4];
 			
