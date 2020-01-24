@@ -61,7 +61,6 @@ NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
 
-
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
@@ -69,21 +68,6 @@ NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 NUDGE_FORCEINLINE simd128_t operator - (simd128_t a, simd128_t b) {
 	return simd_sub(a, b);
 }
-
-
-NUDGE_FORCEINLINE simd128_t operator / (simd128_t a, simd128_t b) {
-	return simd_div(a, b);
-}
-
-NUDGE_FORCEINLINE simd128_t& operator += (simd128_t& a, simd128_t b) {
-	return a = simd_add(a, b);
-}
-
-/*
-NUDGE_FORCEINLINE simd128_t& operator -= (simd128_t& a, simd128_t b) {
-	return a = simd_sub(a, b);
-}
-*/
 
 #endif
 
@@ -1009,9 +993,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, delta_x, delta_y, delta_z, t_x, t_y, t_z);
-			t_x += t_x;
-			t_y += t_y;
-			t_z += t_z;
+			t_x = simd_add(t_x, t_x);
+			t_y = simd_add(t_y, t_y);
+			t_z = simd_add(t_z, t_z);
 			
 			simd4_float u_x, u_y, u_z;
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
@@ -1025,10 +1009,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			paz = simd_sub(paz, simd_abs(a_offset_z));
 			
 			simd_soa::cross(delta_x, delta_y, delta_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
-			t_x += t_x;
-			t_y += t_y;
-			t_z += t_z;
-			
+			t_x = simd_add(t_x, t_x);
+			t_y = simd_add(t_y, t_y);
+			t_z = simd_add(t_z, t_z);
+
 			simd_soa::cross(a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
 			simd4_float b_offset_x = u_x - delta_x - a_rotation_s * t_x;
@@ -1239,10 +1223,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_transpose32(delta_x, delta_y, delta_z, delta_w);
 			
 			simd_soa::cross(delta_x, delta_y, delta_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
-			t_x += t_x;
-			t_y += t_y;
-			t_z += t_z;
-			
+			t_x = simd_add(t_x, t_x);
+			t_y = simd_add(t_y, t_y);
+			t_z = simd_add(t_z, t_z);
+
 			simd4_float u_x, u_y, u_z;
 			simd_soa::cross(a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z, u_x, u_y, u_z);
 			
@@ -1441,7 +1425,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				if (!b_positive_face_bit)
 					c = simd_neg(c);
 				
-				c += b_offset;
+				c = simd_add(c, b_offset);
 				
 				// Quad coordinate packing:
 				// Size of quad a, center of quad b, x-axis of quad b, y-axis of quad b.
@@ -1533,7 +1517,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					unsigned edge_axis_far;
 					{
 						simd4_float one = simd_splat(1.0f);
-						simd4_float rdxy = one/dxy;
+						simd4_float rdxy = simd_div(one, dxy);
 						
 						simd4_float offset_x = simd_swiz_xxzz(dxy);
 						simd4_float offset_y = simd_swiz_yyww(dxy);
@@ -1667,7 +1651,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
 				simd4_float plane = simd_shuf_xyAB(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
-				plane = simd_mul(plane, simd_splat(1.0f)/simd_swiz_zzzz(zn));
+				plane = simd_mul(plane, simd_div(simd_splat(1.0f) , simd_swiz_zzzz(zn)));
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
 				
@@ -1686,7 +1670,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					
 					simd4_float penetration = penetration_offset - simd_xor(z, z_sign);
 					
-					z += penetration * simd_xor(simd_splat(0.5f), z_sign);
+					z = simd_add(z, penetration * simd_xor(simd_splat(0.5f), z_sign));
 					
 					penetration_mask |= simd::cmpmask32(simd_cmpgt(penetration, simd_zero())) << i;
 					
@@ -2119,7 +2103,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float ie = o_x*v_x + o_y*v_y + o_z*v_z;
 			
 			simd4_float half = simd_splat(0.5f);
-			simd4_float ir = half / (ia*ic - ib*ib);
+			simd4_float ir = simd_div(half, (ia*ic - ib*ib));
 			
 			simd4_float sa = (ib*ie - ic*id) * ir;
 			simd4_float sb = (ia*ie - ib*id) * ir;
@@ -3896,7 +3880,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
 		
 		simd4_float nonzero = simd_cmpneq(normal_velocity_to_normal_impulse, simd_zero());
-		normal_velocity_to_normal_impulse = simd_and(simd_splat(-1.0f) / normal_velocity_to_normal_impulse, nonzero);
+		normal_velocity_to_normal_impulse = simd_and(simd_div(simd_splat(-1.0f), normal_velocity_to_normal_impulse), nonzero);
 		
 		simd4_float bias = simd_splat(-bias_factor) * simd_max(penetration - simd_splat(allowed_penetration), simd_zero()) * normal_velocity_to_normal_impulse;
 		
@@ -4061,17 +4045,17 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		a_velocity_y = simd_sub(a_velocity_y, linear_impulse_y * a_mass_inverse);
 		a_velocity_z = simd_sub(a_velocity_z, linear_impulse_z * a_mass_inverse);
 		
-		a_angular_velocity_x += a_angular_impulse_x;
-		a_angular_velocity_y += a_angular_impulse_y;
-		a_angular_velocity_z += a_angular_impulse_z;
+		a_angular_velocity_x = simd_add(a_angular_velocity_x, a_angular_impulse_x);
+		a_angular_velocity_y = simd_add(a_angular_velocity_y, a_angular_impulse_y);
+		a_angular_velocity_z = simd_add(a_angular_velocity_z, a_angular_impulse_z);
 		
-		b_velocity_x += linear_impulse_x * b_mass_inverse;
-		b_velocity_y += linear_impulse_y * b_mass_inverse;
-		b_velocity_z += linear_impulse_z * b_mass_inverse;
+		b_velocity_x = simd_madd(linear_impulse_x, b_mass_inverse, b_velocity_x);
+		b_velocity_y = simd_madd(linear_impulse_y, b_mass_inverse, b_velocity_y);
+		b_velocity_z = simd_madd(linear_impulse_z, b_mass_inverse, b_velocity_z);
 		
-		b_angular_velocity_x += b_angular_impulse_x;
-		b_angular_velocity_y += b_angular_impulse_y;
-		b_angular_velocity_z += b_angular_impulse_z;
+		b_angular_velocity_x = simd_add(b_angular_velocity_x, b_angular_impulse_x);
+		b_angular_velocity_y = simd_add(b_angular_velocity_y, b_angular_impulse_y);
+		b_angular_velocity_z = simd_add(b_angular_velocity_z, b_angular_impulse_z);
 		
 		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
 		simd_st(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
