@@ -63,7 +63,6 @@ NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 }
 
 
-
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
@@ -72,6 +71,12 @@ template<typename Ty>
 Ty simd_add3(Ty _a, Ty _b, Ty _c)
 {
 	return simd_add(_a, simd_add(_b, _c));
+}
+
+template<typename Ty>
+Ty simd_add4(Ty _a, Ty _b, Ty _c, Ty _d)
+{
+	return simd_add(_a, simd_add(_b, simd_add(_c, _d)));
 }
 
 #endif
@@ -1698,22 +1703,22 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float a_to_world0, a_to_world1, a_to_world2;
 				{
 					simd4_float qx_qy_qz_qs = simd_ld(transforms[a_index].rotation);
-					simd4_float kx_ky_kz_ks = qx_qy_qz_qs + qx_qy_qz_qs;
+					simd4_float kx_ky_kz_ks = simd_add(qx_qy_qz_qs, qx_qy_qz_qs);
 					
 					// Make ks negative so that we can create +sx from kx*qs and -sx from ks*qx.
 					kx_ky_kz_ks = simd_xor(kx_ky_kz_ks, simd_ld(0.0f, 0.0f, 0.0f, -0.0f));
 					
 					//  1.0f - yy - zz, xy + sz, xz - sy
-					a_to_world0 = (simd_swiz_yxxw(kx_ky_kz_ks) * simd_swiz_yyzw(qx_qy_qz_qs) +
-								   simd_swiz_zzww(kx_ky_kz_ks) * simd_swiz_zwyw(qx_qy_qz_qs));
+					a_to_world0 = simd_madd(simd_swiz_yxxw(kx_ky_kz_ks), simd_swiz_yyzw(qx_qy_qz_qs),
+									simd_mul(simd_swiz_zzww(kx_ky_kz_ks), simd_swiz_zwyw(qx_qy_qz_qs)));
 					
 					// xy - sz, 1.0f - zz - xx, yz + sx
-					a_to_world1 = (simd_swiz_xzyw(kx_ky_kz_ks) * simd_swiz_yzzw(qx_qy_qz_qs) +
-								   simd_swiz_wxxw(kx_ky_kz_ks) * simd_swiz_zxww(qx_qy_qz_qs));
+					a_to_world1 = simd_madd(simd_swiz_xzyw(kx_ky_kz_ks), simd_swiz_yzzw(qx_qy_qz_qs),
+								   simd_mul(simd_swiz_wxxw(kx_ky_kz_ks), simd_swiz_zxww(qx_qy_qz_qs)));
 					
 					// xz + sy, yz - sx, 1.0f - xx - yy
-					a_to_world2 = (simd_swiz_xyxw(kx_ky_kz_ks) * simd_swiz_zzxw(qx_qy_qz_qs) +
-								   simd_swiz_ywyw(kx_ky_kz_ks) * simd_swiz_wxyw(qx_qy_qz_qs));
+					a_to_world2 = simd_madd(simd_swiz_xyxw(kx_ky_kz_ks), simd_swiz_zzxw(qx_qy_qz_qs),
+								   simd_mul(simd_swiz_ywyw(kx_ky_kz_ks), simd_swiz_wxyw(qx_qy_qz_qs)));
 					
 					a_to_world0 = simd_sub(a_to_world0, simd_ld(1.0f, 0.0f, 0.0f, 0.0f));
 					a_to_world1 = simd_sub(a_to_world1, simd_ld(0.0f, 1.0f, 0.0f, 0.0f));
@@ -1761,9 +1766,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					unsigned index = first_set_bit(mask);
 					mask &= mask-1;
 					
-					simd4_float wp = (a_to_world0 * simd_splat(support_x + index) +
-									  a_to_world1 * simd_splat(support_y + index) +
-									  a_to_world2 * simd_splat(support_z + index) + a_position);
+					simd4_float wp = simd_madd(a_to_world0, simd_splat(support_x + index),
+										simd_madd(a_to_world1, simd_splat(support_y + index),
+											simd_madd(a_to_world2, simd_splat(support_z + index), a_position)));
 
 					float penetration = penetrations[index];
 					
@@ -1861,9 +1866,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float a_basis_yx, a_basis_yy, a_basis_yz;
 			simd4_float a_basis_zx, a_basis_zy, a_basis_zz;
 			{
-				simd4_float kx = a_rotation_x + a_rotation_x;
-				simd4_float ky = a_rotation_y + a_rotation_y;
-				simd4_float kz = a_rotation_z + a_rotation_z;
+				simd4_float kx = simd_add(a_rotation_x, a_rotation_x);
+				simd4_float ky = simd_add(a_rotation_y, a_rotation_y);
+				simd4_float kz = simd_add(a_rotation_z, a_rotation_z);
 				
 				simd4_float xx = kx*a_rotation_x;
 				simd4_float yy = ky*a_rotation_y;
@@ -1878,14 +1883,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float one = simd_splat(1.0f);
 
 				a_basis_xx = simd_sub(one, simd_add(yy, zz));
-				a_basis_xy = xy + sz;
+				a_basis_xy = simd_add(xy, sz);
 				a_basis_xz = simd_sub(xz, sy);
 				
 				a_basis_yx = simd_sub(xy, sz);
 				a_basis_yy = simd_sub(one, simd_add(xx, zz));
-				a_basis_yz = yz + sx;
+				a_basis_yz = simd_add(yz, sx);
 				
-				a_basis_zx = xz + sy;
+				a_basis_zx = simd_add(xz, sy);
 				a_basis_zy = simd_sub(yz, sx);
 				a_basis_zz = simd_sub(one, simd_add(xx, yy));
 			}
@@ -1894,9 +1899,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_basis_yx, b_basis_yy, b_basis_yz;
 			simd4_float b_basis_zx, b_basis_zy, b_basis_zz;
 			{
-				simd4_float kx = b_rotation_x + b_rotation_x;
-				simd4_float ky = b_rotation_y + b_rotation_y;
-				simd4_float kz = b_rotation_z + b_rotation_z;
+				simd4_float kx = simd_add(b_rotation_x, b_rotation_x);
+				simd4_float ky = simd_add(b_rotation_y, b_rotation_y);
+				simd4_float kz = simd_add(b_rotation_z, b_rotation_z);
 				
 				simd4_float xx = kx*b_rotation_x;
 				simd4_float yy = ky*b_rotation_y;
@@ -1911,14 +1916,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float one = simd_splat(1.0f);
 
 				b_basis_xx = simd_sub(one, simd_add(yy, zz));
-				b_basis_xy = xy + sz;
+				b_basis_xy = simd_add(xy, sz);
 				b_basis_xz = simd_sub(xz, sy);
 				
 				b_basis_yx = simd_sub(xy, sz);
 				b_basis_yy = simd_sub(one, simd_add(xx, zz));
-				b_basis_yz = yz + sx;
+				b_basis_yz = simd_add(yz, sx);
 				
-				b_basis_zx = xz + sy;
+				b_basis_zx = simd_add(xz, sy);
 				b_basis_zy = simd_sub(yz, sx);
 				b_basis_zz = simd_sub(one, simd_add(xx, yy));
 			}
@@ -2011,7 +2016,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			// Flip normal?
 			simd4_float sign_mask = simd_splat(-0.0f);
-			simd4_float flip_sign = simd_and(n_x*delta_x + n_y*delta_y + n_z*delta_z, sign_mask);
+			simd4_float flip_sign = simd_and(sign_mask,	simd_madd(n_x, delta_x,
+														simd_madd(n_y, delta_y,
+														simd_mul(n_z, delta_z))));
 			
 			n_x = simd_xor(n_x, flip_sign);
 			n_y = simd_xor(n_y, flip_sign);
@@ -2032,13 +2039,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd_transpose32(b_size_x, b_size_y, b_size_z, b_size_w);
 			
 			// Compute direction to the edge.
-			simd4_float a_sign_x = a_basis_xx*n_x + a_basis_xy*n_y + a_basis_xz*n_z;
-			simd4_float a_sign_y = a_basis_yx*n_x + a_basis_yy*n_y + a_basis_yz*n_z;
-			simd4_float a_sign_z = a_basis_zx*n_x + a_basis_zy*n_y + a_basis_zz*n_z;
+			simd4_float a_sign_x = simd_madd(a_basis_xx, n_x, simd_madd(a_basis_xy, n_y, simd_mul(a_basis_xz, n_z)));
+			simd4_float a_sign_y = simd_madd(a_basis_yx, n_x, simd_madd(a_basis_yy, n_y, simd_mul(a_basis_yz, n_z)));
+			simd4_float a_sign_z = simd_madd(a_basis_zx, n_x, simd_madd(a_basis_zy, n_y, simd_mul(a_basis_zz, n_z)));
 			
-			simd4_float b_sign_x = b_basis_xx*n_x + b_basis_xy*n_y + b_basis_xz*n_z;
-			simd4_float b_sign_y = b_basis_yx*n_x + b_basis_yy*n_y + b_basis_yz*n_z;
-			simd4_float b_sign_z = b_basis_zx*n_x + b_basis_zy*n_y + b_basis_zz*n_z;
+			simd4_float b_sign_x = simd_madd(b_basis_xx, n_x, simd_madd(b_basis_xy, n_y, simd_mul(b_basis_xz, n_z)));
+			simd4_float b_sign_y = simd_madd(b_basis_yx, n_x, simd_madd(b_basis_yy, n_y, simd_mul(b_basis_yz, n_z)));
+			simd4_float b_sign_z = simd_madd(b_basis_zx, n_x, simd_madd(b_basis_zy, n_y, simd_mul(b_basis_zz, n_z)));
 			
 			a_sign_x = simd_and(a_sign_x, sign_mask);
 			a_sign_y = simd_and(a_sign_y, sign_mask);
@@ -2094,24 +2101,24 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			b_basis_zy = simd_mul(b_basis_zy, b_size_z);
 			b_basis_zz = simd_mul(b_basis_zz, b_size_z);
 			
-			simd4_float ca_x = a_basis_xx + a_basis_yx + a_basis_zx + a_position_x;
-			simd4_float ca_y = a_basis_xy + a_basis_yy + a_basis_zy + a_position_y;
-			simd4_float ca_z = a_basis_xz + a_basis_yz + a_basis_zz + a_position_z;
+			simd4_float ca_x = simd_add4(a_basis_xx, a_basis_yx, a_basis_zx, a_position_x);
+			simd4_float ca_y = simd_add4(a_basis_xy, a_basis_yy, a_basis_zy, a_position_y);
+			simd4_float ca_z = simd_add4(a_basis_xz, a_basis_yz, a_basis_zz, a_position_z);
 			
-			simd4_float cb_x = simd_sub(b_basis_xx + b_basis_yx + b_basis_zx, b_position_x); // Note that cb really is negated to save some operations.
-			simd4_float cb_y = simd_sub(b_basis_xy + b_basis_yy + b_basis_zy, b_position_y);
-			simd4_float cb_z = simd_sub(b_basis_xz + b_basis_yz + b_basis_zz, b_position_z);
+			simd4_float cb_x = simd_sub(simd_add3(b_basis_xx, b_basis_yx, b_basis_zx), b_position_x); // Note that cb really is negated to save some operations.
+			simd4_float cb_y = simd_sub(simd_add3(b_basis_xy, b_basis_yy, b_basis_zy), b_position_y);
+			simd4_float cb_z = simd_sub(simd_add3(b_basis_xz, b_basis_yz, b_basis_zz), b_position_z);
 			
 			// Calculate closest point between the two lines.
-			simd4_float o_x = ca_x + cb_x;
-			simd4_float o_y = ca_y + cb_y;
-			simd4_float o_z = ca_z + cb_z;
+			simd4_float o_x = simd_add(ca_x, cb_x);
+			simd4_float o_y = simd_add(ca_y, cb_y);
+			simd4_float o_z = simd_add(ca_z, cb_z);
 			
-			simd4_float ia = u_x*u_x + u_y*u_y + u_z*u_z;
-			simd4_float ib = u_x*v_x + u_y*v_y + u_z*v_z;
-			simd4_float ic = v_x*v_x + v_y*v_y + v_z*v_z;
-			simd4_float id = o_x*u_x + o_y*u_y + o_z*u_z;
-			simd4_float ie = o_x*v_x + o_y*v_y + o_z*v_z;
+			simd4_float ia = simd_madd(u_x, u_x, simd_madd(u_y, u_y, simd_mul(u_z, u_z)));
+			simd4_float ib = simd_madd(u_x, v_x, simd_madd(u_y, v_y, simd_mul(u_z, v_z)));
+			simd4_float ic = simd_madd(v_x, v_x, simd_madd(v_y, v_y, simd_mul(v_z, v_z)));
+			simd4_float id = simd_madd(o_x, u_x, simd_madd(o_y, u_y, simd_mul(o_z, u_z)));
+			simd4_float ie = simd_madd(o_x, v_x, simd_madd(o_y, v_y, simd_mul(o_z, v_z)));
 			
 			simd4_float half = simd_splat(0.5f);
 			simd4_float ir = simd_div(half, simd_sub(ia*ic, ib*ib));
@@ -2119,9 +2126,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float sa = simd_sub(ib*ie, ic*id) * ir;
 			simd4_float sb = simd_sub(ia*ie, ib*id) * ir;
 			
-			simd4_float p_x = simd_sub(ca_x, cb_x)*half + u_x*sa + v_x*sb;
-			simd4_float p_y = simd_sub(ca_y, cb_y)*half + u_y*sa + v_y*sb;
-			simd4_float p_z = simd_sub(ca_z, cb_z)*half + u_z*sa + v_z*sb;
+			simd4_float p_x = simd_madd(simd_sub(ca_x, cb_x), half, simd_madd(u_x, sa, simd_mul(v_x, sb)));
+			simd4_float p_y = simd_madd(simd_sub(ca_y, cb_y), half, simd_madd(u_y, sa, simd_mul(v_y, sb)));
+			simd4_float p_z = simd_madd(simd_sub(ca_z, cb_z), half, simd_madd(u_z, sa, simd_mul(v_z, sb)));
 			
 			simd_soa::normalize(n_x, n_y, n_z);
 			
@@ -3861,9 +3868,9 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float na_xt, na_yt, na_zt;
 		simd_soa::cross(pa_x, pa_y, pa_z, normal_x, normal_y, normal_z, na_xt, na_yt, na_zt);
 		
-		simd4_float na_x = a_momentum_to_velocity_xx*na_xt + a_momentum_to_velocity_xy*na_yt + a_momentum_to_velocity_xz*na_zt;
-		simd4_float na_y = a_momentum_to_velocity_xy*na_xt + a_momentum_to_velocity_yy*na_yt + a_momentum_to_velocity_yz*na_zt;
-		simd4_float na_z = a_momentum_to_velocity_xz*na_xt + a_momentum_to_velocity_yz*na_yt + a_momentum_to_velocity_zz*na_zt;
+		simd4_float na_x = simd_madd(a_momentum_to_velocity_xx, na_xt, simd_madd(a_momentum_to_velocity_xy, na_yt, simd_mul(a_momentum_to_velocity_xz, na_zt)));
+		simd4_float na_y = simd_madd(a_momentum_to_velocity_xy, na_xt, simd_madd(a_momentum_to_velocity_yy, na_yt, simd_mul( a_momentum_to_velocity_yz, na_zt)));
+		simd4_float na_z = simd_madd(a_momentum_to_velocity_xz, na_xt, simd_madd(a_momentum_to_velocity_yz, na_yt, simd_mul(a_momentum_to_velocity_zz, na_zt)));
 		
 		simd4_float b_momentum_to_velocity_xx, b_momentum_to_velocity_yy, b_momentum_to_velocity_zz, b_momentum_to_velocity_u0;
 		simd4_float b_momentum_to_velocity_xy, b_momentum_to_velocity_xz, b_momentum_to_velocity_yz, b_momentum_to_velocity_u1;
@@ -3874,21 +3881,23 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float nb_xt, nb_yt, nb_zt;
 		simd_soa::cross(pb_x, pb_y, pb_z, normal_x, normal_y, normal_z, nb_xt, nb_yt, nb_zt);
 		
-		simd4_float nb_x = b_momentum_to_velocity_xx*nb_xt + b_momentum_to_velocity_xy*nb_yt + b_momentum_to_velocity_xz*nb_zt;
-		simd4_float nb_y = b_momentum_to_velocity_xy*nb_xt + b_momentum_to_velocity_yy*nb_yt + b_momentum_to_velocity_yz*nb_zt;
-		simd4_float nb_z = b_momentum_to_velocity_xz*nb_xt + b_momentum_to_velocity_yz*nb_yt + b_momentum_to_velocity_zz*nb_zt;
+		simd4_float nb_x = simd_madd(b_momentum_to_velocity_xx, nb_xt, simd_madd(b_momentum_to_velocity_xy, nb_yt, simd_mul(b_momentum_to_velocity_xz, nb_zt)));
+		simd4_float nb_y = simd_madd(b_momentum_to_velocity_xy, nb_xt, simd_madd(b_momentum_to_velocity_yy, nb_yt, simd_mul( b_momentum_to_velocity_yz, nb_zt)));
+		simd4_float nb_z = simd_madd(b_momentum_to_velocity_xz, nb_xt, simd_madd(b_momentum_to_velocity_yz, nb_yt, simd_mul( b_momentum_to_velocity_zz, nb_zt)));
 		
 		simd_soa::cross(na_x, na_y, na_z, pa_x, pa_y, pa_z, na_xt, na_yt, na_zt);
 		simd_soa::cross(nb_x, nb_y, nb_z, pb_x, pb_y, pb_z, nb_xt, nb_yt, nb_zt);
 		
-		simd4_float normal_impulse_to_rotational_velocity_x = na_xt + nb_xt;
-		simd4_float normal_impulse_to_rotational_velocity_y = na_yt + nb_yt;
-		simd4_float normal_impulse_to_rotational_velocity_z = na_zt + nb_zt;
+		simd4_float normal_impulse_to_rotational_velocity_x = simd_add(na_xt, nb_xt);
+		simd4_float normal_impulse_to_rotational_velocity_y = simd_add(na_yt, nb_yt);
+		simd4_float normal_impulse_to_rotational_velocity_z = simd_add(na_zt, nb_zt);
 		
-		simd4_float r_dot_n = normal_impulse_to_rotational_velocity_x*normal_x + normal_impulse_to_rotational_velocity_y*normal_y + normal_impulse_to_rotational_velocity_z*normal_z;
+		simd4_float r_dot_n = simd_madd(normal_impulse_to_rotational_velocity_x, normal_x,
+								simd_madd(normal_impulse_to_rotational_velocity_y, normal_y,
+									simd_mul(normal_impulse_to_rotational_velocity_z, normal_z)));
 		
-		simd4_float mass_inverse = a_mass_inverse + b_mass_inverse;
-		simd4_float normal_velocity_to_normal_impulse = mass_inverse + r_dot_n;
+		simd4_float mass_inverse = simd_add(a_mass_inverse, b_mass_inverse);
+		simd4_float normal_velocity_to_normal_impulse = simd_add(mass_inverse, r_dot_n);
 		
 		simd4_float nonzero = simd_cmpneq(normal_velocity_to_normal_impulse, simd_zero());
 		normal_velocity_to_normal_impulse = simd_and(simd_div(simd_splat(-1.0f), normal_velocity_to_normal_impulse), nonzero);
