@@ -6,16 +6,15 @@
 #include <bx/uint32_t.h>
 #include <bx/simd_t.h>
 #include <math.h>
-#include "common.h"
 //#include "bgfx_utils.h"
 #include "logo.h"
+#include <common-bgfx/entry/cmd.h>
+#include <common-bgfx/entry/input.h>
 #include <bgfx/bgfx.h>
 #include <dear-imgui/imgui.h>
 #include <common-bgfx/args.h>
 #include <common-bgfx/imgui/imgui.h>
 
-
-#include <unistd.h>
 
 namespace
 {
@@ -26,11 +25,6 @@ public:
 	ExampleHelloWorld(const char* _name, const char* _description, const char* _url)
 		: entry::AppI(_name, _description, _url)
 	{
-		char cwd[1024];
-		if (getcwd(cwd, sizeof(cwd)) != NULL) {
-			bx::printf("Current working dir: %s\n", cwd);
-		}
-		
 		bx::simd128_t a = bx::simd_splat(2.0f);
 		bx::simd128_t b = bx::simd_splat(1.0f);
 

@@ -1,0 +1,1240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{56bd6ca3-5246-4ca7-90d0-0d79e14aca7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bgx">
+      <UniqueIdentifier>{7a0045c6-28f8-4208-8fc0-403a06ff23e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bimg">
+      <UniqueIdentifier>{20dc6391-d5b7-406b-9bd7-68d759d30a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bx">
+      <UniqueIdentifier>{421f85fa-09ba-48c2-8a8c-b629b9752d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\common-bgfx">
+      <UniqueIdentifier>{92ae9181-5299-4ef1-b1d0-25c4c033797b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\compat">
+      <UniqueIdentifier>{bb769673-94c0-48d4-b035-516bc7996f16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\dear-imgui">
+      <UniqueIdentifier>{7465bdb0-55c4-41b8-ab11-35d4de5e24bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\debugdraw">
+      <UniqueIdentifier>{9722ee39-5493-4e3a-82e2-5097ddd1415a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\dxsdk">
+      <UniqueIdentifier>{8b1b101e-ac9f-4dec-866f-75b6f83dd46a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\iconfontheaders">
+      <UniqueIdentifier>{4688c643-0859-4981-9e06-c9e10300157e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos">
+      <UniqueIdentifier>{c602662e-c1e1-4f79-98c9-a0497c2fd9c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\stb">
+      <UniqueIdentifier>{2f97822d-789f-44c8-ac41-1318f693c92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\tinystl">
+      <UniqueIdentifier>{2f98aa24-5ead-41c6-b5ce-08bf821f7334}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bgx\src">
+      <UniqueIdentifier>{9e0f1ede-e297-4e43-888b-b2a79830a319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bimg\src">
+      <UniqueIdentifier>{01abb4ab-e546-477f-841b-17a1791da446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bx\src">
+      <UniqueIdentifier>{22f19305-974e-4125-85b8-f97111f7e21d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\bx\inline">
+      <UniqueIdentifier>{6c4d13a8-ade3-4908-b299-07a21ca24d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\common-bgfx\entry">
+      <UniqueIdentifier>{3183829b-a648-44d9-844c-52a41bf1645b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\common-bgfx\imgui">
+      <UniqueIdentifier>{1b6e858b-ee55-4bf8-92c7-8692dd15de47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\compat\msvc">
+      <UniqueIdentifier>{255a1eb4-5e8c-496c-a613-254173d0b421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\dxsdk\include">
+      <UniqueIdentifier>{b7f6f91d-ff5a-4efc-9fa7-54637202c595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\EGL">
+      <UniqueIdentifier>{d51ba7e1-926e-46ab-8e0e-8b435e9c92a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\gl">
+      <UniqueIdentifier>{95033095-f2db-48ee-8bb9-51d0e683ffca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\GLES2">
+      <UniqueIdentifier>{01eb38e2-56c8-4b3f-9cb4-e96d1244d6f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\GLES3">
+      <UniqueIdentifier>{28415504-141b-4506-9254-f913fb70d36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\glx">
+      <UniqueIdentifier>{5154f97d-f918-4d0d-8ec6-a9df64290cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\KHR">
+      <UniqueIdentifier>{5b596667-3449-498f-aadc-a5313011dbc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\vulkan">
+      <UniqueIdentifier>{593977a8-163f-47cd-8c07-b9cdc5b22417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\khronos\wgl">
+      <UniqueIdentifier>{ac021233-7e9b-4e88-9410-3a753b139e92}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\bgfx_p.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\charset.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\config.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\debug_renderdoc.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\dxgi.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear0.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear1.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear2.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear3.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear4.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear5.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear6.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_clear7.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\fs_debugfont.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_eagl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_egl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_glx.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_html5.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_nsgl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glcontext_wgl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\glimports.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\nvapi.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_d3d.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_d3d9.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_d3d11.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_d3d12.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_gl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_mtl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\renderer_vk.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\shader.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\shader_dx9bc.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\shader_dxbc.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\shader_spirv.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\topology.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\vertexdecl.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\vs_clear.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\src\vs_debugfont.bin.h">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\bgfx.h">
+      <Filter>3rdparty\bgx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\bgfx_utils.h">
+      <Filter>3rdparty\bgx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\defines.h">
+      <Filter>3rdparty\bgx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\embedded_shader.h">
+      <Filter>3rdparty\bgx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bgfx\platform.h">
+      <Filter>3rdparty\bgx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bimg\bimg.h">
+      <Filter>3rdparty\bimg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bimg\src\bimg_p.h">
+      <Filter>3rdparty\bimg\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bimg\src\config.h">
+      <Filter>3rdparty\bimg\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\allocator.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\bx.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\commandline.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\config.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\cpu.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\debug.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\easing.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\endian.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\error.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\file.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\filepath.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\float4x4_t.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\handlealloc.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\hash.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\macros.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\maputil.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\math.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\mpscqueue.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\mutex.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\os.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\pixelformat.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\platform.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\process.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\readerwriter.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\ringbuffer.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\rng.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\semaphore.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\simd_t.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\sort.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\spscqueue.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\string.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\thread.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\timer.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\uint32_t.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\url.h">
+      <Filter>3rdparty\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\bx\src\bx_p.h">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\args.h">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\camera.h">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\common.h">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\cmd.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\dbg.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\dialog.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\entry.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\entry_p.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\entry\input.h">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\droidsans.ttf.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_color.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_cubemap.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_image.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_image_swizz.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_latlong.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_imgui_texture.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\fs_ocornut_imgui.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\icons_font_awesome.ttf.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\icons_kenney.ttf.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\imgui.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\roboto_regular.ttf.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\robotomono_regular.ttf.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_imgui_color.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_imgui_cubemap.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_imgui_image.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_imgui_latlong.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_imgui_texture.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\common-bgfx\imgui\vs_ocornut_imgui.bin.h">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\compat\msvc\alloca.h">
+      <Filter>3rdparty\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\compat\msvc\dirent.h">
+      <Filter>3rdparty\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\compat\msvc\inttypes.h">
+      <Filter>3rdparty\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\compat\msvc\stdbool.h">
+      <Filter>3rdparty\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imconfig.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imgui.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imgui_internal.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imgui_user.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imstb_rectpack.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imstb_textedit.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\imstb_truetype.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\stb_rect_pack.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\stb_textedit.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dear-imgui\stb_truetype.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\bounds.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\debugdraw.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\fs_debugdraw_fill.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\fs_debugdraw_fill_lit.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\fs_debugdraw_fill_texture.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\fs_debugdraw_lines.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\fs_debugdraw_lines_stipple.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\packrect.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_fill.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_fill_lit.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_fill_lit_mesh.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_fill_mesh.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_fill_texture.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_lines.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\debugdraw\vs_debugdraw_lines_stipple.bin.h">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d9.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d9caps.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d9types.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11_1.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11_2.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11_3.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11_4.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11sdklayers.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11shader.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d11shadertracing.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d12.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d12_1.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d12sdklayers.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d12shader.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3d12video.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3dcommon.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3dcompiler.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\d3dx12.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi1_2.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi1_3.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi1_4.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi1_5.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgi1_6.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgicommon.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgidebug.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgiformat.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxgitype.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\dxva2api.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\pix3.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\pix3_win.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\PIXEventsCommon.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\PIXEventsGenerated.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\dxsdk\include\winapifamily.h">
+      <Filter>3rdparty\dxsdk\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\iconfontheaders\icons_font_awesome.h">
+      <Filter>3rdparty\iconfontheaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\iconfontheaders\icons_kenney.h">
+      <Filter>3rdparty\iconfontheaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\EGL\egl.h">
+      <Filter>3rdparty\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\EGL\eglext.h">
+      <Filter>3rdparty\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\EGL\eglplatform.h">
+      <Filter>3rdparty\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\gl\glcorearb.h">
+      <Filter>3rdparty\khronos\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\gl\glext.h">
+      <Filter>3rdparty\khronos\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\gl\GRemedyGLExtensions.h">
+      <Filter>3rdparty\khronos\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES2\gl2.h">
+      <Filter>3rdparty\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES2\gl2ext.h">
+      <Filter>3rdparty\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES2\gl2platform.h">
+      <Filter>3rdparty\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES3\gl3.h">
+      <Filter>3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES3\gl3ext.h">
+      <Filter>3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES3\gl3platform.h">
+      <Filter>3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES3\gl31.h">
+      <Filter>3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\GLES3\gl32.h">
+      <Filter>3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\glx\glxext.h">
+      <Filter>3rdparty\khronos\glx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\KHR\khrplatform.h">
+      <Filter>3rdparty\khronos\KHR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vk_icd.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vk_layer.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vk_platform.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vk_sdk_platform.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_android.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_core.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_fuchsia.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_ggp.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_ios.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_macos.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_metal.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_mir.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_vi.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_wayland.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_win32.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_xcb.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_xlib.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\vulkan\vulkan_xlib_xrandr.h">
+      <Filter>3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\khronos\wgl\wglext.h">
+      <Filter>3rdparty\khronos\wgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\allocator.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\buffer.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\hash.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\hash_base.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\new.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\stddef.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\string.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\traits.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\unordered_map.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\unordered_set.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tinystl\vector.h">
+      <Filter>3rdparty\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\stb\stb_rect_pack.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\stb\stb_textedit.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\stb\stb_truetype.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\logo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\3rdparty\bgfx\src\bgfx.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\dxgi.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\glcontext_egl.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\glcontext_glx.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\glcontext_html5.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\glcontext_wgl.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\nvapi.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_d3d9.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_d3d11.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_d3d12.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_gl.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_gnm.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_noop.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_nvn.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\renderer_vk.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\shader.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\shader_dx9bc.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\shader_dxbc.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\shader_spirv.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\topology.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bgfx\src\vertexdecl.cpp">
+      <Filter>3rdparty\bgx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bimg\src\image.cpp">
+      <Filter>3rdparty\bimg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bimg\src\image_gnf.cpp">
+      <Filter>3rdparty\bimg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\allocator.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\bx.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\commandline.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\crtnone.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\debug.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\dtoa.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\easing.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\file.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\filepath.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\hash.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\math.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\mutex.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\os.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\process.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\semaphore.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\sort.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\string.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\thread.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\timer.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\bx\src\url.cpp">
+      <Filter>3rdparty\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\args.cpp">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\camera.cpp">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\example-glue.cpp">
+      <Filter>3rdparty\common-bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\cmd.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\dialog.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_android.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_asmjs.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_glfw.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_noop.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_sdl.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_windows.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\entry_x11.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\entry\input.cpp">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\common-bgfx\imgui\imgui-bgfx.cpp">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\dear-imgui\imgui.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\dear-imgui\imgui_demo.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\dear-imgui\imgui_draw.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\dear-imgui\imgui_widgets.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\debugdraw\bounds.cpp">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\debugdraw\debugdraw.cpp">
+      <Filter>3rdparty\debugdraw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helloworld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\3rdparty\bgfx\src\bgfx.idl.inl">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\bgfx_compute.sh">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\bgfx_shader.sh">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear0.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear1.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear2.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear3.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear4.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear5.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear6.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_clear7.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\fs_debugfont.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\glcontext_eagl.mm">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\glcontext_nsgl.mm">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\renderer_mtl.mm">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\varying.def.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\vs_clear.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bgfx\src\vs_debugfont.sc">
+      <Filter>3rdparty\bgx\src</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\allocator.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\bx.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\cpu.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\easing.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\endian.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\error.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\float4x4_t.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\handlealloc.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\hash.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\math.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\mpscqueue.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\mutex.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\pixelformat.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\readerwriter.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\ringbuffer.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\rng.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd_ni.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd128_langext.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd128_neon.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd128_ref.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd128_sse.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd128_swizzle.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd256_avx.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\simd256_ref.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\sort.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\spscqueue.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\string.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\bx\inline\uint32_t.inl">
+      <Filter>3rdparty\bx\inline</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\entry\dialog_darwin.mm">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\entry\entry_ios.mm">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\entry\entry_osx.mm">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\entry\entry_winrt.cx">
+      <Filter>3rdparty\common-bgfx\entry</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_color.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_cubemap.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_image.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_image_swizz.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_latlong.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_imgui_texture.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\fs_ocornut_imgui.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\makefile">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\varying.def.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_imgui_color.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_imgui_cubemap.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_imgui_image.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_imgui_latlong.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_imgui_texture.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\common-bgfx\imgui\vs_ocornut_imgui.sc">
+      <Filter>3rdparty\common-bgfx\imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\dear-imgui\imgui_user.inl">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\fs_debugdraw_fill.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\fs_debugdraw_fill_lit.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\fs_debugdraw_fill_texture.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\fs_debugdraw_lines.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\fs_debugdraw_lines_stipple.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\makefile">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\varying.def.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_fill.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_fill_lit.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_fill_lit_mesh.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_fill_mesh.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_fill_texture.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_lines.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\debugdraw\vs_debugdraw_lines_stipple.sc">
+      <Filter>3rdparty\debugdraw</Filter>
+    </None>
+    <None Include="..\3rdparty\tinystl\LICENSE">
+      <Filter>3rdparty\tinystl</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\3rdparty\dxsdk\directx-sdk-eula.txt">
+      <Filter>3rdparty\dxsdk</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

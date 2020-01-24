@@ -3,13 +3,12 @@
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
-#include "common.h"
-//#include "bgfx_utils.h"
+#include <bx/timer.h>
 #include <common-bgfx/args.h>
 #include <common-bgfx/entry/cmd.h>
 #include <common-bgfx/entry/input.h>
 #include <debugdraw/debugdraw.h>
-#include "camera.h"
+#include <common-bgfx/camera.h>
 #include <common-bgfx/imgui/imgui.h>
 
 #include <bx/uint32_t.h>

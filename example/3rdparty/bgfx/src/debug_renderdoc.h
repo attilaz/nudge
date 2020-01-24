@@ -8,9 +8,11 @@
 
 namespace bgfx
 {
-	void* loadRenderDoc();
-	void unloadRenderDoc(void*);
-	void renderDocTriggerCapture();
+	inline void* loadRenderDoc() {
+		return NULL;
+	}
+	inline void unloadRenderDoc(void*) {}
+	inline void renderDocTriggerCapture() {}
 
 } // namespace bgfx
 
