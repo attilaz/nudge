@@ -152,7 +152,18 @@ static inline unsigned add_sphere(float mass, float radius) {
 
 	return body;
 }
+	
+void* alignedAlloc(size_t _size, size_t _align)
+{
+	return BX_ALIGNED_ALLOC(entry::getAllocator(), _size, _align);
+}
 
+#if 0	//todo: free memory
+void alignedFree(void* _ptr, size_t _align)
+{
+	BX_ALIGNED_FREE(entry::getAllocator(), _size, _align);
+}
+#endif
 
 class ExampleSimulation : public entry::AppI
 {
@@ -206,34 +217,34 @@ public:
 
 		// Allocate memory for simulation arena.
 		arena.size = 64 * 1024 * 1024;
-		arena.data = _mm_malloc(arena.size, 4096);
+		arena.data = alignedAlloc(arena.size, 4096);
 
 		// Allocate memory for bodies, colliders, and contacts.
 		active_bodies.capacity = max_box_count;
-		active_bodies.indices = static_cast<uint16_t*>(_mm_malloc(sizeof(uint16_t)*max_body_count, 64));
+		active_bodies.indices = static_cast<uint16_t*>(alignedAlloc(sizeof(uint16_t)*max_body_count, 64));
 
-		bodies.idle_counters = static_cast<uint8_t*>(_mm_malloc(sizeof(uint8_t)*max_body_count, 64));
-		bodies.transforms = static_cast<nudge::Transform*>(_mm_malloc(sizeof(nudge::Transform)*max_body_count, 64));
-		bodies.momentum = static_cast<nudge::BodyMomentum*>(_mm_malloc(sizeof(nudge::BodyMomentum)*max_body_count, 64));
-		bodies.properties = static_cast<nudge::BodyProperties*>(_mm_malloc(sizeof(nudge::BodyProperties)*max_body_count, 64));
+		bodies.idle_counters = static_cast<uint8_t*>(alignedAlloc(sizeof(uint8_t)*max_body_count, 64));
+		bodies.transforms = static_cast<nudge::Transform*>(alignedAlloc(sizeof(nudge::Transform)*max_body_count, 64));
+		bodies.momentum = static_cast<nudge::BodyMomentum*>(alignedAlloc(sizeof(nudge::BodyMomentum)*max_body_count, 64));
+		bodies.properties = static_cast<nudge::BodyProperties*>(alignedAlloc(sizeof(nudge::BodyProperties)*max_body_count, 64));
 
-		colliders.boxes.data = static_cast<nudge::BoxCollider*>(_mm_malloc(sizeof(nudge::BoxCollider)*max_box_count, 64));
-		colliders.boxes.tags = static_cast<uint16_t*>(_mm_malloc(sizeof(uint16_t)*max_box_count, 64));
-		colliders.boxes.transforms = static_cast<nudge::Transform*>(_mm_malloc(sizeof(nudge::Transform)*max_box_count, 64));
+		colliders.boxes.data = static_cast<nudge::BoxCollider*>(alignedAlloc(sizeof(nudge::BoxCollider)*max_box_count, 64));
+		colliders.boxes.tags = static_cast<uint16_t*>(alignedAlloc(sizeof(uint16_t)*max_box_count, 64));
+		colliders.boxes.transforms = static_cast<nudge::Transform*>(alignedAlloc(sizeof(nudge::Transform)*max_box_count, 64));
 
-		colliders.spheres.data = static_cast<nudge::SphereCollider*>(_mm_malloc(sizeof(nudge::SphereCollider)*max_sphere_count, 64));
-		colliders.spheres.tags = static_cast<uint16_t*>(_mm_malloc(sizeof(uint16_t)*max_sphere_count, 64));
-		colliders.spheres.transforms = static_cast<nudge::Transform*>(_mm_malloc(sizeof(nudge::Transform)*max_sphere_count, 64));
+		colliders.spheres.data = static_cast<nudge::SphereCollider*>(alignedAlloc(sizeof(nudge::SphereCollider)*max_sphere_count, 64));
+		colliders.spheres.tags = static_cast<uint16_t*>(alignedAlloc(sizeof(uint16_t)*max_sphere_count, 64));
+		colliders.spheres.transforms = static_cast<nudge::Transform*>(alignedAlloc(sizeof(nudge::Transform)*max_sphere_count, 64));
 
 		contact_data.capacity = max_body_count * 64;
-		contact_data.bodies = static_cast<nudge::BodyPair*>(_mm_malloc(sizeof(nudge::BodyPair)*contact_data.capacity, 64));
-		contact_data.data = static_cast<nudge::Contact*>(_mm_malloc(sizeof(nudge::Contact)*contact_data.capacity, 64));
-		contact_data.tags = static_cast<uint64_t*>(_mm_malloc(sizeof(uint64_t)*contact_data.capacity, 64));
-		contact_data.sleeping_pairs = static_cast<uint32_t*>(_mm_malloc(sizeof(uint32_t)*contact_data.capacity, 64));
+		contact_data.bodies = static_cast<nudge::BodyPair*>(alignedAlloc(sizeof(nudge::BodyPair)*contact_data.capacity, 64));
+		contact_data.data = static_cast<nudge::Contact*>(alignedAlloc(sizeof(nudge::Contact)*contact_data.capacity, 64));
+		contact_data.tags = static_cast<uint64_t*>(alignedAlloc(sizeof(uint64_t)*contact_data.capacity, 64));
+		contact_data.sleeping_pairs = static_cast<uint32_t*>(alignedAlloc(sizeof(uint32_t)*contact_data.capacity, 64));
 
 		contact_cache.capacity = max_body_count * 64;
-		contact_cache.data = static_cast<nudge::CachedContactImpulse*>(_mm_malloc(sizeof(nudge::CachedContactImpulse)*contact_cache.capacity, 64));
-		contact_cache.tags = static_cast<uint64_t*>(_mm_malloc(sizeof(uint64_t)*contact_cache.capacity, 64));
+		contact_cache.data = static_cast<nudge::CachedContactImpulse*>(alignedAlloc(sizeof(nudge::CachedContactImpulse)*contact_cache.capacity, 64));
+		contact_cache.tags = static_cast<uint64_t*>(alignedAlloc(sizeof(uint64_t)*contact_cache.capacity, 64));
 
 		// The first body is the static world.
 		bodies.count = 1;

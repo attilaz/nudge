@@ -224,15 +224,15 @@
 		DCDFBD6B23D7B0C800C2C90A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBD6A23D7B0C800C2C90A /* OpenGLES.framework */; };
 		DCDFBD6D23D7B0DA00C2C90A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBD6C23D7B0DA00C2C90A /* UIKit.framework */; };
 		DCDFBD9C23D7B2C100C2C90A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBD9B23D7B2C100C2C90A /* QuartzCore.framework */; };
-		DCDFBD9E23D7B2EF00C2C90A /* helloworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */; };
-		DCDFBD9F23D7B2EF00C2C90A /* helloworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */; };
 		DCDFBDE923DA2B0900C2C90A /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDE823DA2B0900C2C90A /* Metal.framework */; };
 		DCDFBDED23DA2B4400C2C90A /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */; };
 		DCDFBDF123DA2B7000C2C90A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */; };
 		DCDFBDF423DA44B400C2C90A /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF223DA44B300C2C90A /* camera.cpp */; };
 		DCDFBDF523DA44B400C2C90A /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF223DA44B300C2C90A /* camera.cpp */; };
-		DCDFBDF723DA44F800C2C90A /* debugdraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */; };
-		DCDFBDF823DA44F800C2C90A /* debugdraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */; };
+		DCEF360B23DB7B71000D1F9D /* sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCEF360A23DB7B70000D1F9D /* sim.cpp */; };
+		DCEF360C23DB7B95000D1F9D /* sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCEF360A23DB7B70000D1F9D /* sim.cpp */; };
+		DCEF360E23DB7BAF000D1F9D /* nudge_bx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCEF360D23DB7BAF000D1F9D /* nudge_bx.cpp */; };
+		DCEF360F23DB7BBD000D1F9D /* nudge_bx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCEF360D23DB7BAF000D1F9D /* nudge_bx.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -567,7 +567,6 @@
 		DCDFBD7223D7B16800C2C90A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.4.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		DCDFBD7523D7B18A00C2C90A /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.4.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		DCDFBD9B23D7B2C100C2C90A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
-		DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helloworld.cpp; path = ../helloworld.cpp; sourceTree = "<group>"; };
 		DCDFBDE823DA2B0900C2C90A /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		DCDFBDEA23DA2B0E00C2C90A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DCDFBDEC23DA2B4300C2C90A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -575,7 +574,8 @@
 		DCDFBDF023DA2B7000C2C90A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DCDFBDF223DA44B300C2C90A /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		DCDFBDF323DA44B400C2C90A /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
-		DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugdraw.cpp; path = ../debugdraw.cpp; sourceTree = "<group>"; };
+		DCEF360A23DB7B70000D1F9D /* sim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sim.cpp; path = ../sim.cpp; sourceTree = "<group>"; };
+		DCEF360D23DB7BAF000D1F9D /* nudge_bx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nudge_bx.cpp; path = ../../nudge_bx.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -606,8 +606,8 @@
 		DCDFB78323D7ABC200C2C90A = {
 			isa = PBXGroup;
 			children = (
-				DCDFBDF623DA44F800C2C90A /* debugdraw.cpp */,
-				DCDFBD9D23D7B2EE00C2C90A /* helloworld.cpp */,
+				DCEF360D23DB7BAF000D1F9D /* nudge_bx.cpp */,
+				DCEF360A23DB7B70000D1F9D /* sim.cpp */,
 				DCDFBAA623D7AD0600C2C90A /* 3rdparty */,
 				DCDFB78823D7ABC200C2C90A /* example Shared */,
 				DCDFB79423D7ABC500C2C90A /* example iOS */,
@@ -1395,7 +1395,6 @@
 				DCDFBC8523D7AD0700C2C90A /* renderer_noop.cpp in Sources */,
 				DCDFBD6523D7AD0700C2C90A /* example-glue.cpp in Sources */,
 				DCDFBCCF23D7AD0700C2C90A /* process.cpp in Sources */,
-				DCDFBDF723DA44F800C2C90A /* debugdraw.cpp in Sources */,
 				DCDFBCED23D7AD0700C2C90A /* commandline.cpp in Sources */,
 				DCDFBCD723D7AD0700C2C90A /* timer.cpp in Sources */,
 				DCDFBC6923D7AD0700C2C90A /* shader.cpp in Sources */,
@@ -1436,6 +1435,7 @@
 				DCDFBD3123D7AD0700C2C90A /* dialog.cpp in Sources */,
 				DCDFBCE523D7AD0700C2C90A /* allocator.cpp in Sources */,
 				DCDFBC4B23D7AD0700C2C90A /* glcontext_eagl.mm in Sources */,
+				DCEF360B23DB7B71000D1F9D /* sim.cpp in Sources */,
 				DCDFBD0323D7AD0700C2C90A /* imgui_draw.cpp in Sources */,
 				DCDFBD5323D7AD0700C2C90A /* imgui-bgfx.cpp in Sources */,
 				DCDFBCE323D7AD0700C2C90A /* file.cpp in Sources */,
@@ -1449,6 +1449,7 @@
 				DCDFBC6123D7AD0700C2C90A /* renderer_gnm.cpp in Sources */,
 				DCDFBC5D23D7AD0700C2C90A /* shader_dx9bc.cpp in Sources */,
 				DCDFBD2B23D7AD0700C2C90A /* input.cpp in Sources */,
+				DCEF360E23DB7BAF000D1F9D /* nudge_bx.cpp in Sources */,
 				DCDFBC5923D7AD0700C2C90A /* renderer_vk.cpp in Sources */,
 				DCDFBD3523D7AD0700C2C90A /* cmd.cpp in Sources */,
 				DCDFBD4D23D7AD0700C2C90A /* makefile in Sources */,
@@ -1458,7 +1459,6 @@
 				DCDFBD2F23D7AD0700C2C90A /* entry_osx.mm in Sources */,
 				DCDFBCF323D7AD0700C2C90A /* image.cpp in Sources */,
 				DCDFBDF423DA44B400C2C90A /* camera.cpp in Sources */,
-				DCDFBD9E23D7B2EF00C2C90A /* helloworld.cpp in Sources */,
 				DCDFBC4F23D7AD0700C2C90A /* nvapi.cpp in Sources */,
 				DCDFBC4123D7AD0700C2C90A /* renderer_d3d12.cpp in Sources */,
 			);
@@ -1477,7 +1477,6 @@
 				DCDFBC8623D7AD0700C2C90A /* renderer_noop.cpp in Sources */,
 				DCDFBD6623D7AD0700C2C90A /* example-glue.cpp in Sources */,
 				DCDFBCD023D7AD0700C2C90A /* process.cpp in Sources */,
-				DCDFBDF823DA44F800C2C90A /* debugdraw.cpp in Sources */,
 				DCDFBCEE23D7AD0700C2C90A /* commandline.cpp in Sources */,
 				DCDFBCD823D7AD0700C2C90A /* timer.cpp in Sources */,
 				DCDFBC6A23D7AD0700C2C90A /* shader.cpp in Sources */,
@@ -1518,6 +1517,7 @@
 				DCDFBD3223D7AD0700C2C90A /* dialog.cpp in Sources */,
 				DCDFBCE623D7AD0700C2C90A /* allocator.cpp in Sources */,
 				DCDFBC4C23D7AD0700C2C90A /* glcontext_eagl.mm in Sources */,
+				DCEF360C23DB7B95000D1F9D /* sim.cpp in Sources */,
 				DCDFBD0423D7AD0700C2C90A /* imgui_draw.cpp in Sources */,
 				DCDFBD5423D7AD0700C2C90A /* imgui-bgfx.cpp in Sources */,
 				DCDFBCE423D7AD0700C2C90A /* file.cpp in Sources */,
@@ -1531,6 +1531,7 @@
 				DCDFBC6223D7AD0700C2C90A /* renderer_gnm.cpp in Sources */,
 				DCDFBC5E23D7AD0700C2C90A /* shader_dx9bc.cpp in Sources */,
 				DCDFBD2C23D7AD0700C2C90A /* input.cpp in Sources */,
+				DCEF360F23DB7BBD000D1F9D /* nudge_bx.cpp in Sources */,
 				DCDFBC5A23D7AD0700C2C90A /* renderer_vk.cpp in Sources */,
 				DCDFBD3623D7AD0700C2C90A /* cmd.cpp in Sources */,
 				DCDFBD4E23D7AD0700C2C90A /* makefile in Sources */,
@@ -1540,7 +1541,6 @@
 				DCDFBD3023D7AD0700C2C90A /* entry_osx.mm in Sources */,
 				DCDFBCF423D7AD0700C2C90A /* image.cpp in Sources */,
 				DCDFBDF523DA44B400C2C90A /* camera.cpp in Sources */,
-				DCDFBD9F23D7B2EF00C2C90A /* helloworld.cpp in Sources */,
 				DCDFBC5023D7AD0700C2C90A /* nvapi.cpp in Sources */,
 				DCDFBC4223D7AD0700C2C90A /* renderer_d3d12.cpp in Sources */,
 			);

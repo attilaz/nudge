@@ -68,22 +68,22 @@ NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
 
+#endif
+
+typedef simd128_t simd4_float;
+typedef simd128_t simd4_int32;
+
 template<typename Ty>
 Ty simd_add3(Ty _a, Ty _b, Ty _c)
 {
 	return simd_add(_a, simd_add(_b, _c));
 }
-
+	
 template<typename Ty>
 Ty simd_add4(Ty _a, Ty _b, Ty _c, Ty _d)
 {
 	return simd_add(_a, simd_add(_b, simd_add(_c, _d)));
 }
-
-#endif
-
-typedef simd128_t simd4_float;
-typedef simd128_t simd4_int32;
 
 	
 NUDGE_FORCEINLINE void simd_transpose32(simd4_float& x, simd4_float& y, simd4_float& z, simd4_float& w) {
@@ -139,7 +139,7 @@ namespace simd {
 	uint32x2_t t3 = vorr_u32(vget_low_u32(t2), vget_high_u32(t2));
 	return vget_lane_u32(t3, 0) | vget_lane_u32(t3, 1);
 #endif
-	
+
 	NUDGE_FORCEINLINE unsigned cmpmask32(simd128_t x) {
 		uint32_t i[4];
 		i[0] = as_int(simd_x(x));
@@ -150,7 +150,11 @@ namespace simd {
 		assert(i[1] == 0x0 || i[1] == 0xffffffff);
 		assert(i[2] == 0x0 || i[2] == 0xffffffff);
 		assert(i[3] == 0x0 || i[3] == 0xffffffff);
+#if BX_SIMD_SSE
 		return _mm_movemask_ps(x);
+#else
+#error not implemented
+#endif
 	}
 
 	void test_cmpmask32()
@@ -168,7 +172,11 @@ namespace simd {
 	}
 
 	NUDGE_FORCEINLINE unsigned signmask32(simd128_t x) {
+#if BX_SIMD_SSE
 		return _mm_movemask_ps(x);
+#else
+#error not implemented
+#endif
 	}
 
 	void test_signmask32()
@@ -189,12 +197,16 @@ namespace simd {
 
 	
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
+#if BX_SIMD_SSE
 #if defined(__SSE4_1__) || defined(__AVX__)
 #define NUDGE_NATIVE_BLENDV32
 		return _mm_blendv_ps(x, y, s);
 #else
 		s = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(s), 31));
 		return _mm_or_ps(_mm_andnot_ps(s, x), _mm_and_ps(s, y));
+#endif
+#else
+#error not implemented
 #endif
 	}
 	
@@ -266,25 +278,37 @@ BX_SIMD_FORCE_INLINE simd128_t simd_swiz_wwBB(simd128_t _a, simd128_t _b)
 	//todo: add this to bx
 	// neon: vmvn_u32 for result
 BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t x, simd128_t y) {
+#if BX_SIMD_SSE
 	return _mm_cmpneq_ps(x, y);
+#else
+#error not implemented
+#endif
 }
 
 	//todo: add this to bx ??
 	//neon: unaligned is same as aligned store
 BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 {
+#if BX_SIMD_SSE
 	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
+#else
+#error not implemented
+#endif
 }
 
 // neon int16x4_t vadd_s16 (int16x4_t a, int16x4_t b)
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i add = _mm_add_epi16(a, b);
 	const simd128_sse_t result = _mm_castsi128_ps(add);
 
 	return result;
+#else
+#error not implemented
+#endif
 }
 	
 void test_simd_i16_add()
@@ -303,12 +327,16 @@ void test_simd_i16_add()
 // neon: uint16x4_t vceq_s16(int16x4_t a, int16x4_t b);
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i cmp = _mm_cmpeq_epi16(a, b);
 	const simd128_sse_t result = _mm_castsi128_ps(cmp);
 
 	return result;
+#else
+#error not implemented
+#endif
 }
 	
 void test_simd_i16_cmpeq()
@@ -330,11 +358,15 @@ void test_simd_i16_cmpeq()
 // templated version for constant
 BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i add = _mm_srli_epi16(a, _bits);
 	const simd128_sse_t result = _mm_castsi128_ps(add);
 
 	return result;
+#else
+#error not implemented
+#endif
 }
 
 void test_simd_i16_srl()
@@ -355,6 +387,7 @@ void test_simd_i16_srl()
 		//convert with signed saturation, but this only gets 0x0 and 0xffffffff here so neon one should support only that
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i packed = _mm_packs_epi32(a, b);
@@ -379,6 +412,9 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 	assert(i[7] == 0x0 || i[7] == 0xffffffff);
 #endif
 	return result;
+#else
+#error not implemented
+#endif
 }
 	
 void test_simd_pack_i32_to_i16()
@@ -399,12 +435,16 @@ void test_simd_pack_i32_to_i16()
 //   int8x16_t   vcombine_s8(int8x8_t low, int8x8_t high);
 BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i packed = _mm_packs_epi16(a, b);
 	const simd128_sse_t result = _mm_castsi128_ps(packed);
 
 	return result;
+#else
+#error not implemented
+#endif
 }
 
 	void test_simd_pack_i16_to_i8()
@@ -427,12 +467,16 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
 	// int16x4_t   vget_low_s16(int16x8_t a);
 BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	const __m128i b = _mm_castps_si128(_b);
 	const __m128i packed = _mm_unpacklo_epi16(a, b);
 	const simd128_sse_t result = _mm_castsi128_ps(packed);
 
 	return result;
+#else
+#error not implemented
+#endif
 }
 	
 	void test_simd_shuf_xAyBzCwD()
@@ -452,8 +496,12 @@ BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 // Create mask from the most significant bit of each 8-bit element in a, and store the result in dst.
 BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 {
+#if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
+#else
+#error not implemented
+#endif
 }
 	
 	void test_simd_i8_mask()
