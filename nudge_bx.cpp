@@ -57,10 +57,11 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
-
+/*
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
+*/
 
 
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
@@ -931,14 +932,14 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float one = simd_splat(1.0f);
 			
 			simd4_float vx_x = simd_sub(one, simd_add(yy, zz));
-			simd4_float vx_y = xy + sz;
+			simd4_float vx_y = simd_add(xy, sz);
 			simd4_float vx_z = simd_sub(xz, sy);
 			
 			simd4_float vy_x = simd_sub(xy, sz);
 			simd4_float vy_y = simd_sub(one, simd_add(xx, zz));
-			simd4_float vy_z = yz + sx;
+			simd4_float vy_z = simd_add(yz, sx);
 			
-			simd4_float vz_x = xz + sy;
+			simd4_float vz_x = simd_add(xz, sy);
 			simd4_float vz_y = simd_sub(yz, sx);
 			simd4_float vz_z = simd_sub(one, simd_add(xx, yy));
 			
@@ -969,13 +970,13 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			vz_y = simd_abs(vz_y);
 			vz_z = simd_abs(vz_z);
 			
-			simd4_float pax = b_size_x + vx_x*a_size_x + vy_x*a_size_y + vz_x*a_size_z;
-			simd4_float pay = b_size_y + vx_y*a_size_x + vy_y*a_size_y + vz_y*a_size_z;
-			simd4_float paz = b_size_z + vx_z*a_size_x + vy_z*a_size_y + vz_z*a_size_z;
+			simd4_float pax = simd_madd(vx_x, a_size_x, simd_madd(vy_x, a_size_y, simd_madd(vz_x ,a_size_z, b_size_x)));
+			simd4_float pay = simd_madd(vx_y, a_size_x, simd_madd(vy_y, a_size_y, simd_madd(vz_y, a_size_z, b_size_y)));
+			simd4_float paz = simd_madd(vx_z, a_size_x, simd_madd(vy_z, a_size_y, simd_madd(vz_z, a_size_z, b_size_z)));
 			
-			simd4_float pbx = a_size_x + vx_x*b_size_x + vx_y*b_size_y + vx_z*b_size_z;
-			simd4_float pby = a_size_y + vy_x*b_size_x + vy_y*b_size_y + vy_z*b_size_z;
-			simd4_float pbz = a_size_z + vz_x*b_size_x + vz_y*b_size_y + vz_z*b_size_z;
+			simd4_float pbx = simd_madd(vx_x, b_size_x, simd_madd(vx_y, b_size_y, simd_madd(vx_z, b_size_z, a_size_x)));
+			simd4_float pby = simd_madd(vy_x, b_size_x, simd_madd(vy_y, b_size_y, simd_madd(vy_z, b_size_z, a_size_y)));
+			simd4_float pbz = simd_madd(vz_x, b_size_x, simd_madd(vz_y, b_size_y, simd_madd(vz_z, b_size_z, a_size_z)));
 			
 			// Load positions.
 			simd4_float a_position_x = simd_ld(transforms[a0_index].position);
