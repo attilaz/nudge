@@ -79,9 +79,11 @@ NUDGE_FORCEINLINE simd128_t& operator += (simd128_t& a, simd128_t b) {
 	return a = simd_add(a, b);
 }
 
+/*
 NUDGE_FORCEINLINE simd128_t& operator -= (simd128_t& a, simd128_t b) {
 	return a = simd_sub(a, b);
 }
+*/
 
 #endif
 
@@ -1018,9 +1020,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float a_offset_y = u_y + delta_y - b_rotation_s * t_y;
 			simd4_float a_offset_z = u_z + delta_z - b_rotation_s * t_z;
 			
-			pax -= simd_abs(a_offset_x);
-			pay -= simd_abs(a_offset_y);
-			paz -= simd_abs(a_offset_z);
+			pax = simd_sub(pax, simd_abs(a_offset_x));
+			pay = simd_sub(pay, simd_abs(a_offset_y));
+			paz = simd_sub(paz, simd_abs(a_offset_z));
 			
 			simd_soa::cross(delta_x, delta_y, delta_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
 			t_x += t_x;
@@ -1033,9 +1035,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float b_offset_y = u_y - delta_y - a_rotation_s * t_y;
 			simd4_float b_offset_z = u_z - delta_z - a_rotation_s * t_z;
 			
-			pbx -= simd_abs(b_offset_x);
-			pby -= simd_abs(b_offset_y);
-			pbz -= simd_abs(b_offset_z);
+			pbx = simd_sub(pbx, simd_abs(b_offset_x));
+			pby = simd_sub(pby, simd_abs(b_offset_y));
+			pbz = simd_sub(pbz, simd_abs(b_offset_z));
 			
 			// Reduce face penetrations.
 			simd4_float payz = simd_min(pay, paz);
@@ -4055,9 +4057,9 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float b_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ub_y) + friction_impulse_y * simd_ld(constraints[i].vb_y) + normal_impulse * simd_ld(constraints[i].nb_y);
 		simd4_float b_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ub_z) + friction_impulse_y * simd_ld(constraints[i].vb_z) + normal_impulse * simd_ld(constraints[i].nb_z);
 		
-		a_velocity_x -= linear_impulse_x * a_mass_inverse;
-		a_velocity_y -= linear_impulse_y * a_mass_inverse;
-		a_velocity_z -= linear_impulse_z * a_mass_inverse;
+		a_velocity_x = simd_sub(a_velocity_x, linear_impulse_x * a_mass_inverse);
+		a_velocity_y = simd_sub(a_velocity_y, linear_impulse_y * a_mass_inverse);
+		a_velocity_z = simd_sub(a_velocity_z, linear_impulse_z * a_mass_inverse);
 		
 		a_angular_velocity_x += a_angular_impulse_x;
 		a_angular_velocity_y += a_angular_impulse_y;
@@ -4239,8 +4241,8 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simd_st(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
 		simd_st(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
 		
-		friction_impulse_x -= old_friction_impulse_x;
-		friction_impulse_y -= old_friction_impulse_y;
+		friction_impulse_x = simd_sub(friction_impulse_x, old_friction_impulse_x);
+		friction_impulse_y = simd_sub(friction_impulse_y, old_friction_impulse_y);
 		
 		linear_impulse_x = simd_madd(fu_x, friction_impulse_x, linear_impulse_x);
 		linear_impulse_y = simd_madd(fu_y, friction_impulse_x, linear_impulse_y);
