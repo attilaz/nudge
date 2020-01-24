@@ -57,12 +57,20 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
+
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
 
+
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
+}
+
+template<typename Ty>
+Ty simd_add3(Ty _a, Ty _b, Ty _c)
+{
+	return simd_add(_a, simd_add(_b, _c));
 }
 
 #endif
@@ -502,7 +510,7 @@ FORCE_INLINE int _mm_movemask_epi8(__m128i _a)
 namespace simd_aos {
 	NUDGE_FORCEINLINE simd4_float dot(simd4_float a, simd4_float b) {
 		simd4_float c = a*b;
-		return simd_swiz_xxxx(c) + simd_swiz_yyyy(c) + simd_swiz_zzzz(c);
+		return simd_add3(simd_swiz_xxxx(c), simd_swiz_yyyy(c), simd_swiz_zzzz(c));
 	}
 	
 	NUDGE_FORCEINLINE simd4_float cross(simd4_float a, simd4_float b) {
@@ -520,7 +528,7 @@ namespace simd_soa {
 	}
 	
 	NUDGE_FORCEINLINE void normalize(simd4_float& x, simd4_float& y, simd4_float& z) {
-		simd4_float f = simd_rsqrt_est(x*x + y*y + z*z);
+		simd4_float f = simd_rsqrt_est(simd_madd(x,x, simd_madd(y,y, simd_mul(z,z))));
 		x = simd_mul(x,f);
 		y = simd_mul(y, f);
 		z = simd_mul(z, f);
@@ -899,16 +907,16 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float relative_rotation_x = simd_sub(a_rotation_x * b_rotation_s, simd_madd(b_rotation_x, a_rotation_s, t_x));
 			simd4_float relative_rotation_y = simd_sub(a_rotation_y * b_rotation_s, simd_madd(b_rotation_y, a_rotation_s, t_y));
 			simd4_float relative_rotation_z = simd_sub(a_rotation_z * b_rotation_s, simd_madd(b_rotation_z, a_rotation_s, t_z));
-			simd4_float relative_rotation_s = (a_rotation_x * b_rotation_x +
-											   a_rotation_y * b_rotation_y +
-											   a_rotation_z * b_rotation_z +
-											   a_rotation_s * b_rotation_s);
+			simd4_float relative_rotation_s = simd_madd(a_rotation_x, b_rotation_x,
+												simd_madd(a_rotation_y, b_rotation_y,
+													simd_madd(a_rotation_z, b_rotation_z,
+														simd_mul(a_rotation_s, b_rotation_s))));
 			
 			// Compute the corresponding matrix.
 			// Note that the b to a matrix is simply the transpose of a to b.
-			simd4_float kx = relative_rotation_x + relative_rotation_x;
-			simd4_float ky = relative_rotation_y + relative_rotation_y;
-			simd4_float kz = relative_rotation_z + relative_rotation_z;
+			simd4_float kx = simd_add(relative_rotation_x, relative_rotation_x);
+			simd4_float ky = simd_add(relative_rotation_y, relative_rotation_y);
+			simd4_float kz = simd_add(relative_rotation_z, relative_rotation_z);
 			
 			simd4_float xx = kx * relative_rotation_x;
 			simd4_float yy = ky * relative_rotation_y;
