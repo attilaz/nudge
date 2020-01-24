@@ -980,10 +980,10 @@
     <ClCompile Include="..\3rdparty\debugdraw\debugdraw.cpp">
       <Filter>3rdparty\debugdraw</Filter>
     </ClCompile>
-    <ClCompile Include="..\helloworld.cpp">
+    <ClCompile Include="..\sim.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\sim.cpp">
+    <ClCompile Include="..\..\nudge_bx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

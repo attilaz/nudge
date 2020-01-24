@@ -389,6 +389,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\nudge_bx.cpp" />
     <ClCompile Include="..\3rdparty\bgfx\src\bgfx.cpp" />
     <ClCompile Include="..\3rdparty\bgfx\src\dxgi.cpp" />
     <ClCompile Include="..\3rdparty\bgfx\src\glcontext_egl.cpp" />
@@ -454,7 +455,6 @@
     <ClCompile Include="..\3rdparty\debugdraw\bounds.cpp" />
     <ClCompile Include="..\3rdparty\debugdraw\debugdraw.cpp" />
     <ClCompile Include="..\sim.cpp" />
-    <ClCompile Include="..\helloworld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\3rdparty\bgfx\src\bgfx.idl.inl" />
