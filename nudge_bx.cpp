@@ -57,21 +57,19 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
-NUDGE_FORCEINLINE simd128_t operator - (simd128_t a) {
-	return simd_neg(a);
-}
-
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
+}
+
+
+NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
+	return simd_mul(a, b);
 }
 
 NUDGE_FORCEINLINE simd128_t operator - (simd128_t a, simd128_t b) {
 	return simd_sub(a, b);
 }
 
-NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
-	return simd_mul(a, b);
-}
 
 NUDGE_FORCEINLINE simd128_t operator / (simd128_t a, simd128_t b) {
 	return simd_div(a, b);
@@ -85,13 +83,6 @@ NUDGE_FORCEINLINE simd128_t& operator -= (simd128_t& a, simd128_t b) {
 	return a = simd_sub(a, b);
 }
 
-NUDGE_FORCEINLINE simd128_t& operator *= (simd128_t& a, simd128_t b) {
-	return a = simd_mul(a, b);
-}
-
-NUDGE_FORCEINLINE simd128_t& operator /= (simd128_t& a, simd128_t b) {
-	return a = simd_div(a, b);
-}
 #endif
 
 typedef simd128_t simd4_float;
@@ -548,9 +539,9 @@ namespace simd_soa {
 	
 	NUDGE_FORCEINLINE void normalize(simd4_float& x, simd4_float& y, simd4_float& z) {
 		simd4_float f = simd_rsqrt_est(x*x + y*y + z*z);
-		x *= f;
-		y *= f;
-		z *= f;
+		x = simd_mul(x,f);
+		y = simd_mul(y, f);
+		z = simd_mul(z, f);
 	}
 }
 
@@ -1417,9 +1408,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				unsigned dir_mask = simd::cmpmask32(simd_cmpge(dirs, max_dir));
 				
 				// Compute the coordinates of the two quad faces.
-				c0 *= simd_swiz_xxxx(b_size);
-				c1 *= simd_swiz_yyyy(b_size);
-				c2 *= simd_swiz_zzzz(b_size);
+				c0 = simd_mul(c0, simd_swiz_xxxx(b_size));
+				c1 = simd_mul(c1, simd_swiz_yyyy(b_size));
+				c2 = simd_mul(c2, simd_swiz_zzzz(b_size));
 				
 				unsigned b_face = 0;
 				
@@ -1446,7 +1437,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				unsigned b_offset_neg = simd::signmask32(b_offset) & (1 << a_face);
 				
 				if (!b_positive_face_bit)
-					c = -c;
+					c = simd_neg(c);
 				
 				c += b_offset;
 				
@@ -1674,7 +1665,7 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				
 				simd4_float zn = simd_aos::cross(dx_transformed, dy_transformed);
 				simd4_float plane = simd_shuf_xyAB(simd_xor(zn, simd_splat(-0.0f)), simd_aos::dot(c_transformed, zn));
-				plane *= simd_splat(1.0f)/simd_swiz_zzzz(zn);
+				plane = simd_mul(plane, simd_splat(1.0f)/simd_swiz_zzzz(zn));
 				
 				NUDGE_ALIGNED(32) float penetrations[16];
 				
@@ -2082,29 +2073,29 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			b_size_y = simd_xor(b_size_y, b_sign_y);
 			b_size_z = simd_xor(b_size_z, b_sign_z);
 			
-			a_basis_xx *= a_size_x;
-			a_basis_xy *= a_size_x;
-			a_basis_xz *= a_size_x;
+			a_basis_xx = simd_mul(a_basis_xx, a_size_x);
+			a_basis_xy = simd_mul(a_basis_xy, a_size_x);
+			a_basis_xz = simd_mul(a_basis_xz, a_size_x);
 			
-			a_basis_yx *= a_size_y;
-			a_basis_yy *= a_size_y;
-			a_basis_yz *= a_size_y;
+			a_basis_yx = simd_mul(a_basis_yx, a_size_y);
+			a_basis_yy = simd_mul(a_basis_yy, a_size_y);
+			a_basis_yz = simd_mul(a_basis_yz, a_size_y);
 			
-			a_basis_zx *= a_size_z;
-			a_basis_zy *= a_size_z;
-			a_basis_zz *= a_size_z;
+			a_basis_zx = simd_mul(a_basis_zx, a_size_z);
+			a_basis_zy = simd_mul(a_basis_zy, a_size_z);
+			a_basis_zz = simd_mul(a_basis_zz, a_size_z);
 			
-			b_basis_xx *= b_size_x;
-			b_basis_xy *= b_size_x;
-			b_basis_xz *= b_size_x;
+			b_basis_xx = simd_mul(b_basis_xx, b_size_x);
+			b_basis_xy = simd_mul(b_basis_xy, b_size_x);
+			b_basis_xz = simd_mul(b_basis_xz, b_size_x);
 			
-			b_basis_yx *= b_size_y;
-			b_basis_yy *= b_size_y;
-			b_basis_yz *= b_size_y;
+			b_basis_yx = simd_mul(b_basis_yx, b_size_y);
+			b_basis_yy = simd_mul(b_basis_yy, b_size_y);
+			b_basis_yz = simd_mul(b_basis_yz, b_size_y);
 			
-			b_basis_zx *= b_size_z;
-			b_basis_zy *= b_size_z;
-			b_basis_zz *= b_size_z;
+			b_basis_zx = simd_mul(b_basis_zx, b_size_z);
+			b_basis_zy = simd_mul(b_basis_zy, b_size_z);
+			b_basis_zz = simd_mul(b_basis_zz, b_size_z);
 			
 			simd4_float ca_x = a_basis_xx + a_basis_yx + a_basis_zx + a_position_x;
 			simd4_float ca_y = a_basis_xy + a_basis_yy + a_basis_zy + a_position_y;
@@ -3997,17 +3988,17 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd_st(constraints[i].friction_coefficient_y, friction_y);
 		simd_st(constraints[i].friction_coefficient_z, friction_z);
 		
-		simd_st(constraints[i].ua_x, -ua_xt);
-		simd_st(constraints[i].ua_y, -ua_yt);
-		simd_st(constraints[i].ua_z, -ua_zt);
+		simd_st(constraints[i].ua_x, simd_neg(ua_xt));
+		simd_st(constraints[i].ua_y, simd_neg(ua_yt));
+		simd_st(constraints[i].ua_z, simd_neg(ua_zt));
 		
-		simd_st(constraints[i].va_x, -va_xt);
-		simd_st(constraints[i].va_y, -va_yt);
-		simd_st(constraints[i].va_z, -va_zt);
+		simd_st(constraints[i].va_x, simd_neg(va_xt));
+		simd_st(constraints[i].va_y, simd_neg(va_yt));
+		simd_st(constraints[i].va_z, simd_neg(va_zt));
 		
-		simd_st(constraints[i].na_x, -na_x);
-		simd_st(constraints[i].na_y, -na_y);
-		simd_st(constraints[i].na_z, -na_z);
+		simd_st(constraints[i].na_x, simd_neg(na_x));
+		simd_st(constraints[i].na_y, simd_neg(na_y));
+		simd_st(constraints[i].na_z, simd_neg(na_z));
 		
 		simd_st(constraints[i].ub_x, ub_xt);
 		simd_st(constraints[i].ub_y, ub_yt);
@@ -4186,8 +4177,8 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		normal_impulse = simd_max(normal_impulse, simd_zero());
 		
-		t_x *= tl2;
-		t_y *= tl2;
+		t_x = simd_mul(t_x, tl2);
+		t_y = simd_mul(t_y, tl2);
 		
 		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
 		
