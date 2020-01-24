@@ -512,15 +512,15 @@ namespace simd_aos {
 	NUDGE_FORCEINLINE simd4_float cross(simd4_float a, simd4_float b) {
 		simd4_float c = simd_swiz_yzxx(a) * simd_swiz_zxyx(b);
 		simd4_float d = simd_swiz_zxyx(a) * simd_swiz_yzxx(b);
-		return c - d;
+		return simd_sub(c, d);
 	}
 }
 
 namespace simd_soa {
 	NUDGE_FORCEINLINE void cross(simd4_float ax, simd4_float ay, simd4_float az, simd4_float bx, simd4_float by, simd4_float bz, simd4_float& rx, simd4_float& ry, simd4_float& rz) {
-		rx = ay*bz - az*by;
-		ry = az*bx - ax*bz;
-		rz = ax*by - ay*bx;
+		rx = simd_sub(ay*bz, az*by);
+		ry = simd_sub(az*bx, ax*bz);
+		rz = simd_sub(ax*by, ay*bx);
 	}
 	
 	NUDGE_FORCEINLINE void normalize(simd4_float& x, simd4_float& y, simd4_float& z) {
@@ -900,9 +900,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float t_x, t_y, t_z;
 			simd_soa::cross(b_rotation_x, b_rotation_y, b_rotation_z, a_rotation_x, a_rotation_y, a_rotation_z, t_x, t_y, t_z);
 			
-			simd4_float relative_rotation_x = a_rotation_x * b_rotation_s - b_rotation_x * a_rotation_s - t_x;
-			simd4_float relative_rotation_y = a_rotation_y * b_rotation_s - b_rotation_y * a_rotation_s - t_y;
-			simd4_float relative_rotation_z = a_rotation_z * b_rotation_s - b_rotation_z * a_rotation_s - t_z;
+			simd4_float relative_rotation_x = simd_sub(a_rotation_x * b_rotation_s, simd_madd(b_rotation_x, a_rotation_s, t_x));
+			simd4_float relative_rotation_y = simd_sub(a_rotation_y * b_rotation_s, simd_madd(b_rotation_y, a_rotation_s, t_y));
+			simd4_float relative_rotation_z = simd_sub(a_rotation_z * b_rotation_s, simd_madd(b_rotation_z, a_rotation_s, t_z));
 			simd4_float relative_rotation_s = (a_rotation_x * b_rotation_x +
 											   a_rotation_y * b_rotation_y +
 											   a_rotation_z * b_rotation_z +
@@ -926,17 +926,17 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd4_float one = simd_splat(1.0f);
 			
-			simd4_float vx_x = one - yy - zz;
+			simd4_float vx_x = simd_sub(one, simd_add(yy, zz));
 			simd4_float vx_y = xy + sz;
-			simd4_float vx_z = xz - sy;
+			simd4_float vx_z = simd_sub(xz, sy);
 			
-			simd4_float vy_x = xy - sz;
-			simd4_float vy_y = one - xx - zz;
+			simd4_float vy_x = simd_sub(xy, sz);
+			simd4_float vy_y = simd_sub(one, simd_add(xx, zz));
 			simd4_float vy_z = yz + sx;
 			
 			simd4_float vz_x = xz + sy;
-			simd4_float vz_y = yz - sx;
-			simd4_float vz_z = one - xx - yy;
+			simd4_float vz_y = simd_sub(yz, sx);
+			simd4_float vz_z = simd_sub(one, simd_add(xx, yy));
 			
 			// Load sizes.
 			simd4_float a_size_x = simd_ld(colliders[a0_index].size);
