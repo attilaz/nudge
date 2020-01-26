@@ -64,6 +64,7 @@ NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 
 
 
+
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
@@ -4006,13 +4007,25 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 								simd_madd(a_momentum_to_velocity_xz, simd_madd(ua_x, va_z, simd_mul(ua_z, va_x)),
 									simd_mul(a_momentum_to_velocity_yz, simd_madd(ua_y, va_z, simd_mul(ua_z, va_y)))));
 		
-		simd4_float b_duu = b_momentum_to_velocity_xx*ub_x*ub_x + b_momentum_to_velocity_yy*ub_y*ub_y + b_momentum_to_velocity_zz*ub_z*ub_z;
-		simd4_float b_dvv = b_momentum_to_velocity_xx*vb_x*vb_x + b_momentum_to_velocity_yy*vb_y*vb_y + b_momentum_to_velocity_zz*vb_z*vb_z;
-		simd4_float b_duv = b_momentum_to_velocity_xx*ub_x*vb_x + b_momentum_to_velocity_yy*ub_y*vb_y + b_momentum_to_velocity_zz*ub_z*vb_z;
+		simd4_float b_duu = simd_madd(b_momentum_to_velocity_xx, simd_mul(ub_x, ub_x),
+										simd_madd(b_momentum_to_velocity_yy, simd_mul( ub_y, ub_y),
+											simd_mul(b_momentum_to_velocity_zz, simd_mul(ub_z,ub_z))));
+		simd4_float b_dvv = simd_madd(b_momentum_to_velocity_xx, simd_mul(vb_x, vb_x), 
+										simd_madd(b_momentum_to_velocity_yy, simd_mul(vb_y, vb_y),
+											simd_mul(b_momentum_to_velocity_zz, simd_mul(vb_z, vb_z))));
+		simd4_float b_duv = simd_madd(b_momentum_to_velocity_xx, simd_mul(ub_x,vb_x),
+									simd_madd(b_momentum_to_velocity_yy, simd_mul(ub_y, vb_y),
+										simd_mul(b_momentum_to_velocity_zz, simd_mul(ub_z, vb_z))));
 		
-		simd4_float b_suu = b_momentum_to_velocity_xy*ub_x*ub_y + b_momentum_to_velocity_xz*ub_x*ub_z + b_momentum_to_velocity_yz*ub_y*ub_z;
-		simd4_float b_svv = b_momentum_to_velocity_xy*vb_x*vb_y + b_momentum_to_velocity_xz*vb_x*vb_z + b_momentum_to_velocity_yz*vb_y*vb_z;
-		simd4_float b_suv = b_momentum_to_velocity_xy*(ub_x*vb_y + ub_y*vb_x) + b_momentum_to_velocity_xz*(ub_x*vb_z + ub_z*vb_x) + b_momentum_to_velocity_yz*(ub_y*vb_z + ub_z*vb_y);
+		simd4_float b_suu = simd_madd(b_momentum_to_velocity_xy, simd_mul(ub_x,ub_y),
+								simd_madd(b_momentum_to_velocity_xz, simd_mul(ub_x, ub_z),
+										simd_mul(b_momentum_to_velocity_yz, simd_mul(ub_y, ub_z))));
+		simd4_float b_svv = simd_madd(b_momentum_to_velocity_xy, simd_mul(vb_x, vb_y),
+								simd_madd(b_momentum_to_velocity_xz, simd_mul(vb_x, vb_z),
+									simd_mul(b_momentum_to_velocity_yz, simd_mul(vb_y, vb_z))));
+		simd4_float b_suv = simd_madd(b_momentum_to_velocity_xy, simd_madd(ub_x, vb_y, simd_mul(ub_y,vb_x)),
+									  simd_madd(b_momentum_to_velocity_xz, simd_madd(ub_x, vb_z, simd_mul(ub_z, vb_x)),
+											simd_mul(b_momentum_to_velocity_yz, simd_madd(ub_y, vb_z, simd_mul(ub_z, vb_y)))));
 		
 		simd4_float friction_x = mass_inverse + a_duu + a_suu + a_suu + b_duu + b_suu + b_suu;
 		simd4_float friction_y = mass_inverse + a_dvv + a_svv + a_svv + b_dvv + b_svv + b_svv;
