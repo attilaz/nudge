@@ -57,11 +57,9 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
-
 NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
-
 
 
 
@@ -4027,25 +4025,37 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 									  simd_madd(b_momentum_to_velocity_xz, simd_madd(ub_x, vb_z, simd_mul(ub_z, vb_x)),
 											simd_mul(b_momentum_to_velocity_yz, simd_madd(ub_y, vb_z, simd_mul(ub_z, vb_y)))));
 		
-		simd4_float friction_x = mass_inverse + a_duu + a_suu + a_suu + b_duu + b_suu + b_suu;
-		simd4_float friction_y = mass_inverse + a_dvv + a_svv + a_svv + b_dvv + b_svv + b_svv;
-		simd4_float friction_z = a_duv + a_duv + a_suv + a_suv + b_duv + b_duv + b_suv + b_suv;
+		simd4_float friction_x = simd_add4(mass_inverse, a_duu, a_suu, simd_add4(a_suu, b_duu, b_suu, b_suu));
+		simd4_float friction_y = simd_add4(mass_inverse, a_dvv, a_svv, simd_add4(a_svv, b_dvv, b_svv, b_svv));
+		simd4_float friction_z = simd_add4(a_duv, a_duv, a_suv, simd_add4(a_suv, b_duv, b_duv, simd_add(b_suv, b_suv)));
 		
-		simd4_float ua_xt = a_momentum_to_velocity_xx*ua_x + a_momentum_to_velocity_xy*ua_y + a_momentum_to_velocity_xz*ua_z;
-		simd4_float ua_yt = a_momentum_to_velocity_xy*ua_x + a_momentum_to_velocity_yy*ua_y + a_momentum_to_velocity_yz*ua_z;
-		simd4_float ua_zt = a_momentum_to_velocity_xz*ua_x + a_momentum_to_velocity_yz*ua_y + a_momentum_to_velocity_zz*ua_z;
+		simd4_float ua_xt = simd_madd(a_momentum_to_velocity_xx, ua_x,
+			simd_madd(a_momentum_to_velocity_xy, ua_y, simd_mul( a_momentum_to_velocity_xz, ua_z)));
+		simd4_float ua_yt = simd_madd(a_momentum_to_velocity_xy, ua_x,
+			simd_madd(a_momentum_to_velocity_yy, ua_y, simd_mul(a_momentum_to_velocity_yz, ua_z)));
+		simd4_float ua_zt = simd_madd(a_momentum_to_velocity_xz, ua_x,
+			simd_madd(a_momentum_to_velocity_yz, ua_y, simd_mul(a_momentum_to_velocity_zz, ua_z)));
 		
-		simd4_float va_xt = a_momentum_to_velocity_xx*va_x + a_momentum_to_velocity_xy*va_y + a_momentum_to_velocity_xz*va_z;
-		simd4_float va_yt = a_momentum_to_velocity_xy*va_x + a_momentum_to_velocity_yy*va_y + a_momentum_to_velocity_yz*va_z;
-		simd4_float va_zt = a_momentum_to_velocity_xz*va_x + a_momentum_to_velocity_yz*va_y + a_momentum_to_velocity_zz*va_z;
+		simd4_float va_xt = simd_madd(a_momentum_to_velocity_xx, va_x,
+			simd_madd(a_momentum_to_velocity_xy, va_y, simd_mul(a_momentum_to_velocity_xz, va_z)));
+		simd4_float va_yt = simd_madd(a_momentum_to_velocity_xy, va_x,
+			simd_madd(a_momentum_to_velocity_yy, va_y, simd_mul(a_momentum_to_velocity_yz, va_z)));
+		simd4_float va_zt = simd_madd(a_momentum_to_velocity_xz, va_x,
+			simd_madd(a_momentum_to_velocity_yz, va_y, simd_mul(a_momentum_to_velocity_zz, va_z)));
 		
-		simd4_float ub_xt = b_momentum_to_velocity_xx*ub_x + b_momentum_to_velocity_xy*ub_y + b_momentum_to_velocity_xz*ub_z;
-		simd4_float ub_yt = b_momentum_to_velocity_xy*ub_x + b_momentum_to_velocity_yy*ub_y + b_momentum_to_velocity_yz*ub_z;
-		simd4_float ub_zt = b_momentum_to_velocity_xz*ub_x + b_momentum_to_velocity_yz*ub_y + b_momentum_to_velocity_zz*ub_z;
+		simd4_float ub_xt = simd_madd(b_momentum_to_velocity_xx, ub_x,
+			simd_madd(b_momentum_to_velocity_xy, ub_y, simd_mul(b_momentum_to_velocity_xz, ub_z)));
+		simd4_float ub_yt = simd_madd(b_momentum_to_velocity_xy, ub_x,
+			simd_madd(b_momentum_to_velocity_yy, ub_y, simd_mul(b_momentum_to_velocity_yz, ub_z)));
+		simd4_float ub_zt = simd_madd(b_momentum_to_velocity_xz, ub_x,
+			simd_madd(b_momentum_to_velocity_yz, ub_y, simd_mul(b_momentum_to_velocity_zz, ub_z)));
 		
-		simd4_float vb_xt = b_momentum_to_velocity_xx*vb_x + b_momentum_to_velocity_xy*vb_y + b_momentum_to_velocity_xz*vb_z;
-		simd4_float vb_yt = b_momentum_to_velocity_xy*vb_x + b_momentum_to_velocity_yy*vb_y + b_momentum_to_velocity_yz*vb_z;
-		simd4_float vb_zt = b_momentum_to_velocity_xz*vb_x + b_momentum_to_velocity_yz*vb_y + b_momentum_to_velocity_zz*vb_z;
+		simd4_float vb_xt = simd_madd(b_momentum_to_velocity_xx, vb_x,
+			simd_madd( b_momentum_to_velocity_xy, vb_y, simd_mul(b_momentum_to_velocity_xz, vb_z)));
+		simd4_float vb_yt = simd_madd(b_momentum_to_velocity_xy, vb_x,
+			simd_madd(b_momentum_to_velocity_yy, vb_y, simd_mul(b_momentum_to_velocity_yz, vb_z)));
+		simd4_float vb_zt = simd_madd(b_momentum_to_velocity_xz, vb_x, simd_madd(
+			b_momentum_to_velocity_yz, vb_y, simd_mul(b_momentum_to_velocity_zz, vb_z)));
 		
 		constraints[i].a[0] = a0; constraints[i].a[1] = a1; constraints[i].a[2] = a2; constraints[i].a[3] = a3;
 		constraints[i].b[0] = b0; constraints[i].b[1] = b1; constraints[i].b[2] = b2; constraints[i].b[3] = b3;
