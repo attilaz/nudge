@@ -61,8 +61,6 @@ NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
 	return simd_add(a, b);
 }
 
-
-
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
 }
@@ -4129,13 +4127,16 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 											 b_velocity_x, b_velocity_y, b_velocity_z, b_mass_inverse,
 											 b_angular_velocity_x, b_angular_velocity_y, b_angular_velocity_z, b_angular_velocity_w);
 		
-		simd4_float normal_impulse = simd_max(normal_x*cached_impulse_x + normal_y*cached_impulse_y + normal_z*cached_impulse_z, simd_zero());
+		simd4_float normal_impulse = simd_max(simd_madd(normal_x, cached_impulse_x, simd_madd(normal_y, cached_impulse_y,
+			simd_mul(normal_z, cached_impulse_z))), simd_zero());
 		simd4_float max_friction_impulse = normal_impulse * friction;
 		
-		simd4_float friction_impulse_x = u_x*cached_impulse_x + u_y*cached_impulse_y + u_z*cached_impulse_z;
-		simd4_float friction_impulse_y = v_x*cached_impulse_x + v_y*cached_impulse_y + v_z*cached_impulse_z;
+		simd4_float friction_impulse_x = simd_madd(u_x, cached_impulse_x,
+			simd_madd(u_y, cached_impulse_y, simd_mul(u_z, cached_impulse_z)));
+		simd4_float friction_impulse_y = simd_madd(v_x, cached_impulse_x,
+			simd_madd(v_y, cached_impulse_y, simd_mul(v_z, cached_impulse_z)));
 		
-		simd4_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
+		simd4_float friction_clamp_scale = simd_madd(friction_impulse_x, friction_impulse_x, simd_mul(friction_impulse_y, friction_impulse_y));
 		
 		friction_clamp_scale = simd_rsqrt_est(friction_clamp_scale);
 		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
@@ -4144,9 +4145,12 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
 		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
 		
-		simd4_float linear_impulse_x = friction_impulse_x*u_x + friction_impulse_y*v_x + normal_x * normal_impulse;
-		simd4_float linear_impulse_y = friction_impulse_x*u_y + friction_impulse_y*v_y + normal_y * normal_impulse;
-		simd4_float linear_impulse_z = friction_impulse_x*u_z + friction_impulse_y*v_z + normal_z * normal_impulse;
+		simd4_float linear_impulse_x = simd_madd(friction_impulse_x, u_x,
+											simd_madd(friction_impulse_y, v_x, simd_mul(normal_x, normal_impulse)));
+		simd4_float linear_impulse_y = simd_madd(friction_impulse_x, u_y,
+											simd_madd(friction_impulse_y, v_y, simd_mul(normal_y, normal_impulse)));
+		simd4_float linear_impulse_z = simd_madd(friction_impulse_x, u_z,
+											simd_madd(friction_impulse_y, v_z, simd_mul(normal_z, normal_impulse)));
 		
 		simd4_float a_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ua_x) + friction_impulse_y * simd_ld(constraints[i].va_x) + normal_impulse * simd_ld(constraints[i].na_x);
 		simd4_float a_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ua_y) + friction_impulse_y * simd_ld(constraints[i].va_y) + normal_impulse * simd_ld(constraints[i].na_y);
