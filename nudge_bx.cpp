@@ -57,9 +57,6 @@ static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
 #ifdef _WIN32
-NUDGE_FORCEINLINE simd128_t operator + (simd128_t a, simd128_t b) {
-	return simd_add(a, b);
-}
 
 NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
 	return simd_mul(a, b);
@@ -4152,13 +4149,25 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float linear_impulse_z = simd_madd(friction_impulse_x, u_z,
 											simd_madd(friction_impulse_y, v_z, simd_mul(normal_z, normal_impulse)));
 		
-		simd4_float a_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ua_x) + friction_impulse_y * simd_ld(constraints[i].va_x) + normal_impulse * simd_ld(constraints[i].na_x);
-		simd4_float a_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ua_y) + friction_impulse_y * simd_ld(constraints[i].va_y) + normal_impulse * simd_ld(constraints[i].na_y);
-		simd4_float a_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ua_z) + friction_impulse_y * simd_ld(constraints[i].va_z) + normal_impulse * simd_ld(constraints[i].na_z);
+		simd4_float a_angular_impulse_x = simd_madd(friction_impulse_x, simd_ld(constraints[i].ua_x),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].va_x),
+				simd_mul(normal_impulse, simd_ld(constraints[i].na_x))));
+		simd4_float a_angular_impulse_y = simd_madd(friction_impulse_x, simd_ld(constraints[i].ua_y),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].va_y),
+				simd_mul(normal_impulse, simd_ld(constraints[i].na_y))));
+		simd4_float a_angular_impulse_z = simd_madd(friction_impulse_x, simd_ld(constraints[i].ua_z),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].va_z),
+				simd_mul(normal_impulse, simd_ld(constraints[i].na_z))));
 		
-		simd4_float b_angular_impulse_x = friction_impulse_x * simd_ld(constraints[i].ub_x) + friction_impulse_y * simd_ld(constraints[i].vb_x) + normal_impulse * simd_ld(constraints[i].nb_x);
-		simd4_float b_angular_impulse_y = friction_impulse_x * simd_ld(constraints[i].ub_y) + friction_impulse_y * simd_ld(constraints[i].vb_y) + normal_impulse * simd_ld(constraints[i].nb_y);
-		simd4_float b_angular_impulse_z = friction_impulse_x * simd_ld(constraints[i].ub_z) + friction_impulse_y * simd_ld(constraints[i].vb_z) + normal_impulse * simd_ld(constraints[i].nb_z);
+		simd4_float b_angular_impulse_x = simd_madd(friction_impulse_x, simd_ld(constraints[i].ub_x),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].vb_x),
+				simd_mul(normal_impulse, simd_ld(constraints[i].nb_x))));
+		simd4_float b_angular_impulse_y = simd_madd(friction_impulse_x, simd_ld(constraints[i].ub_y),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].vb_y),
+				simd_mul(normal_impulse, simd_ld(constraints[i].nb_y))));
+		simd4_float b_angular_impulse_z = simd_madd(friction_impulse_x, simd_ld(constraints[i].ub_z),
+			simd_madd(friction_impulse_y, simd_ld(constraints[i].vb_z),
+				simd_mul(normal_impulse, simd_ld(constraints[i].nb_z))));
 		
 		a_velocity_x = simd_sub(a_velocity_x, linear_impulse_x * a_mass_inverse);
 		a_velocity_y = simd_sub(a_velocity_y, linear_impulse_y * a_mass_inverse);
@@ -4267,7 +4276,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		t_x = simd_madd(v_y, fu_y, t_x);
 		t_y = simd_madd(v_y, fv_y, t_y);
 		
-		normal_bias = normal_bias + old_normal_impulse;
+		normal_bias = simd_add(normal_bias, old_normal_impulse);
 		
 		t_z = simd_madd(n_z, v_z, t_z);
 		t_x = simd_madd(v_z, fu_z, t_x);
@@ -4278,7 +4287,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simd4_float t_xx = t_x*t_x;
 		simd4_float t_yy = t_y*t_y;
 		simd4_float t_xy = t_x*t_y;
-		simd4_float tl2 = t_xx + t_yy;
+		simd4_float tl2 = simd_add(t_xx, t_yy);
 		
 		normal_impulse = simd_max(normal_impulse, simd_zero());
 		
@@ -4323,7 +4332,7 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		friction_impulse_x = simd_sub(old_friction_impulse_x, friction_impulse_x); // Note: Friction impulse has the wrong sign until this point. This is really an addition.
 		friction_impulse_y = simd_sub(old_friction_impulse_y, friction_impulse_y);
 		
-		simd4_float friction_clamp_scale = friction_impulse_x*friction_impulse_x + friction_impulse_y*friction_impulse_y;
+		simd4_float friction_clamp_scale = simd_madd(friction_impulse_x, friction_impulse_x, simd_mul( friction_impulse_y,friction_impulse_y));
 		
 		simd4_float nb_x = simd_ld(constraint.nb_x);
 		simd4_float nb_y = simd_ld(constraint.nb_y);
