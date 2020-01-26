@@ -56,16 +56,6 @@ static const float bias_factor = 2.0f;
 static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
 
-#ifdef _WIN32
-
-NUDGE_FORCEINLINE simd128_t operator * (simd128_t a, simd128_t b) {
-	return simd_mul(a, b);
-}
-
-
-
-#endif
-
 typedef simd128_t simd4_float;
 typedef simd128_t simd4_int32;
 
@@ -1926,15 +1916,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float ky = simd_add(a_rotation_y, a_rotation_y);
 				simd4_float kz = simd_add(a_rotation_z, a_rotation_z);
 				
-				simd4_float xx = kx*a_rotation_x;
-				simd4_float yy = ky*a_rotation_y;
-				simd4_float zz = kz*a_rotation_z;
-				simd4_float xy = kx*a_rotation_y;
-				simd4_float xz = kx*a_rotation_z;
-				simd4_float yz = ky*a_rotation_z;
-				simd4_float sx = kx*a_rotation_s;
-				simd4_float sy = ky*a_rotation_s;
-				simd4_float sz = kz*a_rotation_s;
+				simd4_float xx = simd_mul(kx, a_rotation_x);
+				simd4_float yy = simd_mul(ky, a_rotation_y);
+				simd4_float zz = simd_mul(kz, a_rotation_z);
+				simd4_float xy = simd_mul(kx, a_rotation_y);
+				simd4_float xz = simd_mul(kx, a_rotation_z);
+				simd4_float yz = simd_mul(ky, a_rotation_z);
+				simd4_float sx = simd_mul(kx, a_rotation_s);
+				simd4_float sy = simd_mul(ky, a_rotation_s);
+				simd4_float sz = simd_mul(kz, a_rotation_s);
 				
 				simd4_float one = simd_splat(1.0f);
 
@@ -1959,15 +1949,15 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 				simd4_float ky = simd_add(b_rotation_y, b_rotation_y);
 				simd4_float kz = simd_add(b_rotation_z, b_rotation_z);
 				
-				simd4_float xx = kx*b_rotation_x;
-				simd4_float yy = ky*b_rotation_y;
-				simd4_float zz = kz*b_rotation_z;
-				simd4_float xy = kx*b_rotation_y;
-				simd4_float xz = kx*b_rotation_z;
-				simd4_float yz = ky*b_rotation_z;
-				simd4_float sx = kx*b_rotation_s;
-				simd4_float sy = ky*b_rotation_s;
-				simd4_float sz = kz*b_rotation_s;
+				simd4_float xx = simd_mul(kx, b_rotation_x);
+				simd4_float yy = simd_mul(ky, b_rotation_y);
+				simd4_float zz = simd_mul(kz, b_rotation_z);
+				simd4_float xy = simd_mul(kx, b_rotation_y);
+				simd4_float xz = simd_mul(kx, b_rotation_z);
+				simd4_float yz = simd_mul(ky, b_rotation_z);
+				simd4_float sx = simd_mul(kx, b_rotation_s);
+				simd4_float sy = simd_mul(ky, b_rotation_s);
+				simd4_float sz = simd_mul(kz, b_rotation_s);
 				
 				simd4_float one = simd_splat(1.0f);
 
@@ -2177,10 +2167,10 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			simd4_float ie = simd_madd(o_x, v_x, simd_madd(o_y, v_y, simd_mul(o_z, v_z)));
 			
 			simd4_float half = simd_splat(0.5f);
-			simd4_float ir = simd_div(half, simd_sub(ia*ic, ib*ib));
+			simd4_float ir = simd_div(half, simd_sub(simd_mul(ia, ic), simd_mul(ib, ib)));
 			
-			simd4_float sa = simd_sub(ib*ie, ic*id) * ir;
-			simd4_float sb = simd_sub(ia*ie, ib*id) * ir;
+			simd4_float sa = simd_mul(simd_sub(simd_mul(ib, ie), simd_mul(ic, id)), ir);
+			simd4_float sb = simd_mul(simd_sub(simd_mul(ia, ie), simd_mul(ib, id)), ir);
 			
 			simd4_float p_x = simd_madd(simd_sub(ca_x, cb_x), half, simd_madd(u_x, sa, simd_mul(v_x, sb)));
 			simd4_float p_y = simd_madd(simd_sub(ca_y, cb_y), half, simd_madd(u_y, sa, simd_mul(v_y, sb)));
@@ -2735,11 +2725,11 @@ void collide(ActiveBodies* active_bodies, ContactData* contacts, BodyData bodies
 		scene_max128 = simd_max(scene_max128, p);
 	}
 	
-	simd4_float scene_scale128 = simd_splat((1<<16)-1) * simd_rcp_est(simd_sub(scene_max128, scene_min128));
+	simd4_float scene_scale128 = simd_mul(simd_splat((1<<16)-1), simd_rcp_est(simd_sub(scene_max128, scene_min128)));
 	
 	scene_scale128 = simd_min(simd_swiz_xyzz(scene_scale128), simd_swiz_zzxy(scene_scale128));
 	scene_scale128 = simd_min(scene_scale128, simd_swiz_yxwz(scene_scale128));
-	scene_min128 = scene_min128 * scene_scale128;
+	scene_min128 = simd_mul(scene_min128, scene_scale128);
 	
 #ifdef DEBUG
 	if (simd_x(scene_scale128) < 2.0f)
@@ -3958,12 +3948,13 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float nonzero = simd_cmpneq(normal_velocity_to_normal_impulse, simd_zero());
 		normal_velocity_to_normal_impulse = simd_and(simd_div(simd_splat(-1.0f), normal_velocity_to_normal_impulse), nonzero);
 		
-		simd4_float bias = simd_splat(-bias_factor) * simd_max(simd_sub(penetration, simd_splat(allowed_penetration)), simd_zero()) * normal_velocity_to_normal_impulse;
+		simd4_float bias = simd_mul(simd_splat(-bias_factor),
+			simd_mul(simd_max(simd_sub(penetration, simd_splat(allowed_penetration)), simd_zero()), normal_velocity_to_normal_impulse));
 		
 		// Compute a tangent from the normal. Care is taken to compute a smoothly varying basis to improve stability.
 		simd4_float s = simd_abs(normal_x);
 		
-		simd4_float u_x = normal_z*s;
+		simd4_float u_x = simd_mul(normal_z, s);
 		simd4_float u_y = simd_sub(u_x, normal_z);
 		simd4_float u_z = simd_madd(simd_sub(normal_x, normal_y), s, normal_y);
 		
@@ -4128,7 +4119,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		
 		simd4_float normal_impulse = simd_max(simd_madd(normal_x, cached_impulse_x, simd_madd(normal_y, cached_impulse_y,
 			simd_mul(normal_z, cached_impulse_z))), simd_zero());
-		simd4_float max_friction_impulse = normal_impulse * friction;
+		simd4_float max_friction_impulse = simd_mul(normal_impulse, friction);
 		
 		simd4_float friction_impulse_x = simd_madd(u_x, cached_impulse_x,
 			simd_madd(u_y, cached_impulse_y, simd_mul(u_z, cached_impulse_z)));
@@ -4138,11 +4129,11 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 		simd4_float friction_clamp_scale = simd_madd(friction_impulse_x, friction_impulse_x, simd_mul(friction_impulse_y, friction_impulse_y));
 		
 		friction_clamp_scale = simd_rsqrt_est(friction_clamp_scale);
-		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
+		friction_clamp_scale = simd_mul(friction_clamp_scale, max_friction_impulse);
 		friction_clamp_scale = simd_float::min_second_nan(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
-		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
-		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
+		friction_impulse_x = simd_mul(friction_impulse_x, friction_clamp_scale);
+		friction_impulse_y = simd_mul(friction_impulse_y, friction_clamp_scale);
 		
 		simd4_float linear_impulse_x = simd_madd(friction_impulse_x, u_x,
 											simd_madd(friction_impulse_y, v_x, simd_mul(normal_x, normal_impulse)));
@@ -4171,9 +4162,9 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 			simd_madd(friction_impulse_y, simd_ld(constraints[i].vb_z),
 				simd_mul(normal_impulse, simd_ld(constraints[i].nb_z))));
 		
-		a_velocity_x = simd_sub(a_velocity_x, linear_impulse_x * a_mass_inverse);
-		a_velocity_y = simd_sub(a_velocity_y, linear_impulse_y * a_mass_inverse);
-		a_velocity_z = simd_sub(a_velocity_z, linear_impulse_z * a_mass_inverse);
+		a_velocity_x = simd_sub(a_velocity_x, simd_mul(linear_impulse_x, a_mass_inverse));
+		a_velocity_y = simd_sub(a_velocity_y, simd_mul(linear_impulse_y, a_mass_inverse));
+		a_velocity_z = simd_sub(a_velocity_z, simd_mul(linear_impulse_z, a_mass_inverse));
 		
 		a_angular_velocity_x = simd_add(a_angular_velocity_x, a_angular_impulse_x);
 		a_angular_velocity_y = simd_add(a_angular_velocity_y, a_angular_impulse_y);
@@ -4262,9 +4253,9 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		simd4_float v_y = simd_sub(v_yb, v_ya);
 		simd4_float v_z = simd_sub(v_zb, v_za);
 		
-		simd4_float t_z = n_x * v_x;
-		simd4_float t_x = v_x * fu_x;
-		simd4_float t_y = v_x * fv_x;
+		simd4_float t_z = simd_mul(n_x, v_x);
+		simd4_float t_x = simd_mul(v_x, fu_x);
+		simd4_float t_y = simd_mul(v_x, fv_x);
 		
 		simd4_float n_z = simd_ld(constraint.n_z);
 		simd4_float fu_z = simd_ld(constraint.u_z);
@@ -4286,9 +4277,9 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		simd4_float normal_impulse = simd_madd(normal_factor, t_z, normal_bias);
 		
-		simd4_float t_xx = t_x*t_x;
-		simd4_float t_yy = t_y*t_y;
-		simd4_float t_xy = t_x*t_y;
+		simd4_float t_xx = simd_mul(t_x, t_x);
+		simd4_float t_yy = simd_mul(t_y, t_y);
+		simd4_float t_xy = simd_mul(t_x, t_y);
 		simd4_float tl2 = simd_add(t_xx, t_yy);
 		
 		normal_impulse = simd_max(normal_impulse, simd_zero());
@@ -4298,20 +4289,20 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		simd_st(constraint_states[i].applied_normal_impulse, normal_impulse);
 		
-		simd4_float max_friction_impulse = normal_impulse * simd_ld(constraint.friction);
+		simd4_float max_friction_impulse = simd_mul(normal_impulse, simd_ld(constraint.friction));
 		normal_impulse = simd_sub(normal_impulse, old_normal_impulse);
 		
 		simd4_float friction_x = simd_ld(constraint.friction_coefficient_x);
-		simd4_float friction_factor = t_xx * friction_x;
-		simd4_float linear_impulse_x = n_x * normal_impulse;
+		simd4_float friction_factor = simd_mul(t_xx, friction_x);
+		simd4_float linear_impulse_x = simd_mul(n_x, normal_impulse);
 		
 		simd4_float friction_y = simd_ld(constraint.friction_coefficient_y);
 		friction_factor = simd_madd(t_yy, friction_y, friction_factor);
-		simd4_float linear_impulse_y = n_y * normal_impulse;
+		simd4_float linear_impulse_y = simd_mul(n_y, normal_impulse);
 		
 		simd4_float friction_z = simd_ld(constraint.friction_coefficient_z);
 		friction_factor = simd_madd(t_xy, friction_z, friction_factor);
-		simd4_float linear_impulse_z = n_z * normal_impulse;
+		simd4_float linear_impulse_z = simd_mul(n_z, normal_impulse);
 		
 		friction_factor = simd_rcp_est(friction_factor);
 		
@@ -4328,8 +4319,8 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		
 		friction_factor = simd_float::min_second_nan(simd_splat(1e+6f), friction_factor); // Note: First operand is returned on NaN.
 		
-		simd4_float friction_impulse_x = t_x*friction_factor;
-		simd4_float friction_impulse_y = t_y*friction_factor;
+		simd4_float friction_impulse_x = simd_mul(t_x, friction_factor);
+		simd4_float friction_impulse_y = simd_mul(t_y, friction_factor);
 		
 		friction_impulse_x = simd_sub(old_friction_impulse_x, friction_impulse_x); // Note: Friction impulse has the wrong sign until this point. This is really an addition.
 		friction_impulse_y = simd_sub(old_friction_impulse_y, friction_impulse_y);
@@ -4346,11 +4337,11 @@ void apply_impulses(ContactConstraintData* data, BodyData bodies) {
 		b_angular_velocity_y = simd_madd(nb_y, normal_impulse, b_angular_velocity_y);
 		b_angular_velocity_z = simd_madd(nb_z, normal_impulse, b_angular_velocity_z);
 		
-		friction_clamp_scale = friction_clamp_scale * max_friction_impulse;
+		friction_clamp_scale = simd_mul(friction_clamp_scale, max_friction_impulse);
 		friction_clamp_scale = simd_float::min_second_nan(simd_splat(1.0f), friction_clamp_scale); // Note: First operand is returned on NaN.
 		
-		friction_impulse_x = friction_impulse_x * friction_clamp_scale;
-		friction_impulse_y = friction_impulse_y * friction_clamp_scale;
+		friction_impulse_x = simd_mul(friction_impulse_x, friction_clamp_scale);
+		friction_impulse_y = simd_mul(friction_impulse_y, friction_clamp_scale);
 		
 		simd_st(constraint_states[i].applied_friction_impulse_x, friction_impulse_x);
 		simd_st(constraint_states[i].applied_friction_impulse_y, friction_impulse_y);
