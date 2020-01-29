@@ -126,20 +126,23 @@ namespace simd {
 	return vget_lane_u32(t3, 0) | vget_lane_u32(t3, 1);
 #endif
 
-	NUDGE_FORCEINLINE unsigned cmpmask32(simd128_t x) {
+	NUDGE_FORCEINLINE unsigned cmpmask32(simd128_t _x) {
 		uint32_t i[4];
-		i[0] = as_int(simd_x(x));
-		i[1] = as_int(simd_y(x));
-		i[2] = as_int(simd_z(x));
-		i[3] = as_int(simd_w(x));
+		i[0] = as_int(simd_x(_x));
+		i[1] = as_int(simd_y(_x));
+		i[2] = as_int(simd_z(_x));
+		i[3] = as_int(simd_w(_x));
 		assert(i[0] == 0x0 || i[0] == 0xffffffff);
 		assert(i[1] == 0x0 || i[1] == 0xffffffff);
 		assert(i[2] == 0x0 || i[2] == 0xffffffff);
 		assert(i[3] == 0x0 || i[3] == 0xffffffff);
 #if BX_SIMD_SSE
-		return _mm_movemask_ps(x);
+		return _mm_movemask_ps(_x);
 #else
-		return 0;
+		static const uint32x4_t mask = {0x1, 0x2, 0x4, 0x8 };
+		uint32x4_t t0 = vreinterpretq_u32_f32(_x);
+		uint32x4_t t1 = vandq_u32(t0, mask);
+		return vaddvq_s32(t1);	//NOTE: this is arm64 only
 //#error not implemented
 #endif
 	}
@@ -158,12 +161,17 @@ namespace simd {
 		assert( 0xa == cmpmask32(a));
 	}
 
-	NUDGE_FORCEINLINE unsigned signmask32(simd128_t x) {
+	NUDGE_FORCEINLINE unsigned signmask32(simd128_t _x) {
 #if BX_SIMD_SSE
-		return _mm_movemask_ps(x);
+		return _mm_movemask_ps(_x);
 #else
-		return 0;
-//#error not implemented
+		static const uint32x4_t mask = {0x1, 0x2, 0x4, 0x8 };
+		static const uint32x4_t highbit = {0x80000000, 0x80000000, 0x80000000,
+			0x80000000};
+		uint32x4_t t0 = vreinterpretq_u32_f32(_x);
+		uint32x4_t t1 = vtstq_u32(t0, highbit);	//this makes all bits equal
+		uint32x4_t t2 = vandq_u32(t1, mask);
+		return vaddvq_s32(t2);	//NOTE: this is arm64 only
 #endif
 	}
 
