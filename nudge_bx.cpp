@@ -192,18 +192,24 @@ namespace simd {
 	}
 
 	
-	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t x, simd128_t y, simd128_t s) {
+	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t _a, simd128_t _b, simd128_t _s) {
 #if BX_SIMD_SSE
 #if defined(__SSE4_1__) || defined(__AVX__)
 #define NUDGE_NATIVE_BLENDV32
-		return _mm_blendv_ps(x, y, s);
+		return _mm_blendv_ps(_a, _b, _s);
 #else
 		s = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(s), 31));
-		return _mm_or_ps(_mm_andnot_ps(s, x), _mm_and_ps(s, y));
+		return _mm_or_ps(_mm_andnot_ps(s, _a), _mm_and_ps(s, _b));
 #endif
 #else
-		return simd_zero();
-//#error not implemented
+		static const uint32x4_t highbit = {0x80000000, 0x80000000, 0x80000000,
+			0x80000000};
+		uint32x4_t tmps = vreinterpretq_u32_f32(_s);
+		uint32x4_t t1 = vtstq_u32(tmps, highbit);	//this makes all bits equal
+		const int32x4_t tmpa   = vreinterpretq_s32_f32(_a);
+		const int32x4_t tmpb   = vreinterpretq_s32_f32(_b);
+		int32x4_t retval = vbslq_s32(t1, tmpb, tmpa);
+		return retval;
 #endif
 	}
 	
