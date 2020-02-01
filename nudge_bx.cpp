@@ -236,21 +236,31 @@ namespace simd_float {
 		return tmp > UINT32_C(0x7f800000);
 	}
 
-	// Note: First operand is returned on NaN.
-	NUDGE_FORCEINLINE simd4_float min_second_nan(simd4_float x, simd4_float y) {
-		assert(!isNan(simd_x(x)));
-		assert(!isNan(simd_y(x)));
-		assert(!isNan(simd_z(x)));
-		assert(!isNan(simd_w(x)));
+	// Note: First operand is returned if second is NaN.
+	NUDGE_FORCEINLINE simd4_float min_second_nan(simd4_float _x, simd4_float _y) {
+		assert(!isNan(simd_x(_x)));
+		assert(!isNan(simd_y(_x)));
+		assert(!isNan(simd_z(_x)));
+		assert(!isNan(simd_w(_x)));
 		// Note: For SSE, second operand is returned on NaN.
-		// todo: check Nan behaviour for neon
-		return simd_min(y, x);
+#if BX_SIMD_SSE
+		return simd_min(_y, _x);
+#else
+		//on neon if any of nan result will be nan
+		uint32x4_t notNan = vceqq_f32(_y, _y);
+		simd4_float v = simd_min(_x, _y);
+		
+		const int32x4_t tmpx   = vreinterpretq_s32_f32(_x);
+		int32x4_t retval = vbslq_s32(notNan, v, tmpx);
+
+		return retval;
+#endif
 	}
 	
 	void test_min_second_nan()
 	{
-		simd128_t a = simd_ld(1.0f, 2.0f, 3.0f, 4.0f);
-		simd128_t b = simd_ld(5.0f, NAN, 7.0f, 8.0f);
+		simd128_t a = simd_ld(1.0f, 2.0f, 3.0f, 8.0f);
+		simd128_t b = simd_ld(5.0f, NAN, 7.0f, 4.0f);
 
 		simd128_t v = min_second_nan(a,b);
 		assert(simd_x(v) == 1.0f);
@@ -280,12 +290,11 @@ BX_SIMD_FORCE_INLINE simd128_t simd_swiz_wwBB(simd128_t _a, simd128_t _b)
 
 	//todo: add this to bx
 	// neon: vmvn_u32 for result
-BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t x, simd128_t y) {
+BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t _x, simd128_t _y) {
 #if BX_SIMD_SSE
-	return _mm_cmpneq_ps(x, y);
+	return _mm_cmpneq_ps(_x, _y);
 #else
-//#error not implemented
-	return simd_zero();
+	return simd_not(simd_cmpeq(_x, _y));
 #endif
 }
 
@@ -296,7 +305,7 @@ BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 #if BX_SIMD_SSE
 	_mm_storeu_ps(reinterpret_cast<float*>(_ptr), _a);
 #else
-//#error not implemented
+	simd_st(_ptr, _a);
 #endif
 }
 
