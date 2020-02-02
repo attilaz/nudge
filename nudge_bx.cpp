@@ -298,8 +298,6 @@ BX_SIMD_FORCE_INLINE simd128_t simd_cmpneq(simd128_t _x, simd128_t _y) {
 #endif
 }
 
-	//todo: add this to bx ??
-	//neon: unaligned is same as aligned store
 BX_SIMD_FORCE_INLINE void simd_stu(void* _ptr, simd128_t _a)
 {
 #if BX_SIMD_SSE
@@ -320,8 +318,10 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_add(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-//#error not implemented
-	return simd_zero();
+	const int16x8_t tmpa   = vreinterpretq_s16_f32(_a);
+	const int16x8_t tmpb   = vreinterpretq_s16_f32(_b);
+	const int16x8_t result = vaddq_s16(tmpa,tmpb);
+	return result;
 #endif
 }
 	
@@ -349,8 +349,10 @@ BX_SIMD_FORCE_INLINE simd128_t simd_i16_cmpeq(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-//#error not implemented
-	return simd_zero();
+	const int16x8_t tmpa   = vreinterpretq_s16_f32(_a);
+	const int16x8_t tmpb   = vreinterpretq_s16_f32(_b);
+	const int16x8_t result = vceqq_s16(tmpa, tmpb);
+	return result;
 #endif
 }
 	
@@ -371,17 +373,19 @@ void test_simd_i16_cmpeq()
 
 // neon: int16x4_t  vshr_n_s16(int16x4_t a, __constrange(1,16) int b);   // VSHR.S16 d0,d0,#16
 // templated version for constant
-BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _bits)
+BX_SIMD_FORCE_INLINE simd128_t simd_i16_srl(simd128_t _a, int _count)
 {
 #if BX_SIMD_SSE
 	const __m128i a = _mm_castps_si128(_a);
-	const __m128i add = _mm_srli_epi16(a, _bits);
+	const __m128i add = _mm_srli_epi16(a, _count);
 	const simd128_sse_t result = _mm_castsi128_ps(add);
 
 	return result;
 #else
-//#error not implemented
-	return simd_zero();
+	const int16x8_t tmpa   = vreinterpretq_s16_f32(_a);
+	const int16x8_t shift  = vdupq_n_s16(-_count);
+	const int16x8_t result = vshlq_u16(tmpa, shift);
+	return result;
 #endif
 }
 
@@ -429,8 +433,13 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i32_to_i16(simd128_t _a, simd128_t _b)
 #endif
 	return result;
 #else
-//#error not implemented
-	return simd_zero();
+	const int32x4_t tmpa   = vreinterpretq_s32_f32(_a);
+	const int32x4_t tmpb   = vreinterpretq_s32_f32(_b);
+
+	const int16x4_t tmplow = vqmovn_s32(tmpa);
+	const int16x8_t result = vqmovn_high_s32(tmplow, tmpb);
+	
+	return result;
 #endif
 }
 	
@@ -460,8 +469,13 @@ BX_SIMD_FORCE_INLINE simd128_t simd_pack_i16_to_i8(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-//#error not implemented
-	return simd_zero();
+	const int16x8_t tmpa   = vreinterpretq_s16_f32(_a);
+	const int16x8_t tmpb   = vreinterpretq_s16_f32(_b);
+	
+	const int8x8_t tmplow = vqmovn_s16(tmpa);
+	const int8x16_t result = vqmovn_high_s16(tmplow, tmpb);
+	
+	return result;
 #endif
 }
 
@@ -493,7 +507,7 @@ BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-//#error not implemented
+	assert(false);
 	return simd_zero();
 #endif
 }
@@ -519,7 +533,7 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
 #else
-//#error not implemented
+	assert(false);
 	return 0;
 #endif
 }
