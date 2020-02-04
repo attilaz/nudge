@@ -507,8 +507,12 @@ BX_SIMD_FORCE_INLINE simd128_t simd_shuf_xAyBzCwD(simd128_t _a, simd128_t _b)
 
 	return result;
 #else
-	assert(false);
-	return simd_zero();
+	const int16x8_t tmpa   = vreinterpretq_s16_f32(_a);
+	const int16x8_t tmpb   = vreinterpretq_s16_f32(_b);
+	
+	const int16x8_t result = vzip1q_s16(tmpa, tmpb);
+	
+	return result;
 #endif
 }
 	
@@ -533,8 +537,15 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 	const __m128i a = _mm_castps_si128(_a);
 	return _mm_movemask_epi8(a);
 #else
-	assert(false);
-	return 0;
+	static const uint32x4_t masklow =  {0x10204080, 0x01020408, 0x0, 0x0 };
+	static const uint32x4_t maskhigh = {0x0, 0x0, 0x01020408, 0x10204080};
+	static const uint8x16_t highbit = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+		0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};
+	uint8x16_t t0 = vreinterpretq_u8_f32(_a);
+	uint8x16_t t1 = vtstq_u8(t0, highbit);	//this makes all bits equal
+	uint32x4_t t2 = vandq_u32(t1, masklow);
+	uint32x4_t t3 = vandq_u32(t1, maskhigh);
+	return vaddvq_u8(t2) | (vaddvq_u8(t3) << 8);	//NOTE: this is arm64 only
 #endif
 }
 	
@@ -544,6 +555,7 @@ BX_SIMD_FORCE_INLINE int simd_i8_mask(simd128_t _a)
 		//						  0 0 1 1     1 1 0 0    1 0 0 1     1 1 1 1
 		int v = simd_i8_mask(a);
 		assert(v == 0xf9c3);
+		//todo:add more test, i am not sure about neon impl
 	}
 
 
