@@ -55,20 +55,6 @@ static const float bias_factor = 2.0f;
 #define NUDGE_SIMDV_ALIGNED NUDGE_ALIGNED(16)
 static const unsigned simdv_width32 = 4;
 static const unsigned simdv_width32_log2 = 2;
-
-#if 0
-	template<typename Ty>
-	Ty simd_add3(Ty _a, Ty _b, Ty _c)
-	{
-		return simd_add(_a, simd_add(_b, _c));
-	}
-#endif
-	
-	template<typename Ty>
-	Ty simd_add4(Ty _a, Ty _b, Ty _c, Ty _d)
-	{
-		return simd_add(_a, simd_add(_b, simd_add(_c, _d)));
-	}
 	
 NUDGE_FORCEINLINE void simd_transpose32(simd128_t& x, simd128_t& y, simd128_t& z, simd128_t& w) {
 	const simd128_t tmp0 = simd_shuf_xAyB(x, y);
@@ -4067,9 +4053,12 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 									  simd_madd(b_momentum_to_velocity_xz, simd_madd(ub_x, vb_z, simd_mul(ub_z, vb_x)),
 											simd_mul(b_momentum_to_velocity_yz, simd_madd(ub_y, vb_z, simd_mul(ub_z, vb_y)))));
 		
-		simd128_t friction_x = simd_add4(mass_inverse, a_duu, a_suu, simd_add4(a_suu, b_duu, b_suu, b_suu));
-		simd128_t friction_y = simd_add4(mass_inverse, a_dvv, a_svv, simd_add4(a_svv, b_dvv, b_svv, b_svv));
-		simd128_t friction_z = simd_add4(a_duv, a_duv, a_suv, simd_add4(a_suv, b_duv, b_duv, simd_add(b_suv, b_suv)));
+		simd128_t ab_suu = simd_add(a_suu, b_suu);
+		simd128_t friction_x = simd_add(mass_inverse, simd_add(simd_add(a_duu, b_duu), simd_add(ab_suu, ab_suu)));
+		simd128_t ab_svv = simd_add(a_svv, b_svv);
+		simd128_t friction_y = simd_add(mass_inverse, simd_add(simd_add(a_dvv, b_dvv), simd_add(ab_svv, ab_svv)));
+		simd128_t friction_z_half = simd_add(simd_add(a_duv, a_suv), simd_add(b_duv, b_suv));
+		simd128_t friction_z = simd_add(friction_z_half, friction_z_half);
 		
 		simd128_t ua_xt = simd_madd(a_momentum_to_velocity_xx, ua_x,
 			simd_madd(a_momentum_to_velocity_xy, ua_y, simd_mul( a_momentum_to_velocity_xz, ua_z)));
