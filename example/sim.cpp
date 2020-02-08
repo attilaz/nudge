@@ -212,8 +212,8 @@ public:
 
 		cameraCreate();
 
-		cameraSetPosition({ 0.0f, 2.0f, -12.0f });
-		cameraSetVerticalAngle(0.0f);
+		cameraSetPosition({ 0.0f, 6.0f, -45.0f });
+		cameraSetVerticalAngle(-0.2f);
 
 		// Allocate memory for simulation arena.
 		arena.size = 64 * 1024 * 1024;

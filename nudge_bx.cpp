@@ -175,7 +175,7 @@ namespace simd {
 
 	}
 
-	
+#if 0
 	NUDGE_FORCEINLINE simd128_t blendv32(simd128_t _a, simd128_t _b, simd128_t _s) {
 #if BX_SIMD_SSE
 #if defined(__SSE4_1__) || defined(__AVX__)
@@ -192,23 +192,13 @@ namespace simd {
 		uint32x4_t t1 = vtstq_u32(tmps, highbit);	//this makes all bits equal
 		const int32x4_t tmpa   = vreinterpretq_s32_f32(_a);
 		const int32x4_t tmpb   = vreinterpretq_s32_f32(_b);
+		//todo: optimize simd_sels/simd_selb with this
 		int32x4_t retval = vbslq_s32(t1, tmpb, tmpa);
 		return retval;
 #endif
 	}
+#endif
 	
-	void test_blendv32()
-	{
-		simd128_t a = simd_ld(1.0f, 2.0f, 3.0f, 4.0f);
-		simd128_t b = simd_ld(5.0f, 6.0f, 7.0f, 8.0f);
-		simd128_t s = simd_ild(0x80000000, 0xffffffff, 0x7fffffff, 0x0);
-
-		simd128_t v = blendv32(a, b, s);
-		assert(simd_x(v) == 5.0f);
-		assert(simd_y(v) == 6.0f);
-		assert(simd_z(v) == 3.0f);
-		assert(simd_w(v) == 4.0f);
-	}
 }
 
 namespace simd_float {
@@ -580,7 +570,6 @@ FORCE_INLINE int _mm_movemask_epi8(__m128i _a)
 	{
 		simd::test_cmpmask32();
 		simd::test_signmask32();
-		simd::test_blendv32();
 		simd_float::test_min_second_nan();
 		
 		test_simd_i16_add();
@@ -1143,9 +1132,9 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 			
 			simd128_t pair_a_b = simd_ld((const int32_t*)(pairs + i));
 			simd128_t pair_b_a = simd_or(simd_sll(pair_a_b, 16), simd_srl(pair_a_b, 16));
-			
-			simd128_t face = simd::blendv32(bface, aface, swap);
-			simd128_t pair = simd::blendv32(pair_a_b, pair_b_a, swap);
+
+			simd128_t face = simd_selb(swap, aface, bface);
+			simd128_t pair = simd_selb(swap, pair_b_a, pair_a_b);
 			
 			// Store data for pairs with positive penetration.
 			unsigned mask = simd::cmpmask32(simd_cmpgt(p, simd_zero()));
@@ -1413,8 +1402,8 @@ static unsigned box_box_collide(uint32_t* pairs, unsigned pair_count, BoxCollide
 					simd128_t mask = simd_cmpgt(penetration, p);
 					
 					penetration = simd_float::min_second_nan(penetration, p); // Note: First operand is returned on NaN.
-					a_edge = simd::blendv32(a_edge, simd_isplat(j), mask);
-					b_edge = simd::blendv32(b_edge, simd_isplat(i), mask);
+					a_edge = simd_selb(mask, simd_isplat(j), a_edge);
+					b_edge = simd_selb(mask, simd_isplat(i), b_edge);
 				}
 			}
 			
@@ -3888,7 +3877,7 @@ ContactConstraintData* setup_contact_constraints(ActiveBodies active_bodies, Con
 				simd128_t mask = simd_icmpeq(ab, invalid_index);
 				simd128_t first_index = simd_swiz_xxxx(indices);
 				
-				indices = simd::blendv32(indices, first_index, mask);
+				indices = simd_selb(mask, first_index, indices);
 				
 				simd_st((int32_t*)contact_slots[contact_slot_count++].indices, indices);
 			}
