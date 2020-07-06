@@ -17,6 +17,14 @@
 		01CBD15024B1298D00D04E99 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD14724B1298D00D04E99 /* imgui_demo.cpp */; };
 		01CBD15124B1298D00D04E99 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD14824B1298D00D04E99 /* imgui_draw.cpp */; };
 		01CBD15224B1298D00D04E99 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD14824B1298D00D04E99 /* imgui_draw.cpp */; };
+		01CBD15724B12C8700D04E99 /* nudge_impl_metal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD15324B12C8700D04E99 /* nudge_impl_metal.mm */; };
+		01CBD15824B12C8700D04E99 /* nudge_impl_metal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD15324B12C8700D04E99 /* nudge_impl_metal.mm */; };
+		01CBD15924B12C8700D04E99 /* nudge_examples.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD15524B12C8700D04E99 /* nudge_examples.cpp */; };
+		01CBD15A24B12C8700D04E99 /* nudge_examples.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD15524B12C8700D04E99 /* nudge_examples.cpp */; };
+		01CBD16124B3CCC700D04E99 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 01CBD15D24B3CCC700D04E99 /* README.md */; };
+		01CBD16224B3CCC700D04E99 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 01CBD15D24B3CCC700D04E99 /* README.md */; };
+		01CBD16324B3CCC700D04E99 /* nudge_bx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD16024B3CCC700D04E99 /* nudge_bx.cpp */; };
+		01CBD16424B3CCC700D04E99 /* nudge_bx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01CBD16024B3CCC700D04E99 /* nudge_bx.cpp */; };
 		8307E7CC20E9F9C900473790 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8307E7CB20E9F9C900473790 /* ViewController.mm */; };
 		8307E7CF20E9F9C900473790 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8307E7CD20E9F9C900473790 /* Main.storyboard */; };
 		8307E7DE20E9F9C900473790 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8307E7DD20E9F9C900473790 /* AppDelegate.m */; };
@@ -52,6 +60,15 @@
 		01CBD14624B1298D00D04E99 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		01CBD14724B1298D00D04E99 /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_demo.cpp; sourceTree = "<group>"; };
 		01CBD14824B1298D00D04E99 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_draw.cpp; sourceTree = "<group>"; };
+		01CBD15324B12C8700D04E99 /* nudge_impl_metal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = nudge_impl_metal.mm; path = ../../nudge_impl_metal.mm; sourceTree = "<group>"; };
+		01CBD15424B12C8700D04E99 /* nudge_impl_metal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nudge_impl_metal.h; path = ../../nudge_impl_metal.h; sourceTree = "<group>"; };
+		01CBD15524B12C8700D04E99 /* nudge_examples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nudge_examples.cpp; path = ../../nudge_examples.cpp; sourceTree = "<group>"; };
+		01CBD15624B12C8700D04E99 /* nudge_examples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nudge_examples.h; path = ../../nudge_examples.h; sourceTree = "<group>"; };
+		01CBD15C24B3CCC700D04E99 /* nudge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nudge.h; path = ../../nudge.h; sourceTree = "<group>"; };
+		01CBD15D24B3CCC700D04E99 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
+		01CBD15E24B3CCC700D04E99 /* nudge_hl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nudge_hl.h; path = ../../nudge_hl.h; sourceTree = "<group>"; };
+		01CBD15F24B3CCC700D04E99 /* bx_simd_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bx_simd_t.h; path = ../../bx_simd_t.h; sourceTree = "<group>"; };
+		01CBD16024B3CCC700D04E99 /* nudge_bx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nudge_bx.cpp; path = ../../nudge_bx.cpp; sourceTree = "<group>"; };
 		8307E7BB20E9F9C700473790 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		8307E7BC20E9F9C700473790 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
 		8307E7C420E9F9C900473790 /* example_apple_metal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example_apple_metal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,9 +139,22 @@
 			path = ../imgui;
 			sourceTree = "<group>";
 		};
+		01CBD15B24B3CCB200D04E99 /* nudge */ = {
+			isa = PBXGroup;
+			children = (
+				01CBD15F24B3CCC700D04E99 /* bx_simd_t.h */,
+				01CBD16024B3CCC700D04E99 /* nudge_bx.cpp */,
+				01CBD15E24B3CCC700D04E99 /* nudge_hl.h */,
+				01CBD15C24B3CCC700D04E99 /* nudge.h */,
+				01CBD15D24B3CCC700D04E99 /* README.md */,
+			);
+			name = nudge;
+			sourceTree = "<group>";
+		};
 		8307E7B520E9F9C700473790 = {
 			isa = PBXGroup;
 			children = (
+				01CBD15B24B3CCB200D04E99 /* nudge */,
 				01CBD13D24B1298D00D04E99 /* imgui */,
 				8307E7BA20E9F9C700473790 /* Shared */,
 				8307E7C620E9F9C900473790 /* iOS */,
@@ -137,6 +167,10 @@
 		8307E7BA20E9F9C700473790 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				01CBD15424B12C8700D04E99 /* nudge_impl_metal.h */,
+				01CBD15324B12C8700D04E99 /* nudge_impl_metal.mm */,
+				01CBD15524B12C8700D04E99 /* nudge_examples.cpp */,
+				01CBD15624B12C8700D04E99 /* nudge_examples.h */,
 				83BBE9FC20EB54D800295997 /* imgui_impl_metal.h */,
 				83BBE9FD20EB54D800295997 /* imgui_impl_metal.mm */,
 				836D2A2C20EE208D0098E909 /* imgui_impl_osx.h */,
@@ -276,6 +310,7 @@
 			files = (
 				01CBD14D24B1298D00D04E99 /* LICENSE.txt in Resources */,
 				836D2A3220EE4A900098E909 /* Launch Screen.storyboard in Resources */,
+				01CBD16124B3CCC700D04E99 /* README.md in Resources */,
 				8307E7CF20E9F9C900473790 /* Main.storyboard in Resources */,
 				836D2A3020EE4A180098E909 /* Default-568h@2x.png in Resources */,
 			);
@@ -285,6 +320,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01CBD16224B3CCC700D04E99 /* README.md in Resources */,
 				01CBD14E24B1298D00D04E99 /* LICENSE.txt in Resources */,
 				8307E7E420E9F9C900473790 /* Main.storyboard in Resources */,
 			);
@@ -300,10 +336,13 @@
 				8307E7E820E9F9C900473790 /* Renderer.mm in Sources */,
 				01CBD14924B1298D00D04E99 /* imgui_widgets.cpp in Sources */,
 				8307E7CC20E9F9C900473790 /* ViewController.mm in Sources */,
+				01CBD15724B12C8700D04E99 /* nudge_impl_metal.mm in Sources */,
 				01CBD15124B1298D00D04E99 /* imgui_draw.cpp in Sources */,
 				83BBE9DF20EB40AE00295997 /* AppDelegate.m in Sources */,
 				83BBE9FE20EB54D800295997 /* imgui_impl_metal.mm in Sources */,
 				01CBD14B24B1298D00D04E99 /* imgui.cpp in Sources */,
+				01CBD15924B12C8700D04E99 /* nudge_examples.cpp in Sources */,
+				01CBD16324B3CCC700D04E99 /* nudge_bx.cpp in Sources */,
 				01CBD14F24B1298D00D04E99 /* imgui_demo.cpp in Sources */,
 				83BBE9DE20EB3FFC00295997 /* main.m in Sources */,
 			);
@@ -313,13 +352,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01CBD15A24B12C8700D04E99 /* nudge_examples.cpp in Sources */,
 				83BBE9E020EB42D000295997 /* ViewController.mm in Sources */,
 				8307E7E920E9F9C900473790 /* Renderer.mm in Sources */,
 				8307E7E720E9F9C900473790 /* main.m in Sources */,
 				01CBD15224B1298D00D04E99 /* imgui_draw.cpp in Sources */,
+				01CBD15824B12C8700D04E99 /* nudge_impl_metal.mm in Sources */,
 				83BBE9FF20EB54D800295997 /* imgui_impl_metal.mm in Sources */,
 				836D2A2E20EE208E0098E909 /* imgui_impl_osx.mm in Sources */,
 				01CBD14C24B1298D00D04E99 /* imgui.cpp in Sources */,
+				01CBD16424B3CCC700D04E99 /* nudge_bx.cpp in Sources */,
 				8307E7DE20E9F9C900473790 /* AppDelegate.m in Sources */,
 				01CBD14A24B1298D00D04E99 /* imgui_widgets.cpp in Sources */,
 				01CBD15024B1298D00D04E99 /* imgui_demo.cpp in Sources */,
